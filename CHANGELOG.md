@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2020-12-14
+### Removed
+- Unnecessary debug print.
+
 ## [0.0.1] - 2020-12-14
 ### Added
 - Initial commit.
@@ -14,5 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redirect logged in users to jobs when page was not found.
 - Improved template renderer to use layouts.
 
-[Unreleased]: https://github.com/sgabe/winaflpet/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/sgabe/winaflpet/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.2
 [0.0.1]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.1
