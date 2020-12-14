@@ -1,0 +1,245 @@
+{{define "content"}}
+<form id="createJob" class="create job" method="PUT" enctype="multipart/form-data" action="/jobs/create">
+
+  <fieldset class="form-group">
+  <legend>General settings</legend>
+
+    <div class="form-row">
+      <div class="form-group col-md">
+        <label for="agent" class="col-md col-form-label">Agent</label>
+        <div class="col-md">
+          <select class="form-control" id="aid" name="aid" required>
+            {{if not .agents}}
+            <option value="1">Default</option>
+            {{else}}
+              {{range .agents}}
+                <option value="{{ .ID }}">{{.Name}}</option>
+              {{end}}
+            {{end}}
+          </select>
+          <small id="agentHelp" class="form-text text-muted">Specify the remote agent</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="cores" class="col-md col-form-label">CPU cores</label>
+        <div class="col-md">
+          <select class="form-control" id="cores" name="cores">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+          </select>
+          <small id="coresHelp" class="form-text text-muted">Enable distributed mode by increasing CPU cores</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+          <label for="name" class="col-md col-form-label">Name</label>
+          <div class="col-md">
+            <input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp" placeholder="Enter name">
+            <small id="nameHelp" class="form-text text-muted">Short name of the new job</small>
+          </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="banner" class="col-md col-form-label">Banner</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="banner" id="banner" aria-describedby="bannerHelp" placeholder="Enter banner">
+          <small id="bannerHelp" class="form-text text-muted">Short text banner to show on the screen</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md">
+        <label for="desc" class="col-md col-form-label">Description</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="desc" id="desc" aria-describedby="descHelp" placeholder="Enter short description">
+          <small id="descHelp" class="form-text text-muted">Short description of the job</small>
+        </div>
+      </div>
+    </div>
+
+  </fieldset>
+
+  <fieldset class="form-group">
+    <legend>Tool locations</legend>
+    <div class="form-row">
+
+      <div class="form-group col-md">
+        <label for="aflDir" class="col-md col-form-label">AFL directory</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="afl_dir" id="aflDir" aria-describedby="aflDirHelp" placeholder="Enter AFL directory">
+          <small id="aflDirHelp" class="form-text text-muted">AFL directory on the remote machine</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="drioDir" class="col-md col-form-label">DynamorIO directory</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="drio_dir" id="drioDir" aria-describedby="drioDirHelp" placeholder="Enter DynamorIO directory">
+          <small id="drioDirHelp" class="form-text text-muted">DynamorIO directory on the remote machine</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="pyDir" class="col-md col-form-label">Python directory</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="py_dir" id="pyDir" aria-describedby="pyDirHelp" placeholder="Enter Python directory">
+          <small id="pyDirHelp" class="form-text text-muted">Python directory on the remote machine</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="bugidDir" class="col-md col-form-label">BugId directory</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="bugid_dir" id="bugidDir" aria-describedby="bugidDirHelp" placeholder="Enter BugId directory">
+          <small id="bugidDirHelp" class="form-text text-muted">BugId directory on the remote machine</small>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset class="form-group">
+    <legend>Basic parameters</legend>
+    <div class="form-row">
+
+      <div class="form-group col-md">
+        <label for="input" class="col-md col-form-label">Input</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="input" id="input" aria-describedby="inputHelp" placeholder="Enter input directory">
+          <small id="inputHelp" class="form-text text-muted">Input directory with test cases</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="output" class="col-md col-form-label">Output</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="output" id="output" aria-describedby="outputHelp" placeholder="Enter output directory">
+          <small id="outputHelp" class="form-text text-muted">Output directory for findings</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="instMode" class="col-md col-form-label">Instrumentation</label>
+        <div class="col-md">
+          <select class="form-control" name="inst_mode" id="instMode" disabled>
+            <option>DynamorIO</option>
+            <option>Static</option>
+            <option>Intel PT</option>
+          </select>
+          <small id="instModeHelp" class="form-text text-muted">Instrumentation mode to use</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="timeout" class="col-md col-form-label">Timeout</label>
+        <div class="col-sm-10">
+          <input type="number" class="form-control" name="timeout" id="timeout" aria-describedby="timeoutHelp" placeholder="100000" required>
+          <small id="timeoutHelp" class="form-number">Timeout for each run</small>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset class="form-group">
+    <legend>Instrumentation settings</legend>
+
+    <div class="form-row">
+      <div class="form-group col-md">
+        <label for="coverageModule" class="col-md col-form-label">Coverage module(s)</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="cov_module" id="coverageModule" aria-describedby="coverageModuleHelp" placeholder="Enter coverage module(s)">
+          <small id="coverageModuleHelp" class="form-text text-muted">Module(s) to collect coverage for, separate multiple modules with comma (,)</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md">
+        <label for="coverageType" class="col-md col-form-label">Coverage type</label>
+        <div class="col-md">
+          <select class="form-control" name="cov_type" id="coverageType">
+            <option>bb</option>
+            <option>edge</option>
+          </select>
+          <small id="coverageTypeHelp" class="form-text text-muted">The type of coverage being recorded</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="fuzzIter" class="col-md col-form-label">Fuzz iterations</label>
+        <div class="col-md">
+          <input type="number" class="form-control" name="fuzz_iter" id="fuzzIter" aria-describedby="fuzzIterHelp" placeholder="5000" required>
+          <small id="fuzzIterHelp" class="form-number">Fuzzing iterations to perform</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md">
+        <label for="targetModule" class="col-md col-form-label">Target module</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="target_module" id="targetModule" aria-describedby="targetModuleHelp" placeholder="Enter target module">
+          <small id="targetModuleHelp" class="form-text text-muted">Module with target function to fuzz</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="targetMethod" class="col-md col-form-label">Target method</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="target_method" id="targetMethod" aria-describedby="targetMethodHelp" placeholder="Enter target method">
+          <small id="targetMethodHelp" class="form-text text-muted">Name of the method to fuzz</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="targetOffset" class="col-md col-form-label">Target offset</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="target_offset" id="targetOffset" aria-describedby="targetOffsetHelp" placeholder="Enter target offset">
+          <small id="targetOffsetHelp" class="form-text text-muted">Offset to target function</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="targetNArgs" class="col-md col-form-label">Target argument count</label>
+        <div class="col-md">
+          <input type="number" class="form-control" name="target_nargs" id="targetNArgs" aria-describedby="targetNArgsHelp" placeholder="1" required>
+          <small id="targetNAargsHelp" class="form-number">Number of arguments the fuzzed method takes</small>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset class="form-group">
+    <legend>Target application</legend>
+
+    <div class="form-row">
+      <div class="form-group col-md-9">
+        <label for="targetApp" class="col-md col-form-label">Target application command line</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="target_app" id="targetApp" aria-describedby="targetAppHelp" placeholder="Enter application">
+          <small id="targetAppHelp" class="form-text text-muted">Target application or harness to execute for fuzzing (e.g. harness.exe)</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="targetArch">Architecture</label>
+        <div class="col-md">
+          <select class="form-control" name="target_arch" id="targetArch">
+            <option>x86</option>
+            <option>x64</option>
+          </select>
+          <small id="targetArchHelp" class="form-text text-muted">Target architecture</small>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}

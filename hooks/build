@@ -1,0 +1,4 @@
+#!/bin/sh
+docker build --build-arg BUILD_DATE=`git log --pretty=format:%ct -1` \
+             --build-arg BUILD_REV=`git rev-parse --short HEAD` \
+             --build-arg BUILD_VER=$SOURCE_BRANCH -t $IMAGE_NAME .

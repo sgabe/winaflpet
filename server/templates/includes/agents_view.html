@@ -1,0 +1,52 @@
+{{define "content"}}
+{{if not .agents}}
+  <p>There are no existing agents in the database. Click <a href="/agents/create">here</a> to create one!</p>
+{{else}}
+  <div class="card-columns">
+    {{range .agents}}
+    <div class="card agent">
+
+      <div class="card-header">
+        <small class="id {{if .Status}}on{{else}}off{{end}}">{{ .ID }}</small>
+        <h6>
+          <a data-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
+            <i class="fas fa-chevron-down float-right"></i>
+            <span class="name">{{ .Name }}</span>
+          </a>
+        </h6>
+      </div>
+
+      <div id="collapse-{{ .ID }}" class="collapse collapsed">
+        <div class="card-body">
+          <small class="card-text">{{ .Description }}</small>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h6>Host <small>{{ .Host }}</small></h6></li>
+            <li class="list-group-item"><h6>Port <small>{{ .Port }}</small></h6></li>
+            <li class="list-group-item"><h6>Version <small>{{ .Version }}</small></h6></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <a id="checkAgent" href="/agent/{{.GUID}}/check" class="action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+          <svg class="bi" width="1em" height="1em" fill="currentColor" color="grey">
+            <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
+          </svg>
+        </a>
+        <a id="editAgent" href="/agent/{{.GUID}}/edit" class="action">
+          <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="brown">
+            <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
+          </svg>
+        </a>
+        <a id="deleteAgent" href="/agent/{{.GUID}}" class="action" data-method="DELETE">
+          <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
+            <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+    {{end}}
+  </div>
+{{end}}
+{{end}}

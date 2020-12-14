@@ -1,0 +1,79 @@
+{{define "content"}}
+{{if not .crashes}}
+  <p>There are no existing crashes in the database.</p>
+{{else}}
+  <div class="card-columns">
+  {{range .crashes}}
+    <div class="card crash">
+    {{if .Verified }}
+      <div class="card-header">
+        <small class="id {{ .GetRisk }}">{{ .ID }}</small>
+        <h6>
+          <a data-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
+            <i class="fas fa-chevron-down float-right"></i>
+            {{if .Label }}
+              <span class="label">{{ .Label }}</span>
+            {{else}}
+              <span class="bugid">{{ .BugID }}</span>
+            {{end}}
+            <small class="text-muted">{{ .GetJob.Name }}</small>
+          </a>
+        </h6>
+      </div>
+
+      <div id="collapse-{{ .ID }}" class="collapse collapsed">
+        <div class="card-body">
+          <small class="card-text">{{ .Description }}</small>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h6>Fuzzer ID <small>{{ .FuzzerID }}</small></h6></li>
+            <li class="list-group-item"><h6>Bug ID <small>{{ .BugID }}</small></h6></li>
+            <li class="list-group-item"><h6>Module <small>{{ .Module }}</small></h6></li>
+            <li class="list-group-item"><h6>Function <small>{{ .Function }}</small></h6></li>
+            <li class="list-group-item"><h6>Impact <small>{{ .Impact }}</small></h6></li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <a id="downloadCrash" href="/crash/{{.GUID}}/download" class="action" data-method="POST">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="#0074D9">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#file-arrow-down-fill"/>
+            </svg>
+          </a>
+          <a id="editCrash" href="/crash/{{.GUID}}/edit" class="action">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="brown">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
+            </svg>
+          </a>
+          <a id="deleteCrash" href="/crash/{{.GUID}}" class="action" data-method="DELETE">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    {{else}}
+      <div class="card-header">
+        <small class="id {{ .GetRisk }}">{{ .ID }}</small>
+        <h6>
+          <span class="label">Unverified crash</span>
+          <small class="text-muted">{{ .GetJob.Name }}</small>
+        </h6>
+      </div>
+      <div class="card-footer">
+        <a id="verifyCrash" href="/crash/{{.GUID}}/verify" class="action verify" data-method="POST">
+          <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="orangered">
+            <use xlink:href="/static/svg/bootstrap-icons.svg#check-square-fill"/>
+          </svg>
+        </a>
+        <a id="deleteCrash" href="/crash/{{.GUID}}" class="action delete" data-method="DELETE">
+          <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
+            <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
+          </svg>
+        </a>
+      </div>
+    {{end}}
+
+    </div>
+    {{end}}
+  </div>
+{{end}}
+{{end}}

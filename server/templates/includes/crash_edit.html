@@ -1,0 +1,55 @@
+{{define "content"}}
+<form id="editCrash" method="POST" enctype="multipart/form-data">
+
+  <fieldset class="form-group">
+    <div class="form-row">
+
+      <div class="form-group col-md">
+        <label for="fuzzerID" class="col-form-label">Fuzzer ID</label>
+        <input type="text" class="form-control" name="fuzzerID" id="fuzzerID" aria-describedby="fuzzerIDHelp" value="{{.crash.FuzzerID}}">
+        <small id="fuzzerIDHelp" class="form-text text-muted">Fuzzer ID</small>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="bugID" class="col-form-label">Bug ID</label>
+        <input type="text" class="form-control" name="bugID" id="bugID" aria-describedby="bugIDHelp" value="{{.crash.BugID}}">
+        <small id="bugIDHelp" class="form-text text-muted">Bug ID</small>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="mod" class="col-form-label">Module</label>
+        <input type="text" class="form-control" name="mod" id="mod" aria-describedby="modHelp" value="{{.crash.Module}}">
+        <small id="modHelp" class="form-text text-muted">Module</small>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="func" class="col-form-label">Function</label>
+        <input type="text" class="form-control" name="func" id="func" aria-describedby="funcHelp" value="{{.crash.Function}}">
+        <small id="funcHelp" class="form-text text-muted">Function</small>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="label" class="col-form-label">Label</label>
+        <input type="text" class="form-control" name="label" id="label" aria-describedby="labelHelp" value="{{.crash.Label}}">
+        <small id="labelHelp" class="form-text text-muted">Label</small>
+      </div>
+
+    </div>
+
+    <div class="form-row">
+        <label for="desc" class="col-form-label">Description</label>
+        <textarea class="form-control" name="desc" id="desc" rows="2">{{.crash.Description}}</textarea>
+        <small id="descHelp" class="form-text text-muted">Description</small>
+    </div>
+
+    <div class="form-row">
+        <label for="loc" class="col-form-label">Args</label>
+        <input type="text" class="form-control" name="args" id="args" aria-describedby="argsHelp" value="{{.crash.Args}}">
+        <small id="argsHelp" class="form-text text-muted">Args</small>
+    </div>
+
+  </fieldset>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}

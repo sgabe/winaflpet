@@ -1,0 +1,74 @@
+{{define "content"}}
+{{if not .jobs}}
+  <p>There are no existing jobs in the database. Click <a href="/jobs/create">here</a> to create one!</p>
+{{else}}
+  <div class="card-columns">
+  {{range .jobs}}
+    <div class="card job">
+      <div class="card-header">
+        <small class="id {{if .GetAgent.Status}}on{{else}}off{{end}}">{{ .ID }}</small>
+        <h6>
+          <a data-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
+            <i class="fas fa-chevron-down float-right"></i>
+            <span class="label">{{.Name}}</span> @ <span class="host">{{.GetAgent.Name}}</span>
+          </a>
+        </h6>
+      </div>
+
+      <div id="collapse-{{ .ID }}" class="collapse collapsed">
+        <div class="card-body">
+          <p class="card-text truncate">{{ .Desc }}</p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h6>Instrumentation <small>{{.InstMode}}</small></h6></li>
+            <li class="list-group-item"><h6>Coverage <small>{{.CoverageType}} for {{.CoverageModule}}</small></h6></li>
+            <li class="list-group-item"><h6>Iterations <small>{{.FuzzIter}}</small></h6></li>
+            <li class="list-group-item"><h6>Target <small>{{if .TargetOffset }} {{.TargetOffset}}{{else}}{{.TargetMethod}}{{end}} in {{.TargetModule}} ({{.TargetArch}})</small></h6></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        {{$ := .}}
+        {{range seq .Cores}}
+          <a id="startJob{{.}}" href="/job/{{$.GUID}}/start?fid=fuzzer{{.}}" class="action play play-{{.}} {{if (hasStatus $.Status .) }}disabled{{end}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="green">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
+            </svg>
+          </a>
+        {{end}}
+          <a id="stopJob" href="/job/{{.GUID}}/stop" class="action stop {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="orangered">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#stop-fill"/>
+            </svg>
+          </a>
+          <a id="viewJob" href="/job/{{.GUID}}/view" class="action view {{if (eq .Status 0) }}disabled{{end}}">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="blue">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#eye-fill"/>
+            </svg>
+          </a>
+          <a id="checkJob" href="/job/{{.GUID}}/check" class="action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+            <svg class="bi" width="1em" height="1em" fill="currentColor" color="grey">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
+            </svg>
+          </a>
+          <a id="collectJob" href="/job/{{.GUID}}/collect" class="action collect {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="purple">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#cloud-arrow-down-fill"/>
+            </svg>
+          </a>
+          <a id="editJob" href="/job/{{.GUID}}/edit" class="action edit {{if (ne .Status 0) }}disabled{{end}}">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="brown">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
+            </svg>
+          </a>
+          <a id="deleteJob" href="/job/{{.GUID}}" class="action delete {{if (ne .Status 0) }}disabled{{end}}" data-method="DELETE">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
+            </svg>
+          </a>
+      </div>
+    </div>
+    {{end}}
+  </div>
+{{end}}
+{{end}}

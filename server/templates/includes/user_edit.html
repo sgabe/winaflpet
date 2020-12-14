@@ -1,0 +1,65 @@
+{{define "content"}}
+<form id="editUser" method="POST" enctype="multipart/form-data" action="/user/edit">
+
+  <fieldset class="form-group">
+  <legend>General information</legend>
+    <div class="form-row">
+
+      <div class="form-group col-md">
+        <label for="firstname" class="col-md col-form-label">First name</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="firstname" id="firstname" placeholder="{{.user.FirstName}}">
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="lastname" class="col-md col-form-label">Last name</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="lastname" id="lastname" placeholder="{{.user.LastName}}">
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="username" class="col-md col-form-label">Username</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="username" id="username" placeholder="{{.user.UserName}}" disabled>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="form-group">
+  <legend>Password</legend>
+
+    <div class="form-row">
+      <div class="form-group col-md">
+        <label for="password" class="col-md col-form-label">Current password</label>
+        <div class="col-md">
+          <input type="password" class="form-control" name="password" id="password">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md">
+        <label for="newPassword" class="col-md col-form-label">New password</label>
+        <div class="col-md">
+          <input type="password" class="form-control" name="newPassword" id="newPassword">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md">
+        <label for="newPasswordConfirmation" class="col-md col-form-label">New password confirmation</label>
+        <div class="col-md">
+          <input type="password" class="form-control" name="newPasswordConfirmation" id="newPasswordConfirmation">
+        </div>
+      </div>
+    </div>
+
+  </fieldset>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}

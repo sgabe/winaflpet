@@ -1,0 +1,68 @@
+{{define "content"}}
+<form id="createAgent" class="create agent" method="PUT" enctype="multipart/form-data" action="/agents/create">
+
+  <fieldset class="form-group">
+  <legend>General settings</legend>
+    <div class="form-row">
+
+      <div class="form-group col-md">
+        <label for="name" class="col-md col-form-label">Name</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp" placeholder="Enter name">
+          <small id="nameHelp" class="form-text text-muted">Short name of the new job</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="desc" class="col-md col-form-label">Description</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="desc" id="desc" aria-describedby="descHelp" placeholder="Enter short description">
+          <small id="descHelp" class="form-text text-muted">Short description of the job</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="status" class="col-md col-form-label">Status</label>
+        <div class="col-md">
+          <input type="checkbox" class="form-check-input" name="status" id="status" value="1" aria-describedby="statusHelp">
+          <small id="statusHelp" class="form-text text-muted">Activate</small>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset class="form-group">
+  <legend>Agent settings</legend>
+    <div class="form-row">
+
+      <div class="form-group col-md">
+        <label for="host" class="col-md col-form-label">Host</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="host" id="host" aria-describedby="hostHelp" placeholder="Enter hostname or IP address">
+          <small id="hostHelp" class="form-text text-muted">Host name or IP address of the remote machine</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="port" class="col-md col-form-label">Port</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="port" id="port" aria-describedby="portHelp" placeholder="Enter port number">
+          <small id="portHelp" class="form-text text-muted">Port number of the agent on the remote machine</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="key" class="col-md col-form-label">Key</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="key" id="key" aria-describedby="keyHelp" placeholder="Enter API key">
+          <small id="keyHelp" class="form-text text-muted">Authentication key for API requests</small>
+        </div>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}

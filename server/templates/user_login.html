@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/fontawesome-all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://pixinvent.com/stack-responsive-bootstrap-4-admin-template/app-assets/fonts/simple-line-icons/style.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/css/custom.css">
+    <title>Login | WinAFL Pet</title>
+</head>
+<body class="login text-center">
+    <main role="main" class="container">
+        <form id="login" method="POST" action="/user/login" class="form-signin">
+            <div class="alert alert-{{if .context}}{{.context}}{{else}}empty{{end}}" role="alert">
+                <div class="message">{{.alert}}</div>
+            </div>
+            <img class="mb-4" src="/static/svg/carrot-solid.svg" alt="" width="72" height="72">
+            <h1 class="h3 mb-3 font-weight-normal">WinAFL Pet</h1>
+            <label for="username" class="sr-only">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+            <button class="btn btn-primary" type="submit">Sign in</button>
+            <p class="mt-5 mb-3 text-muted">&copy; 2020 Gabor Seljan</p>
+        </form>
+    </main>
+    <script src="/static/js/jquery.min.js" type="text/javascript" charset="utf8"></script>
+    <script src="/static/js/bootstrap.bundle.min.js" type="text/javascript" charset="utf8"></script>
+    <script src="/static/js/bootstrap.min.js" type="text/javascript" charset="utf8"></script>
+    <script src="/static/js/custom.js" type="text/javascript" charset="utf8"></script>
+</body>
+</html>
