@@ -40,7 +40,6 @@ func customHTMLRender() multitemplate.Renderer {
 	for _, include := range includes {
 		fileName := filepath.Base(include)
 		name := strings.TrimSuffix(fileName, filepath.Ext(fileName))
-		fmt.Println(name)
 		layoutCopy := make([]string, len(layouts))
 		copy(layoutCopy, layouts)
 		files := append(layoutCopy, include)
