@@ -80,8 +80,9 @@ func (c Crash) Verify() (Crash, error) {
 			}
 			if m := regexp.MustCompile(`Id @ Location: +(.*) @ (.*)`).FindStringSubmatch(s); len(m) > 0 {
 				c.BugID = m[1]
-				c.Module = strings.Split(m[2], "!")[1]
-				c.Function = strings.Split(m[2], "!")[2]
+				re := regexp.MustCompile(`[!+]`)
+				c.Module = re.Split(m[2], -1)[1]
+				c.Function = re.Split(m[2], -1)[2]
 			}
 			if m := regexp.MustCompile(`Description: +(.*)`).FindStringSubmatch(s); len(m) > 0 {
 				c.Description = m[1]
