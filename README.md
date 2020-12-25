@@ -1,6 +1,6 @@
 # WinAFL Pet
 
-[![Gitlab pipeline status](https://img.shields.io/gitlab/pipeline/sgabe/winaflpet)](https://gitlab.com/sgabe/winaflpet/-/pipelines)
+[![GitLab pipeline status](https://img.shields.io/gitlab/pipeline/sgabe/winaflpet/main)](https://gitlab.com/sgabe/winaflpet/-/pipelines)
 [![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/sgabe/winaflpet)](https://hub.docker.com/r/sgabe/winaflpet/builds)
 [![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/sgabe/winaflpet)](https://hub.docker.com/r/sgabe/winaflpet/builds)
 [![Docker Image Size (tag)](https://img.shields.io/docker/image-size/sgabe/winaflpet/latest)](https://hub.docker.com/r/sgabe/winaflpet)
