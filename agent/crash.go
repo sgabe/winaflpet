@@ -55,7 +55,11 @@ func (c Crash) Verify() (Crash, error) {
 		return c, err
 	}
 
-	args := fmt.Sprintf("-q --bShowLicenseAndDonationInfo=false --bGenerateReportHTML=false --isa=%s %s -- %s", job.TargetArch, job.TargetApp, c.Args)
+	args := fmt.Sprintf("-q"+
+		" --bShowLicenseAndDonationInfo=false"+
+		" --bGenerateReportHTML=false"+
+		" --cBugId.bEnsurePageHeap=false"+
+		" --isa=%s %s -- %s", job.TargetArch, job.TargetApp, c.Args)
 	cmd := exec.Command(bugid, args)
 	cmd.Dir = job.BugIdDir
 	cmd.Env = append(
