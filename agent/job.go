@@ -300,6 +300,7 @@ func checkJob(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Invalid number of arguments provided.",
 		})
+		return
 	}
 
 	j, _, err := project.GetJob(c.Param("guid"))
