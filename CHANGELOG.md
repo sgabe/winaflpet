@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Return early on invalid number of PIDs provided for checking a job.
 
 ### Changed
+- Use smaller font size in footer for mobile screens.
 - Allow crash analysis when page heap is not enabled.
 
 ## [0.0.2] - 2020-12-14
