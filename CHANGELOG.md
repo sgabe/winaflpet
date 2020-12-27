@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Use smaller font size in footer for mobile screens.
 - Allow crash analysis when page heap is not enabled.
+- Allow running up to 8 fuzzer instances simultaneously.
 
 ## [0.0.2] - 2020-12-14
 ### Removed

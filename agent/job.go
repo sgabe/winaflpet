@@ -296,7 +296,7 @@ func checkJob(c *gin.Context) {
 	msg := ""
 
 	c.Bind(&processIDs)
-	if len(processIDs) < 1 || len(processIDs) > 4 {
+	if len(processIDs) < 1 || len(processIDs) > 8 {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Invalid number of arguments provided.",
 		})

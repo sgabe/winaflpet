@@ -25,10 +25,9 @@
         <label for="cores" class="col-md col-form-label">CPU cores</label>
         <div class="col-md">
           <select class="form-control" id="cores" name="cores">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
+          {{range seq 8}}
+            <option>{{.}}</option>
+          {{end}}
           </select>
           <small id="coresHelp" class="form-text text-muted">Enable distributed mode by increasing CPU cores</small>
         </div>
