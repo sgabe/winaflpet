@@ -106,12 +106,12 @@
         </div>
       </div>
       <div class="card-footer">
-        <a id="checkFuzzer" href="/job/{{.GetJob.GUID}}/check?fid={{.AFLBanner}}" class="action check" data-method="POST">
+        <a href="/job/{{.GetJob.GUID}}/check?fid={{.AFLBanner}}" class="action check" data-method="POST">
           <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="grey">
             <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
           </svg>
         </a>
-        <a id="plotFuzzer" href="/job/{{.GetJob.GUID}}/plot?fid={{.AFLBanner}}" class="action plot" data-method="POST">
+        <a href="/job/{{.GetJob.GUID}}/plot?fid={{.AFLBanner}}" class="action plot" data-method="POST">
           <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="green">
             <use xlink:href="/static/svg/bootstrap-icons.svg#bar-chart-fill"/>
           </svg>

@@ -33,17 +33,17 @@
           </ul>
         </div>
         <div class="card-footer">
-          <a id="downloadCrash" href="/crash/{{.GUID}}/download" class="action" data-method="POST">
+          <a href="/crash/{{.GUID}}/download" class="action download" data-method="POST">
             <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="#0074D9">
               <use xlink:href="/static/svg/bootstrap-icons.svg#file-arrow-down-fill"/>
             </svg>
           </a>
-          <a id="editCrash" href="/crash/{{.GUID}}/edit" class="action">
+          <a href="/crash/{{.GUID}}/edit" class="action edit">
             <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="brown">
               <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
             </svg>
           </a>
-          <a id="deleteCrash" href="/crash/{{.GUID}}" class="action" data-method="DELETE">
+          <a href="/crash/{{.GUID}}" class="action delete" data-method="DELETE">
             <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
               <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
             </svg>

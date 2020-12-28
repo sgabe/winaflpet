@@ -28,17 +28,17 @@
       </div>
 
       <div class="card-footer">
-        <a id="checkAgent" href="/agent/{{.GUID}}/check" class="action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+        <a href="/agent/{{.GUID}}/check" class="action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
           <svg class="bi" width="1em" height="1em" fill="currentColor" color="grey">
             <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
           </svg>
         </a>
-        <a id="editAgent" href="/agent/{{.GUID}}/edit" class="action">
+        <a href="/agent/{{.GUID}}/edit" class="action edit">
           <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="brown">
             <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
           </svg>
         </a>
-        <a id="deleteAgent" href="/agent/{{.GUID}}" class="action" data-method="DELETE">
+        <a href="/agent/{{.GUID}}" class="action delete" data-method="DELETE">
           <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
             <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
           </svg>
