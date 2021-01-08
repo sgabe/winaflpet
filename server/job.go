@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
@@ -523,11 +524,40 @@ func collectJob(c *gin.Context) {
 		return
 	}
 
+	resumedJob := false
+	if j.Input == "-" {
+		resumedJob = true
+	}
+
 	var crashes []Crash
 	for _, crash := range crashesTemp {
 		c := newCrash()
 		c.JobID = j.ID
 		c.FuzzerID = crash.FuzzerID
+
+		recentCrash := false
+		for _, i := range crashesTemp {
+			if i.FuzzerID == c.FuzzerID && strings.Contains(i.Args, "\\crashes\\") {
+				recentCrash = true
+				break
+			}
+		}
+
+		re := regexp.MustCompile(c.FuzzerID + `\\crashes_\d{14}\\`)
+		backedUpCrash := re.MatchString(crash.Args)
+
+		// Avoid duplicate crash records when resuming aborted jobs.
+		if resumedJob && !recentCrash && backedUpCrash {
+			c.Args = re.ReplaceAllString(crash.Args, c.FuzzerID+"\\crashes\\")
+			if err := c.LoadByJobIDArgs(); err == nil {
+				c.Args = crash.Args
+				if err := c.Update(); err != nil {
+					log.Println(err)
+				}
+				continue
+			}
+		}
+
 		c.Args = crash.Args
 		if err := c.LoadByJobIDArgs(); err != nil {
 			if err := c.Insert(); err != nil {
