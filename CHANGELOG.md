@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow running up to 8 fuzzer instances simultaneously.
 - Sort crashes in descending order by internal ID.
 - Update crash file paths when resuming aborted jobs.
+- Refactor crash template.
 
 ### Removed
 - Unused id attributes in the HTML templates.

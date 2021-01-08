@@ -74,10 +74,20 @@ a.navbar-brand i.fas {
   margin-right: 0.25em;
 }
 
+.card.job a.action.play {
+  display: inline-block;
+  width: 20px;
+}
+
 .card.job a.action.disabled {
   /* opacity: 25%; */
   /* cursor: default; */
   display: none;
+}
+
+.card.crash a.action.float-right {
+  margin-top: -2px;
+  padding-left: 0.2em;
 }
 
 .card a.action:hover {
@@ -102,6 +112,14 @@ a.navbar-brand i.fas {
   padding: .5rem .75rem;
 }
 
+.card-footer a.action.float-right {
+  float:none;
+}
+
+.card-header {
+  padding: .75rem .75rem;
+}
+
 .card-header .fas {
   transition: .3s transform ease-in-out;
 }
@@ -115,7 +133,7 @@ a.navbar-brand i.fas {
   float: left;
   width: 35px;
   padding: 12.2px 5px;
-  margin: -12px 0 0 -20px;
+  margin: -12px 0 0 -12px;
   text-align: center;
 }
 
@@ -134,7 +152,7 @@ a.navbar-brand i.fas {
 }
 
 .card-header h6 {
-  margin: 0 0 0 20px;
+  margin: 0 0 0 30px;
 }
 
 .card-body pre {
