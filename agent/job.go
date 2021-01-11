@@ -80,7 +80,7 @@ func (j Job) Start(fID string) error {
 		distMode = "-S"
 	}
 
-	args := fmt.Sprintf("%s %s -i %s -o %s -D %s -t %d -- -covtype %s -coverage_module %s -fuzz_iterations %d -target_module %s -target_method %s -nargs %d -- %s @@",
+	args := fmt.Sprintf("%s %s -i %s -o %s -D %s -t %d -- -covtype %s -coverage_module %s -fuzz_iterations %d -target_module %s -target_method %s -target_offset %s -nargs %d -- %s @@",
 		distMode,
 		fID,
 		j.Input,
@@ -92,6 +92,7 @@ func (j Job) Start(fID string) error {
 		j.FuzzIter,
 		j.TargetModule,
 		j.TargetMethod,
+		j.TargetOffset,
 		j.TargetNArgs,
 		app)
 

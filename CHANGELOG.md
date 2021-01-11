@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 - Fix regex pattern used to extract crash location from BugId output.
 - Return early on invalid number of PIDs provided for checking a job.
+- Missing instrumentation option to set target_offset.
 
 ### Changed
 - Use smaller font size in footer for mobile screens.
