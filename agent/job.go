@@ -69,7 +69,8 @@ func (j Job) Start(fID string) error {
 		return err
 	}
 
-	app, err := exec.LookPath(j.TargetApp)
+	targetCmd, targetArgs := splitCmdLine(j.TargetApp)
+	targetApp, err := exec.LookPath(targetCmd)
 	if err != nil {
 		logger.Error(err)
 		return err
@@ -80,7 +81,7 @@ func (j Job) Start(fID string) error {
 		distMode = "-S"
 	}
 
-	args := fmt.Sprintf("%s %s -i %s -o %s -D %s -t %d -- -covtype %s -coverage_module %s -fuzz_iterations %d -target_module %s -target_method %s -target_offset %s -nargs %d -- %s @@",
+	args := fmt.Sprintf("%s %s -i %s -o %s -D %s -t %d -- -covtype %s -coverage_module %s -fuzz_iterations %d -target_module %s -target_method %s -target_offset %s -nargs %d -- %s %s @@",
 		distMode,
 		fID,
 		j.Input,
@@ -94,7 +95,8 @@ func (j Job) Start(fID string) error {
 		j.TargetMethod,
 		j.TargetOffset,
 		j.TargetNArgs,
-		app)
+		targetApp,
+		targetArgs)
 
 	cmd := exec.Command(afl, args)
 	cmd.Dir = j.AFLDir
@@ -135,8 +137,11 @@ func (j Job) Stop() error {
 		return err
 	}
 
+	targetCmd, _ := splitCmdLine(j.TargetApp)
+	targetExe := filepath.Base(targetCmd)
+
 	for _, p := range processes {
-		if p.Executable() == filepath.Base(j.TargetApp) {
+		if p.Executable() == targetExe {
 			p1, _ := ps.FindProcess(p.Pid())
 			p2, _ := ps.FindProcess(p1.PPid())
 			p3, _ := ps.FindProcess(p2.PPid())

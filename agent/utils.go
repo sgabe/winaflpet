@@ -120,3 +120,16 @@ func delKey() error {
 	}
 	return cred.Delete()
 }
+
+func splitCmdLine(cmdLine string) (string, string) {
+	cmdFields := strings.Fields(cmdLine)
+
+	cmd := cmdFields[0]
+	args := ""
+
+	if len(cmdFields) > 1 {
+		args = strings.Join(cmdFields[1:], " ")
+	}
+
+	return cmd, args
+}

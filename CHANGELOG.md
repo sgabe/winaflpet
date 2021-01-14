@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## Fixed
+### Added
+- Support additional command line arguments for target application.
+
+### Fixed
 - Fix regex pattern used to extract crash location from BugId output.
 - Return early on invalid number of PIDs provided for checking a job.
 - Missing instrumentation option to set target_offset.
