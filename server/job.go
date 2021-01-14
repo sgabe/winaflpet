@@ -184,7 +184,7 @@ func startJob(c *gin.Context) {
 	// TODO: Handle errors.
 	a, _ := j.GetAgent()
 
-	request := gorequest.New().Timeout(90 * time.Second)
+	request := gorequest.New().Timeout(300 * time.Second)
 	request.Debug = false
 
 	fuzzerID := c.DefaultQuery("fid", "fuzzer1")
