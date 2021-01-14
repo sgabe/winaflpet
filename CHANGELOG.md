@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sort crashes in descending order by internal ID.
 - Update crash file paths when resuming aborted jobs.
 - Increase request timeout to avoid errors when starting jobs.
+- Increase database query limit to display more crashes.
 - Refactor crash template.
 
 ### Removed

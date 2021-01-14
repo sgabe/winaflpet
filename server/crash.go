@@ -104,7 +104,7 @@ func loadCrashes() ([]*Crash, error) {
 	sc := structable.New(db, DB_FLAVOR).Bind(TB_NAME_CRASHES, c)
 
 	fn := func(d structable.Describer, q squirrel.SelectBuilder) (squirrel.SelectBuilder, error) {
-		return q.OrderBy("id DESC").Limit(100), nil
+		return q.OrderBy("id DESC").Limit(1000), nil
 	}
 
 	items, err := listWhere(sc, fn)
