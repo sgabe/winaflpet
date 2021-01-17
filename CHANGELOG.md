@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Support additional command line arguments for target application.
+- Support for absolute paths for input and output.
 
 ### Fixed
 - Fix regex pattern used to extract crash location from BugId output.

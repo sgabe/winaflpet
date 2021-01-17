@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -132,4 +133,16 @@ func splitCmdLine(cmdLine string) (string, string) {
 	}
 
 	return cmd, args
+}
+
+func joinPath(workingDir string, outputDir string, pathNames ...string) string {
+	e := append([]string{outputDir}, pathNames...)
+
+	if !filepath.IsAbs(outputDir) {
+		e = append([]string{workingDir}, e...)
+	}
+
+	p := filepath.Join(e...)
+
+	return p
 }

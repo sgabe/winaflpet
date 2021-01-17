@@ -160,8 +160,7 @@ func (j Job) View() ([]Stats, error) {
 
 	for c := 1; c <= j.Cores; c++ {
 		fuzzerID := fmt.Sprintf("fuzzer%d", c)
-		filePath := []string{j.AFLDir, j.Output, fuzzerID, AFL_STATS_FILE}
-		fileName := strings.Join(filePath, `\`)
+		fileName := joinPath(j.AFLDir, j.Output, fuzzerID, AFL_STATS_FILE)
 
 		if !fileExists(fileName) {
 			text := fmt.Sprintf("Statistics are unavailable for %s", j.Name)
@@ -201,7 +200,7 @@ func (j Job) Check(pid int) (bool, error) {
 func (j Job) Collect() ([]Crash, error) {
 	var crashes []Crash
 
-	dirname := path.Join(j.AFLDir, j.Output)
+	dirname := joinPath(j.AFLDir, j.Output)
 	re := regexp.MustCompile(`\\crashes.*\\id_\d{6}_\d{2}`)
 	err := godirwalk.Walk(dirname, &godirwalk.Options{
 		Callback: func(osPathname string, de *godirwalk.Dirent) error {
@@ -378,7 +377,7 @@ func plotJob(c *gin.Context) {
 	}
 
 	fuzzerID := c.Query("fid")
-	filePath := filepath.Join(j.AFLDir, j.Output, fuzzerID, AFL_PLOT_FILE)
+	filePath := joinPath(j.AFLDir, j.Output, fuzzerID, AFL_PLOT_FILE)
 	// TODO: Add a security check for filepath.
 	// if !strings.HasPrefix(filepath.Clean(filePath), "C:\\Tools\\") {
 	// 	c.String(403, "Invalid file path!")
