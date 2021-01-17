@@ -17,7 +17,7 @@ require (
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.5.1
+	github.com/stretchr/testify v1.6.1
 	golang.org/x/crypto v0.0.0-20201001193750-eb9a90e9f9cb
 	moul.io/http2curl v1.0.0 // indirect
 )
