@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Unused id attributes in the HTML templates.
+- Unused CSS stylesheet.
 
 ## [0.0.2] - 2020-12-14
 ### Removed
