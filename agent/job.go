@@ -24,7 +24,7 @@ import (
 const (
 	AFL_EXECUTABLE  = "afl-fuzz.exe"
 	AFL_SUCCESS_MSG = "All set and ready to roll!"
-	AFL_FAIL_REGEX  = `PROGRAM ABORT : (.*)`
+	AFL_FAIL_REGEX  = `(?:PROGRAM ABORT|OS message) : (.*)`
 	AFL_STATS_FILE  = "fuzzer_stats"
 	AFL_PLOT_FILE   = "plot_data"
 )

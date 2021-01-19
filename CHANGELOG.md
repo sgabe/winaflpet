@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increase request timeout to avoid errors when starting jobs.
 - Increase database query limit to display more crashes.
 - Refactor crash template.
+- Improve regex pattern to detect system errors.
 
 ### Removed
 - Unused id attributes in the HTML templates.
