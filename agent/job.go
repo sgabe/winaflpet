@@ -194,7 +194,7 @@ func (j Job) Collect() ([]Crash, error) {
 	var crashes []Crash
 
 	dirname := joinPath(j.AFLDir, j.Output)
-	re := regexp.MustCompile(`\\crashes.*\\id_\d{6}_\d{2}`)
+	re := regexp.MustCompile(`\\crashes.*\\id_\d{6}_\d{2}_\w+$`)
 	err := godirwalk.Walk(dirname, &godirwalk.Options{
 		Callback: func(osPathname string, de *godirwalk.Dirent) error {
 			if re.MatchString(osPathname) {

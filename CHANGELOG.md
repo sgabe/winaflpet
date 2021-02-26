@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Use goroutine to read process's standard output.
+- More specific regex pattern to find crash samples.
 
 ## [0.0.3] - 2021-01-24
 ### Added
