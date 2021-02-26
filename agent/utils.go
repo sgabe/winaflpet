@@ -3,10 +3,13 @@
 package main
 
 import (
+	"bufio"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -145,4 +148,23 @@ func joinPath(workingDir string, outputDir string, pathNames ...string) string {
 	p := filepath.Join(e...)
 
 	return p
+}
+
+func readStdout(c chan error, rd *bufio.Reader) {
+	for {
+		l, _, err := rd.ReadLine()
+		if err != nil || err == io.EOF {
+			c <- err
+		}
+
+		s := string(l)
+		if strings.Contains(s, AFL_SUCCESS_MSG) {
+			c <- nil
+		}
+
+		m := regexp.MustCompile(AFL_FAIL_REGEX).FindStringSubmatch(s)
+		if len(m) > 0 {
+			c <- errors.New(stripAnsi(m[1]))
+		}
+	}
 }

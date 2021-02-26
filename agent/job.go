@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/karrick/godirwalk"
@@ -102,32 +103,24 @@ func (j Job) Start(fID string) error {
 	cmd.Dir = j.AFLDir
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.CmdLine = strings.Join(cmd.Args, ` `)
-	stdout, _ := cmd.StdoutPipe()
+	stdoutPipe, _ := cmd.StdoutPipe()
+	stdoutReader := bufio.NewReader(stdoutPipe)
 
 	if err := cmd.Start(); err != nil {
 		logger.Error(err)
 		return err
 	}
 
-	if cmd.Process != nil {
-		if j.Input == "-" {
-			return nil
-		}
-		r := bufio.NewReader(stdout)
-		for {
-			l, _, _ := r.ReadLine()
-			s := string(l)
-			if strings.Contains(s, AFL_SUCCESS_MSG) {
-				break
-			}
-			m := regexp.MustCompile(AFL_FAIL_REGEX).FindStringSubmatch(s)
-			if len(m) > 0 {
-				return errors.New(stripAnsi(m[1]))
-			}
-		}
-	}
+	c := make(chan error)
 
-	return nil
+	go readStdout(c, stdoutReader)
+
+	select {
+	case err := <-c:
+		return err
+	case <-time.After(4 * time.Minute):
+		return nil
+	}
 }
 
 func (j Job) Stop() error {
