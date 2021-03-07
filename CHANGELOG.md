@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Anonymous function as parameter to setTimeout().
 
 ### Changed
+- Allow running up to 20 fuzzer instances simultaneously.
 - Reload the page after successfully starting a job.
 - Use goroutine to read process's standard output.
 - More specific regex pattern to find crash samples.
