@@ -85,7 +85,9 @@ $(function () {
                             }, 1000*5);
                         }
                         else if ($(this).is("a.verify")) {
-                            setTimeout(location.reload(), 1000*5);
+                            setTimeout(function() {
+                                location.reload()
+                            }, 1000*5);
                         }
                     }
                 } else {
