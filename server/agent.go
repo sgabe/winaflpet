@@ -24,7 +24,7 @@ const (
 		"port" INTEGER NOT NULL,
 		"key" TEXT NOT NULL,
 		"ver" TEXT,
-		"status" INT
+		"status" INTEGER
 	  );`
 )
 

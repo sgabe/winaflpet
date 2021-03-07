@@ -43,7 +43,7 @@ const (
 		"drio_dir" TEXT NOT NULL,
 		"py_dir" TEXT NOT NULL,
 		"bugid_dir" TEXT NOT NULL,
-		"status" INT,
+		"status" INTEGER,
 		FOREIGN KEY (aid) REFERENCES agents(id)
 	  );`
 )

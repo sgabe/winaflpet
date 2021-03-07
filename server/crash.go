@@ -30,7 +30,7 @@ const (
 			"desc" TEXT,
 			"imp" TEXT,
 			"args" TEXT,
-			"verified" INT,
+			"verified" INTEGER,
 			FOREIGN KEY (jid) REFERENCES jobs(id)
 		);`
 )
