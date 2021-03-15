@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- Binding to command line host and port flags.
 - Anonymous function as parameter to setTimeout().
 
 ### Changed

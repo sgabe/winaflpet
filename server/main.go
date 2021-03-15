@@ -57,10 +57,10 @@ func main() {
 	setDefaults()
 
 	flag.StringVarP(&host, "host", "h", DEFAULT_SERVER_HOST, "Host to bind to")
-	viper.BindPFlag("host", flag.Lookup("host"))
+	viper.BindPFlag("server.host", flag.Lookup("host"))
 
 	flag.IntVarP(&port, "port", "p", DEFAULT_SERVER_PORT, "Port to bind to")
-	viper.BindPFlag("port", flag.Lookup("port"))
+	viper.BindPFlag("server.port", flag.Lookup("port"))
 
 	flag.StringVarP(&log, "log", "l", DEFAULT_LOG, "Log filename")
 	viper.BindPFlag("log", flag.Lookup("log"))
