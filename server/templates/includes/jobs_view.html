@@ -22,7 +22,7 @@
             <li class="list-group-item"><h6>Instrumentation <small>{{.InstMode}}</small></h6></li>
             <li class="list-group-item"><h6>Coverage <small>{{.CoverageType}} for {{.CoverageModule}}</small></h6></li>
             <li class="list-group-item"><h6>Iterations <small>{{.FuzzIter}}</small></h6></li>
-            <li class="list-group-item"><h6>Target <small>{{if .TargetOffset }} {{.TargetOffset}}{{else}}{{.TargetMethod}}{{end}} in {{.TargetModule}} ({{.TargetArch}})</small></h6></li>
+            <li class="list-group-item"><h6>Target <small>{{if ne .TargetOffset "0"}}{{.TargetOffset}}{{else}}{{.TargetMethod}}{{end}} in {{.TargetModule}} ({{.TargetArch}})</small></h6></li>
           </ul>
         </div>
       </div>
