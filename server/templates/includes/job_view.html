@@ -67,6 +67,9 @@
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Number of unique hangs encountered.">Unique hangs:</span>
                   <span class="badge badge-primary badge-{{if ne .UniqueHangs 0}}warning{{else}}secondary{{end}}">{{ .UniqueHangs }}</span></li>
+                <li class="list-group-item">
+                  <span data-toggle="tooltip" title="Bitmap coverage observed by the instrumentation.">Bitmap coverage:</span>
+                  <span class="badge badge-primary badge-success">{{ .BitmapCvg }}</span></li>
               </ul>
             </div>
           </div>

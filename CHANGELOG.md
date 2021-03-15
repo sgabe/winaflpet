@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Show bitmap coverage information among overall results.
+
 ### Fixed
 - Show target method when offset is not specified.
 - Binding to command line host and port flags.
