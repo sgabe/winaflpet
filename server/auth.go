@@ -26,7 +26,6 @@ func Authentication() (*jwt.GinJWTMiddleware, error) {
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
 		LoginResponse: func(c *gin.Context, code int, token string, expire time.Time) {
-			c.SetCookie("token", token, 3600, "/", "", true, true)
 			c.Redirect(http.StatusFound, "/jobs/view")
 		},
 		LogoutResponse: func(c *gin.Context, code int) {
@@ -72,7 +71,7 @@ func Authentication() (*jwt.GinJWTMiddleware, error) {
 			c.Data(http.StatusUnauthorized, "text/html", []byte(redirectCode))
 		},
 		SendCookie:     true,
-		SecureCookie:   true,
+		SecureCookie:   !gin.IsDebugging(),
 		CookieHTTPOnly: true,
 		CookieName:     "token",
 		TokenLookup:    "header: Authorization, cookie: token",

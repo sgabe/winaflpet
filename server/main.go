@@ -52,6 +52,7 @@ func main() {
 		log     string
 		config  string
 		version bool
+		debug   bool
 	)
 
 	setDefaults()
@@ -67,6 +68,7 @@ func main() {
 
 	flag.StringVarP(&config, "config", "c", "", "Configuration filename")
 	flag.BoolVarP(&version, "version", "v", false, "Output the current version of the server")
+	flag.BoolVarP(&debug, "debug", "d", false, "Enable debug mode")
 
 	flag.Parse()
 
@@ -93,6 +95,10 @@ func main() {
 
 	gin.DisableConsoleColor()
 	gin.SetMode(gin.ReleaseMode)
+
+	if debug {
+		gin.SetMode(gin.DebugMode)
+	}
 
 	f, _ := os.Create(filepath.Join(viper.GetString("data.dir"), viper.GetString("log")))
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
