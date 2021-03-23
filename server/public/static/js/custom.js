@@ -66,6 +66,7 @@ $(function () {
                 url: $(this).attr('href'),
                 method: $(this).attr("data-method"),
                 context: $(this),
+                dataType: $(this).attr("data-type") ? "binary" : "json",
                 statusCode: {
                     401: function() {
                         setTimeout(function() {
@@ -148,4 +149,35 @@ $(function () {
         });
     });
 
+});
+
+$.ajaxTransport("+binary", function(options, originalOptions, jqXHR) {
+    var isBinary = options.dataType && options.dataType == "binary",
+        isBlob = options.data && window.Blob && options.data instanceof Blob,
+        isArrayBuffer = options.data && window.ArrayBuffer && options.data instanceof ArrayBuffer;
+    if (window.FormData && (isBinary || isArrayBuffer || isBlob)) {
+        return {
+            send: function(headers, callback) {
+                var xhr = new XMLHttpRequest(),
+                    url = options.url,
+                    type = options.type,
+                    async = options.async || true,
+                    dataType = options.responseType || "blob",
+                    data = options.data || null;
+
+                xhr.addEventListener("load", function() {
+                    var data = {};
+                    data[options.dataType] = xhr.response;
+                    callback(xhr.status, xhr.statusText, data, xhr.getAllResponseHeaders());
+                });
+ 
+                xhr.open(type, url, async);
+                xhr.responseType = dataType;
+                xhr.send(data);
+            },
+            abort: function() {
+                jqXHR.abort();
+            }
+        };
+    }
 });
