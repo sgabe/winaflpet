@@ -93,6 +93,7 @@ func editUser(c *gin.Context) {
 			return
 		}
 
+		oriPassword := user.Password
 		if err := c.ShouldBind(&user); err != nil {
 			otherError(c, map[string]string{
 				"title":    title,
@@ -101,6 +102,7 @@ func editUser(c *gin.Context) {
 			})
 			return
 		}
+		user.Password = oriPassword
 
 		if user.NewPassword != "" {
 			if user.NewPassword != user.NewPasswordConfirmation {
@@ -115,7 +117,15 @@ func editUser(c *gin.Context) {
 			user.Password, _ = generatePassword(user.NewPassword)
 		}
 
-		user.Update()
+		if err := user.Update(); err != nil {
+			c.HTML(http.StatusOK, "user_edit", gin.H{
+				"title":   title,
+				"alert":   err.Error(),
+				"user":    user,
+				"context": "danger",
+			})
+			return
+		}
 
 		c.HTML(http.StatusOK, "user_edit", gin.H{
 			"title":   title,

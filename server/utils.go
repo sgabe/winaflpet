@@ -299,6 +299,9 @@ func generatePassword(password string) (string, error) {
 
 func comparePassword(password, hash string) (bool, error) {
 	parts := strings.Split(hash, "$")
+	if len(parts) != 6 {
+		return false, errors.New("corrupted password hash")
+	}
 
 	c := &passwordConfig{}
 	_, err := fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &c.memory, &c.time, &c.threads)
