@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.0.5] - 2021-04-01
 ### Fixed
 - Prevent erroneous user profile update.
 - jQuery AJAX used to download binary crash samples.
@@ -62,7 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redirect logged in users to jobs when page was not found.
 - Improved template renderer to use layouts.
 
-[Unreleased]: https://github.com/sgabe/winaflpet/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/sgabe/winaflpet/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.5
 [0.0.4]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.4
 [0.0.3]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.3
 [0.0.2]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.2
