@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/Masterminds/sprig"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	helmet "github.com/danielkov/gin-helmet"
 	"github.com/gin-contrib/multitemplate"
@@ -25,6 +26,10 @@ func customHTMLRender() multitemplate.Renderer {
 		"getVersion":     getVersion,
 		"formatNumber":   formatNumber,
 		"formatDuration": formatDuration,
+	}
+
+	for k, v := range sprig.FuncMap() {
+		funcs[k] = v
 	}
 
 	layouts, err := filepath.Glob("templates/layouts/*.html")
