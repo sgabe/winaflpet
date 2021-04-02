@@ -181,3 +181,23 @@ $.ajaxTransport("+binary", function(options, originalOptions, jqXHR) {
         };
     }
 });
+
+jQuery.expr[':'].contains = function(a, i, m) {
+    return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+};
+
+var filterCards = function() {
+    $('.card').removeClass('d-none');
+    var filter = $("#search").val();
+    if (filter) {
+        $('.card-columns').find('.card .card-body:not(:contains("'+filter+'"))').parent().parent().addClass('d-none');
+    }
+}
+
+$(window).on('load', function() {
+    filterCards();
+})
+
+$('#search').on('keyup', function() {
+    filterCards();
+})
