@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Masterminds/squirrel"
 	"github.com/rs/xid"
 	"github.com/spf13/cast"
 	"golang.org/x/crypto/argon2"
@@ -323,4 +324,16 @@ func comparePassword(password, hash string) (bool, error) {
 	comparisonHash := argon2.IDKey([]byte(password), salt, c.time, c.memory, c.threads, c.keyLen)
 
 	return (subtle.ConstantTimeCompare(decodedHash, comparisonHash) == 1), nil
+}
+
+func totalPages() int {
+	count := 0
+	size := 99
+
+	items := squirrel.Select("COUNT(*)").From(TB_NAME_CRASHES)
+	items.RunWith(db).QueryRow().Scan(&count)
+
+	pages := float64(count) / float64(size)
+
+	return int(pages) + 1
 }

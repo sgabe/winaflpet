@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Common template functions provided by Sprig.
+- Pagination to navigate through the crashes.
 - Search box to filter cards.
 
 ## [0.0.5] - 2021-04-01

@@ -24,6 +24,7 @@ func customHTMLRender() multitemplate.Renderer {
 		"seq":            seq,
 		"hasStatus":      hasStatus,
 		"getVersion":     getVersion,
+		"totalPages":     totalPages,
 		"formatNumber":   formatNumber,
 		"formatDuration": formatDuration,
 	}

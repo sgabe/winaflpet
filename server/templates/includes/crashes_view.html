@@ -1,3 +1,38 @@
+{{define "pagination"}}
+{{if gt totalPages 0}}
+{{$currentPage := add . 1 }}
+{{$previousPage := sub $currentPage 1}}
+{{$nextPage := add $currentPage 1}}
+{{$firstPage := sub $currentPage 2 }}
+{{$lastPage := add $currentPage 2 }}
+<nav aria-label="...">
+  <ul class="pagination justify-content-center">
+    <li class="page-item {{if (lt $previousPage 1)}}disabled{{end}}">
+      <a class="page-link" href="/crashes/view?p={{if lt $previousPage 1}}#{{else}}{{$previousPage}}{{end}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {{range seq totalPages}}
+      {{if or (lt totalPages 6) (and (lt $currentPage 3) (lt . 6))}}
+    <li class="page-item {{if eq $currentPage .}}active{{end}}"><a class="page-link" href="/crashes/view?p={{ . }}">{{ . }}</a></li>
+      {{else}}
+        {{if and (ge . $firstPage) (le . $lastPage)}}
+    <li class="page-item {{if eq $currentPage .}}active{{end}}"><a class="page-link" href="/crashes/view?p={{ . }}">{{ . }}</a></li>
+        {{end}}
+      {{end}}
+    {{end}}
+    <li class="page-item {{if (gt $nextPage totalPages)}}disabled{{end}}">
+      <a class="page-link" href="/crashes/view?p={{if gt $nextPage totalPages}}#{{else}}{{$nextPage}}{{end}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+{{end}}
+{{end}}
+
 {{define "verifyCrash"}}
 <a href="/crash/{{.}}/verify" class="float-right action verify" data-method="POST">
   <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="orangered">
@@ -34,6 +69,7 @@
 {{if not .crashes}}
   <p>There are no existing crashes in the database.</p>
 {{else}}
+  {{template "pagination" .currentPage}}
   <div class="card-columns">
   {{range .crashes}}
     <div class="card crash">
@@ -81,5 +117,6 @@
     </div>
     {{end}}
   </div>
+  {{template "pagination" .currentPage}}
 {{end}}
 {{end}}

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/Masterminds/squirrel"
@@ -99,12 +100,12 @@ func (c *Crash) GetRisk() string {
 	return risk
 }
 
-func loadCrashes() ([]*Crash, error) {
+func loadCrashes(page uint64) ([]*Crash, error) {
 	c := &Crash{}
 	sc := structable.New(db, DB_FLAVOR).Bind(TB_NAME_CRASHES, c)
 
 	fn := func(d structable.Describer, q squirrel.SelectBuilder) (squirrel.SelectBuilder, error) {
-		return q.OrderBy("id DESC").Limit(1000), nil
+		return q.OrderBy("id DESC").Limit(99).Offset(page * 99), nil
 	}
 
 	items, err := listWhere(sc, fn)
@@ -124,8 +125,14 @@ func loadCrashes() ([]*Crash, error) {
 
 func viewCrashes(c *gin.Context) {
 	title := "Crashes"
+	currentPage := 0
 
-	crashes, err := loadCrashes()
+	p, err := strconv.Atoi(c.DefaultQuery("p", "1"))
+	if err == nil && p > 0 && p < (totalPages()+1) {
+		currentPage = p - 1
+	}
+
+	crashes, err := loadCrashes(uint64(currentPage))
 	if err != nil {
 		otherError(c, map[string]string{
 			"title":    title,
@@ -136,8 +143,9 @@ func viewCrashes(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "crashes_view", gin.H{
-		"title":   title,
-		"crashes": crashes,
+		"title":       title,
+		"crashes":     crashes,
+		"currentPage": currentPage,
 	})
 }
 
