@@ -22,8 +22,14 @@
 }
 
 @media (max-width: 667px) {
+  main h1 {
+    margin-top:1.5rem;
+  }
   .card {
     display: inherit;
+  }
+  .card-header h6 .label {
+    max-width: 180px;
   }
   .card-columns {
     -webkit-column-count: 1;
@@ -131,8 +137,8 @@ a.navbar-brand i.fas {
 .card-header .id {
   display: block;
   float: left;
-  width: 35px;
-  padding: 12.2px 5px;
+  width: 40px;
+  padding: 12px 0;
   margin: -12px 0 0 -12px;
   text-align: center;
 }
@@ -152,7 +158,19 @@ a.navbar-brand i.fas {
 }
 
 .card-header h6 {
-  margin: 0 0 0 30px;
+  margin: 0 0 0 35px;
+}
+
+.card-header h6 .label {
+  float:left;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.card-header h6 small {
+  margin-left: 5px;
 }
 
 .card-body pre {

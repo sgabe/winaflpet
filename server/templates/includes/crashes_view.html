@@ -81,13 +81,15 @@
             <i class="fas fa-chevron-down float-right"></i>
             {{if .Label }}
               <span class="label">{{ .Label }}</span>
+            {{else if .Function }}
+              <span class="label">{{ .Function }}</span>
             {{else}}
               <span class="bugid">{{ .BugID }}</span>
             {{end}}
             <small class="text-muted">{{ .GetJob.Name }}</small>
           </a>
         {{else}}
-          <span class="label">Unverified crash</span>
+          <span class="label">Unverified</span>
           <small class="text-muted">{{ .GetJob.Name }}</small>
           {{template "deleteCrash" .GUID}}
           {{template "downloadCrash" .GUID}}
