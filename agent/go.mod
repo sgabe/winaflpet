@@ -6,7 +6,7 @@ require (
 	github.com/danieljoos/wincred v1.1.0
 	github.com/eknkc/amber v0.0.0-20171010120322-cdade1c07385 // indirect
 	github.com/gin-contrib/timeout v0.0.1 // indirect
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.0
 	github.com/kardianos/service v1.1.0
 	github.com/karrick/godirwalk v1.16.1
 	github.com/mitchellh/go-ps v1.0.0

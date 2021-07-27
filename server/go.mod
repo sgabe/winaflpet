@@ -10,7 +10,7 @@ require (
 	github.com/danielkov/gin-helmet v0.0.0-20171108135313-1387e224435e
 	github.com/elazarl/goproxy v0.0.0-20200809112317-0581fc3aee2d // indirect
 	github.com/gin-contrib/multitemplate v0.0.0-20200916052041-666a7309d230
-	github.com/gin-gonic/gin v1.6.3
+	github.com/gin-gonic/gin v1.7.0
 	github.com/mattn/go-sqlite3 v1.14.3
 	github.com/parnurzeal/gorequest v0.2.16
 	github.com/rs/xid v1.2.1
