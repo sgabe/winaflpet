@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.7] - 2021-10-02
+### Changed
+- Gin version bumped to fix CVE-2020-28483.
+
 ## [0.0.6] - 2021-04-10
 ### Added
 - Common template functions provided by Sprig.
@@ -70,7 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redirect logged in users to jobs when page was not found.
 - Improved template renderer to use layouts.
 
-[Unreleased]: https://github.com/sgabe/winaflpet/compare/v0.0.6...HEAD
+[Unreleased]: https://github.com/sgabe/winaflpet/compare/v0.0.7...HEAD
+[0.0.7]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.7
 [0.0.6]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.6
 [0.0.5]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.5
 [0.0.4]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.4
