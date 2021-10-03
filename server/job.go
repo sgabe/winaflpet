@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/Masterminds/structable"
 	"github.com/gin-gonic/gin"
 	"github.com/parnurzeal/gorequest"
 	"github.com/rs/xid"
+	"github.com/sgabe/structable"
 )
 
 const (

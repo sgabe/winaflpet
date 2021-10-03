@@ -8,8 +8,8 @@ import (
 	"reflect"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/Masterminds/structable"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/sgabe/structable"
 	"github.com/spf13/viper"
 )
 

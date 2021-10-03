@@ -6,9 +6,9 @@ import (
 	"os"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/Masterminds/structable"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/sgabe/structable"
 )
 
 const (

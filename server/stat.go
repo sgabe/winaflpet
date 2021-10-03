@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/Masterminds/structable"
 	"github.com/rs/xid"
+	"github.com/sgabe/structable"
 )
 
 const (

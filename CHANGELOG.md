@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Update build constraints.
+- Migrate structable from Masterminds to sgabe.
 
 ## [0.0.7] - 2021-10-02
 ### Changed
