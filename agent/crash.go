@@ -62,7 +62,11 @@ func (c Crash) Verify() (Crash, error) {
 		" --bShowLicenseAndDonationInfo=false"+
 		" --bGenerateReportHTML=false"+
 		" --cBugId.bEnsurePageHeap=false"+
-		" --isa=%s %s -- %s %s", job.TargetArch, targetCmd, targetArgs, c.Args)
+		" --isa=%s"+
+		" %s --"+
+		" %s"+
+		" -f %s", // Sample delivery via file.
+		job.TargetArch, targetCmd, targetArgs, c.Args)
 	cmd := exec.Command(bugid, args)
 	cmd.Dir = job.BugIdDir
 	cmd.Env = append(

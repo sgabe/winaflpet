@@ -30,6 +30,7 @@ const (
 		"output" TEXT NOT NULL,
 		"timeout" INTEGER NOT NULL,
 		"inst_mode" TEXT NOT NULL,
+		"deliv_mode" TEXT,
 		"cov_type" TEXT NOT NULL,
 		"cov_module" TEXT NOT NULL,
 		"fuzz_iter" INTEGER NOT NULL,
@@ -61,6 +62,7 @@ type Job struct {
 	Output         string `json:"output" form:"output" stbl:"output"`
 	Timeout        int    `json:"timeout" form:"timeout" stbl:"timeout"`
 	InstMode       string `json:"inst_mode" form:"inst_mode" stbl:"inst_mode"`
+	DelivMode      string `json:"deliv_mode" form:"deliv_mode" stbl:"deliv_mode"`
 	CoverageType   string `json:"cov_type" form:"cov_type" stbl:"cov_type"`
 	CoverageModule string `json:"cov_module" form:"cov_module" stbl:"cov_module"`
 	FuzzIter       int    `json:"fuzz_iter" form:"fuzz_iter" stbl:"fuzz_iter"`

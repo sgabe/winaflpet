@@ -119,14 +119,13 @@
       </div>
 
       <div class="form-group col-md">
-        <label for="instMode" class="col-md col-form-label">Instrumentation</label>
+        <label for="delivMode" class="col-md col-form-label">Delivery</label>
         <div class="col-md">
-          <select class="form-control" name="inst_mode" id="instMode" disabled>
-            <option>DynamorIO</option>
-            <option>Static</option>
-            <option>Intel PT</option>
+          <select class="form-control" name="deliv_mode" id="delivMode">
+            <option value="" {{if (eq .job.DelivMode "") }}selected{{end}}>File</option>
+            <option value="sm" {{if (eq .job.DelivMode "sm") }}selected{{end}}>Shared memory</option>
           </select>
-          <small id="instModeHelp" class="form-text text-muted">Instrumentation mode to use</small>
+          <small id="delivModeHelp" class="form-text text-muted">Sample delivery mode</small>
         </div>
       </div>
 
@@ -236,6 +235,8 @@
 
     </div>
   </fieldset>
+
+  <input type="hidden" id="inst_mode" name="inst_mode" value="DynamorIO">
 
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>

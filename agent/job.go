@@ -41,6 +41,7 @@ type Job struct {
 	Output         string `json:"output"`
 	Timeout        int    `json:"timeout"`
 	InstMode       string `json:"inst_mode"`
+	DelivMode      string `json:"deliv_mode"`
 	CoverageType   string `json:"cov_type"`
 	CoverageModule string `json:"cov_module"`
 	FuzzIter       int    `json:"fuzz_iter"`
@@ -78,12 +79,21 @@ func (j Job) Start(fID string) error {
 		return err
 	}
 
+	delivMode := ""
+	if j.DelivMode == "sm" {
+		delivMode = "-s"
+		targetArgs += fmt.Sprintf("-s sample_afl_shm_%s", fID)
+	} else {
+		targetArgs += "-f @@"
+	}
+
 	distMode := "-M"
 	if j.Cores > 1 && fID != "fuzzer1" {
 		distMode = "-S"
 	}
 
-	args := fmt.Sprintf("%s %s -i %s -o %s -D %s -t %d -- -covtype %s -coverage_module %s -fuzz_iterations %d -target_module %s -target_method %s -target_offset %s -nargs %d -- %s %s @@",
+	args := fmt.Sprintf("%s %s %s -i %s -o %s -D %s -t %d -- -covtype %s -coverage_module %s -fuzz_iterations %d -target_module %s -target_method %s -target_offset %s -nargs %d -- %s %s",
+		delivMode,
 		distMode,
 		fID,
 		j.Input,
