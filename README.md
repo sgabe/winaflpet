@@ -58,6 +58,10 @@ Currently the default user is *admin* with the hostname or Docker container ID a
 8. Go to the **Crashes** page to *verify* new crashes by clicking on the ![pencil](https://icons.getbootstrap.com/icons/check-square-fill.svg) icon.
 9. Go to the **Jobs** page and *stop* all fuzzing instances by clicking on the ![stop](https://icons.getbootstrap.com/icons/stop-fill.svg) icon.
 
+### Sample delivery
+
+WinAFL Pet supports delivering samples via shared memory and via a file. You need to make sure that your harness understands the `-f <file name>` argument for file mode and the `-s <shared memory name>` argument for shared memory mode. Note that even if you are using shared memory for fuzzing, your harness must support file mode for analyzing crashes with BugId. The `-f` argument will be automatically passed to the testing harness.
+
 ## Environment variables
 
 Some of the configuration options are exposed via environment variables to be used in the container. This allows you to customize WinAFL Pet without creating or modifying configuration files. The below table summarizes the available environment variables and their default settings.
