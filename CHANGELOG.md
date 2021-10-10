@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for sample delivery via shared memory.
 
 ### Changed
+- Set coverage type values in job creation form.
 - Update build constraints.
 - Migrate structable from Masterminds to sgabe.
 
