@@ -333,7 +333,7 @@ func totalPages() int {
 	items := squirrel.Select("COUNT(*)").From(TB_NAME_CRASHES)
 	items.RunWith(db).QueryRow().Scan(&count)
 
-	pages := float64(count) / float64(size)
+	pages := math.Ceil(float64(count) / float64(size))
 
-	return int(pages) + 1
+	return int(pages)
 }

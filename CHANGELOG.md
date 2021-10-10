@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update build constraints.
 - Migrate structable from Masterminds to sgabe.
 
+### Fixed
+- Hide pager for single page.
+
 ## [0.0.7] - 2021-10-02
 ### Changed
 - Gin version bumped to fix CVE-2020-28483.

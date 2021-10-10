@@ -1,5 +1,5 @@
 {{define "pagination"}}
-{{if gt totalPages 0}}
+{{if gt totalPages 1}}
 {{$currentPage := add . 1 }}
 {{$previousPage := sub $currentPage 1}}
 {{$nextPage := add $currentPage 1}}
