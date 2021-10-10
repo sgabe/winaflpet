@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrate structable from Masterminds to sgabe.
 
 ### Fixed
+- Overflowing card header.
 - Hide pager for single page.
 
 ## [0.0.7] - 2021-10-02

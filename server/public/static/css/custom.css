@@ -29,7 +29,7 @@
     display: inherit;
   }
   .card-header h6 .label {
-    max-width: 180px;
+    max-width: 180px !important;
   }
   .card-columns {
     -webkit-column-count: 1;
@@ -162,11 +162,14 @@ a.navbar-brand i.fas {
 }
 
 .card-header h6 .label {
-  float:left;
-  display: inline-block;
+  max-width: 240px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.crash .card-header h6 .label {
+  float: left;
 }
 
 .card-header h6 small {
