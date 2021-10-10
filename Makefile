@@ -1,6 +1,6 @@
 .PHONY: all server agent
 
-BUILD_VER := 0.0.7
+BUILD_VER := 0.1.0
 BUILD_REV := $(shell git rev-parse --short HEAD)
 BUILD_DATE ?= $(shell git log --pretty=format:%ct -1)
 
