@@ -143,17 +143,27 @@ func (j Job) Stop() error {
 
 	targetCmd, _ := splitCmdLine(j.TargetApp)
 	targetExe := filepath.Base(targetCmd)
+	targetProcs := []ps.Process{}
 
 	for _, p := range processes {
 		if p.Executable() == targetExe {
 			p1, _ := ps.FindProcess(p.Pid())
-			p2, _ := ps.FindProcess(p1.PPid())
-			p3, _ := ps.FindProcess(p2.PPid())
-
-			killProcess(p1)
-			killProcess(p2)
-			killProcess(p3)
+			if p1 != nil {
+				targetProcs = append(targetProcs, p1)
+				p2, _ := ps.FindProcess(p1.PPid())
+				if p2 != nil {
+					targetProcs = append(targetProcs, p2)
+					p3, _ := ps.FindProcess(p2.PPid())
+					if p3 != nil {
+						targetProcs = append(targetProcs, p3)
+					}
+				}
+			}
 		}
+	}
+
+	for _, p := range targetProcs {
+		killProcess(p)
 	}
 
 	return nil
