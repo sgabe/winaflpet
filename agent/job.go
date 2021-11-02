@@ -55,6 +55,14 @@ type Job struct {
 	DrioDir        string `json:"drio_dir"`
 	PyDir          string `json:"py_dir"`
 	BugIdDir       string `json:"bugid_dir"`
+	ExtrasDir      string `json:"extras_dir"`
+	AttachLib      string `json:"attach_lib"`
+	CustomLib      string `json:"custom_lib"`
+	MemoryLimit    string `json:"memory_limit"`
+	PersistCache   int    `json:"persist_cache"`
+	DirtyMode      int    `json:"dirty_mode"`
+	DumbMode       int    `json:"dumb_mode"`
+	CrashMode      int    `json:"crash_mode"`
 	Status         int    `json:"status"`
 }
 
@@ -79,38 +87,72 @@ func (j Job) Start(fID string) error {
 		return err
 	}
 
-	delivMode := ""
+	args := []string{}
+
 	if j.DelivMode == "sm" {
-		delivMode = "-s"
+		args = append(args, "-s")
 		targetArgs += fmt.Sprintf("-s sample_afl_shm_%s", fID)
 	} else {
 		targetArgs += "-f @@"
 	}
 
-	distMode := "-M"
 	if j.Cores > 1 && fID != "fuzzer1" {
-		distMode = "-S"
+		args = append(args, fmt.Sprintf("-S %s", fID))
+	} else {
+		args = append(args, fmt.Sprintf("-M %s", fID))
 	}
 
-	args := fmt.Sprintf("%s %s %s -i %s -o %s -D %s -t %d -- -covtype %s -coverage_module %s -fuzz_iterations %d -target_module %s -target_method %s -target_offset %s -nargs %d -- %s %s",
-		delivMode,
-		distMode,
-		fID,
-		j.Input,
-		j.Output,
-		j.DrioDir,
-		j.Timeout,
-		j.CoverageType,
-		strings.Join(strings.Split(j.CoverageModule, ","), " -coverage_module "),
-		j.FuzzIter,
-		j.TargetModule,
-		j.TargetMethod,
-		j.TargetOffset,
-		j.TargetNArgs,
-		targetApp,
-		targetArgs)
+	args = append(args, fmt.Sprintf("-i %s", j.Input))
+	args = append(args, fmt.Sprintf("-o %s", j.Output))
+	args = append(args, fmt.Sprintf("-D %s", j.DrioDir))
+	args = append(args, fmt.Sprintf("-t %d", j.Timeout))
+	args = append(args, fmt.Sprintf("-m %s", j.MemoryLimit))
 
-	cmd := exec.Command(afl, args)
+	if j.PersistCache != 0 {
+		args = append(args, "-p")
+	}
+
+	if j.DirtyMode != 0 {
+		args = append(args, "-d")
+	}
+
+	if j.CrashMode != 0 && j.DumbMode == 0 {
+		args = append(args, "-C")
+	}
+
+	if j.DumbMode != 0 && j.CrashMode == 0 {
+		args = append(args, "-n")
+	}
+
+	if j.AttachLib != "" {
+		args = append(args, fmt.Sprintf("-A %s", j.AttachLib))
+	}
+
+	if j.CustomLib != "" {
+		args = append(args, fmt.Sprintf("-l %s", j.CustomLib))
+	}
+
+	if j.ExtrasDir != "" {
+		args = append(args, fmt.Sprintf("-x %s", j.ExtrasDir))
+	}
+
+	args = append(args, "--")
+	args = append(args, fmt.Sprintf("-covtype %s", j.CoverageType))
+
+	for _, m := range strings.Split(j.CoverageModule, ",") {
+		args = append(args, fmt.Sprintf("-coverage_module %s", m))
+	}
+
+	args = append(args, fmt.Sprintf("-fuzz_iterations %d", j.FuzzIter))
+	args = append(args, fmt.Sprintf("-target_module %s", j.TargetModule))
+	args = append(args, fmt.Sprintf("-target_method %s", j.TargetMethod))
+	args = append(args, fmt.Sprintf("-target_offset %s", j.TargetOffset))
+	args = append(args, fmt.Sprintf("-nargs %d", j.TargetNArgs))
+	args = append(args, "--")
+	args = append(args, targetApp)
+	args = append(args, targetArgs)
+
+	cmd := exec.Command(afl, strings.Join(args, " "))
 	cmd.Dir = j.AFLDir
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.CmdLine = strings.Join(cmd.Args, ` `)

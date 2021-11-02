@@ -141,6 +141,82 @@
       </div>
 
     </div>
+
+    <div class="form-row">
+
+      <div class="form-group col-md">
+        <label for="attachLib" class="col-md col-form-label">Attach library</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="attach_lib" id="attachLib" aria-describedby="attachLibHelp" placeholder="Enter module to watch">
+          <small id="attachLibHelp" class="form-text text-muted">Library identifying a unique process to attach to</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="customLib" class="col-md col-form-label">Custom library</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="custom_lib" id="customLib" aria-describedby="customLibHelp" placeholder="Enter path to custom module">
+          <small id="customLibHelp" class="form-text text-muted">Path to user-defined library for custom test cases processing</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="extrasDir" class="col-md col-form-label">Extras directory</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="extras_dir" id="extrasDir" aria-describedby="extrasDirHelp" placeholder="Enter extras directory">
+          <small id="extrasDirHelp" class="form-text text-muted">Optional fuzzer dictionary</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <label for="memoryLimit" class="col-md col-form-label">Memory limit</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="memory_limit" id="memoryLimit" aria-describedby="memoryLimitHelp" placeholder="0">
+          <small id="memoryLimitHelp" class="form-text text-muted">Memory limit for the target process</small>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="form-row">
+
+      <div class="form-group col-md">
+        <div class="custom-control custom-switch">
+          <div class="col-md">
+            <input class="custom-control-input" type="checkbox" name="dirty_mode" id="dirtyMode" value="1">
+            <label class="custom-control-label" for="dirtyMode">Quick & dirty mode</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <div class="custom-control custom-switch">
+          <div class="col-md">
+            <input class="custom-control-input" type="checkbox" name="dumb_mode" id="dumbMode" value="1">
+            <label class="custom-control-label" for="dumbMode">Without instrumentation</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <div class="custom-control custom-switch">
+          <div class="col-md">
+            <input class="custom-control-input" type="checkbox" name="crash_mode" id="crashMode" value="1">
+            <label class="custom-control-label" for="crashMode">Crash exploration mode</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
+        <div class="custom-control custom-switch">
+          <div class="col-md">
+            <input class="custom-control-input" type="checkbox" name="persist_cache" id="persistCache" value="1">
+            <label class="custom-control-label" for="persistCache">Persist DynamoRIO cache</label>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </fieldset>
 
   <fieldset class="form-group">
@@ -154,9 +230,7 @@
           <small id="coverageModuleHelp" class="form-text text-muted">Module(s) to collect coverage for, separate multiple modules with comma (,)</small>
         </div>
       </div>
-    </div>
 
-    <div class="form-row">
       <div class="form-group col-md">
         <label for="coverageType" class="col-md col-form-label">Coverage type</label>
         <div class="col-md">

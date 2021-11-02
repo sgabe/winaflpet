@@ -44,6 +44,14 @@ const (
 		"drio_dir" TEXT NOT NULL,
 		"py_dir" TEXT NOT NULL,
 		"bugid_dir" TEXT NOT NULL,
+		"extras_dir" TEXT,
+		"attach_lib" TEXT,
+		"custom_lib" TEXT,
+		"memory_limit" TEXT,
+		"persist_cache" INTEGER,
+		"dirty_mode" INTEGER,
+		"dumb_mode" INTEGER,
+		"crash_mode" INTEGER,
 		"status" INTEGER,
 		FOREIGN KEY (aid) REFERENCES agents(id)
 	  );`
@@ -76,6 +84,14 @@ type Job struct {
 	DrioDir        string `json:"drio_dir" form:"drio_dir" stbl:"drio_dir"`
 	PyDir          string `json:"py_dir" form:"py_dir" stbl:"py_dir"`
 	BugIdDir       string `json:"bugid_dir" form:"bugid_dir" stbl:"bugid_dir"`
+	ExtrasDir      string `json:"extras_dir" form:"extras_dir" stbl:"extras_dir"`
+	AttachLib      string `json:"attach_lib" form:"attach_lib" stbl:"attach_lib"`
+	CustomLib      string `json:"custom_lib" form:"custom_lib" stbl:"custom_lib"`
+	MemoryLimit    string `json:"memory_limit" form:"memory_limit" stbl:"memory_limit"`
+	PersistCache   int    `json:"persist_cache" form:"persist_cache" stbl:"persist_cache"`
+	DirtyMode      int    `json:"dirty_mode" form:"dirty_mode" stbl:"dirty_mode"`
+	DumbMode       int    `json:"dumb_mode" form:"dumb_mode" stbl:"dumb_mode"`
+	CrashMode      int    `json:"crash_mode" form:"crash_mode" stbl:"crash_mode"`
 	Status         status `json:"status" form:"status" stbl:"status"`
 }
 
@@ -84,6 +100,10 @@ func newJob() *Job {
 	j.GUID = xid.New()
 	j.Cores = 1
 	j.InstMode = "Dynamic" // The only supported instrumentation mode.
+	j.CrashMode = 0
+	j.DirtyMode = 0
+	j.DumbMode = 0
+	j.PersistCache = 0
 	j.Recorder = structable.New(db, DB_FLAVOR).Bind(TB_NAME_JOBS, j)
 	return j
 }
@@ -638,6 +658,11 @@ func editJob(c *gin.Context) {
 			})
 			return
 		}
+		// Set default values for empty checkboxes.
+		j.CrashMode = 0
+		j.DirtyMode = 0
+		j.DumbMode = 0
+		j.PersistCache = 0
 		if err := c.ShouldBind(&j); err != nil {
 			otherError(c, map[string]string{
 				"title": title,
