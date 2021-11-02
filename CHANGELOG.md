@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.0] - 2021-11-02
 ### Added
 - Support for additional afl-fuzz options.
 
@@ -94,7 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redirect logged in users to jobs when page was not found.
 - Improved template renderer to use layouts.
 
-[Unreleased]: https://github.com/sgabe/winaflpet/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/sgabe/winaflpet/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/sgabe/winaflpet/releases/tag/v0.2.0
 [0.1.0]: https://github.com/sgabe/winaflpet/releases/tag/v0.1.0
 [0.0.7]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.7
 [0.0.6]: https://github.com/sgabe/winaflpet/releases/tag/v0.0.6
