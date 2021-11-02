@@ -233,8 +233,8 @@
         <label for="coverageType" class="col-md col-form-label">Coverage type</label>
         <div class="col-md">
           <select class="form-control" name="cov_type" id="coverageType">
-            <option value="bb" {{if (eq .job.CoverageType "bb") }}selected{{end}}>bb</option>
-            <option value="edge" {{if (eq .job.CoverageType "edge") }}selected{{end}}>edge</option>
+            <option value="bb" {{if (eq .job.CoverageType "bb") }}selected{{end}}>Basic block</option>
+            <option value="edge" {{if (eq .job.CoverageType "edge") }}selected{{end}}>Edge</option>
           </select>
           <small id="coverageTypeHelp" class="form-text text-muted">The type of coverage being recorded</small>
         </div>
@@ -299,7 +299,7 @@
       </div>
 
       <div class="form-group col-md">
-        <label for="targetArch">Architecture</label>
+        <label for="targetArch" class="col-md col-form-label">Architecture</label>
         <div class="col-md">
           <select class="form-control" name="target_arch" id="targetArch">
             <option value="x86" {{if (eq .job.TargetArch "x86") }}selected{{end}}>x86</option>
