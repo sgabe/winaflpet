@@ -91,7 +91,7 @@ func (j Job) Start(fID string) error {
 
 	if j.DelivMode == "sm" {
 		args = append(args, "-s")
-		targetArgs += fmt.Sprintf("-s sample_afl_shm_%s", fID)
+		targetArgs += "-s @@"
 	} else {
 		targetArgs += "-f @@"
 	}
