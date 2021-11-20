@@ -50,6 +50,12 @@ func (c Crash) Verify() (Crash, error) {
 		return c, err
 	}
 
+	python, err := exec.LookPath(path.Join(job.PyDir, "python.exe"))
+	if err != nil {
+		logger.Error(err)
+		return c, err
+	}
+
 	bugid, err := exec.LookPath(path.Join(job.BugIdDir, "BugId.cmd"))
 	if err != nil {
 		logger.Error(err)
@@ -71,7 +77,7 @@ func (c Crash) Verify() (Crash, error) {
 	cmd.Dir = job.BugIdDir
 	cmd.Env = append(
 		os.Environ(),
-		fmt.Sprintf("PYTHON=%s", path.Join(job.PyDir, "python.exe")),
+		fmt.Sprintf("PYTHON=%s", python),
 	)
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.CmdLine = strings.Join(cmd.Args, ` `)

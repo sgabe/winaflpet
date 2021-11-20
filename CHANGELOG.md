@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- Handle error when Python path is incorrect.
 - Use the randomly generated shared memory name.
 
 ## [0.2.0] - 2021-11-02
