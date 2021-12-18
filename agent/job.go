@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
@@ -63,6 +64,10 @@ type Job struct {
 	DirtyMode      int    `json:"dirty_mode"`
 	DumbMode       int    `json:"dumb_mode"`
 	CrashMode      int    `json:"crash_mode"`
+	NoAffinity     int    `json:"no_affinity"`
+	SkipCrashes    int    `json:"skip_crashes"`
+	ShuffleQueue   int    `json:"shuffle_queue"`
+	Autoresume     int    `json:"autoresume"`
 	Status         int    `json:"status"`
 }
 
@@ -87,6 +92,24 @@ func (j Job) Start(fID string) error {
 		return err
 	}
 
+	envs := os.Environ()
+
+	if j.Autoresume != 0 {
+		envs = append(envs, "AFL_AUTORESUME=1")
+	}
+
+	if j.SkipCrashes != 0 || j.Autoresume != 0 {
+		envs = append(envs, "AFL_SKIP_CRASHES=1")
+	}
+
+	if j.ShuffleQueue != 0 {
+		envs = append(envs, "AFL_SHUFFLE_QUEUE=1")
+	}
+
+	if j.NoAffinity != 0 {
+		envs = append(envs, "AFL_NO_AFFINITY=1")
+	}
+
 	args := []string{}
 
 	if j.DelivMode == "sm" {
@@ -105,8 +128,14 @@ func (j Job) Start(fID string) error {
 	args = append(args, fmt.Sprintf("-i %s", j.Input))
 	args = append(args, fmt.Sprintf("-o %s", j.Output))
 	args = append(args, fmt.Sprintf("-D %s", j.DrioDir))
-	args = append(args, fmt.Sprintf("-t %d", j.Timeout))
 	args = append(args, fmt.Sprintf("-m %s", j.MemoryLimit))
+
+	timeoutSuffix := ""
+	if j.Autoresume != 0 || j.Input == "-" {
+		timeoutSuffix = "+" // Skip queue entries that time out.
+	}
+
+	args = append(args, fmt.Sprintf("-t %d%s", j.Timeout, timeoutSuffix))
 
 	if j.PersistCache != 0 {
 		args = append(args, "-p")
@@ -154,6 +183,7 @@ func (j Job) Start(fID string) error {
 
 	cmd := exec.Command(afl, strings.Join(args, " "))
 	cmd.Dir = j.AFLDir
+	cmd.Env = envs
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.CmdLine = strings.Join(cmd.Args, ` `)
 	stdoutPipe, _ := cmd.StdoutPipe()

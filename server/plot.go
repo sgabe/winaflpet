@@ -15,9 +15,6 @@ const (
 set terminal png truecolor enhanced size 1000,300 butt
 set output 'public/plots/%[1]v/%[2]v/high_freq.png'
 
-set xdata time
-set timefmt '%[3]v'
-set format x "%[4]v"
 set tics font 'small'
 unset mxtics
 unset mytics
@@ -30,6 +27,8 @@ set key outside
 
 set autoscale xfixmin
 set autoscale xfixmax
+
+set xlabel "relative time in seconds" font "small"
 
 plot 'public/plots/%[1]v/%[2]v/plot_data' using 1:4 with filledcurve x1 title 'total paths' linecolor rgb '#000000' fillstyle transparent solid 0.2 noborder, \
 	 '' using 1:3 with filledcurve x1 title 'current path' linecolor rgb '#f0f0f0' fillstyle transparent solid 0.5 noborder, \
@@ -53,7 +52,7 @@ plot 'public/plots/%[1]v/%[2]v/plot_data' using 1:11 with filledcurve x1 title '
 )
 
 type Plot struct {
-	UnixTime      int     `json:"unix_time"`
+	RelativeTime  int     `json:"relative_time"`
 	CyclesDone    int     `json:"cycles_done"`
 	CurPath       int     `json:"cur_path"`
 	PathsTotal    int     `json:"paths_total"`
@@ -73,7 +72,7 @@ func createPlots(jGUID string, fId string) error {
 
 	plot, _ := glot.NewPlot(dimensions, persist, debug)
 
-	plotCmd := fmt.Sprintf(GNUPLOT_CMDS, jGUID, fId, "%%s", "%%b %%d\\n%%H:%%M")
+	plotCmd := fmt.Sprintf(GNUPLOT_CMDS, jGUID, fId)
 	if err := plot.Cmd(plotCmd); err != nil {
 		return err
 	}

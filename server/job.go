@@ -52,6 +52,10 @@ const (
 		"dirty_mode" INTEGER,
 		"dumb_mode" INTEGER,
 		"crash_mode" INTEGER,
+		"skip_crashes" INTEGER,
+		"autoresume" INTEGER,
+		"shuffle_queue" INTEGER,
+		"no_affinity" INTEGER,
 		"status" INTEGER,
 		FOREIGN KEY (aid) REFERENCES agents(id)
 	  );`
@@ -92,6 +96,10 @@ type Job struct {
 	DirtyMode      int    `json:"dirty_mode" form:"dirty_mode" stbl:"dirty_mode"`
 	DumbMode       int    `json:"dumb_mode" form:"dumb_mode" stbl:"dumb_mode"`
 	CrashMode      int    `json:"crash_mode" form:"crash_mode" stbl:"crash_mode"`
+	NoAffinity     int    `json:"no_affinity" form:"no_affinity" stbl:"no_affinity"`
+	SkipCrashes    int    `json:"skip_crashes" form:"skip_crashes" stbl:"skip_crashes"`
+	ShuffleQueue   int    `json:"shuffle_queue" form:"shuffle_queue" stbl:"shuffle_queue"`
+	Autoresume     int    `json:"autoresume" form:"autoresume" stbl:"autoresume"`
 	Status         status `json:"status" form:"status" stbl:"status"`
 }
 
@@ -104,6 +112,10 @@ func newJob() *Job {
 	j.DirtyMode = 0
 	j.DumbMode = 0
 	j.PersistCache = 0
+	j.NoAffinity = 0
+	j.SkipCrashes = 0
+	j.ShuffleQueue = 0
+	j.Autoresume = 0
 	j.Recorder = structable.New(db, DB_FLAVOR).Bind(TB_NAME_JOBS, j)
 	return j
 }
@@ -663,6 +675,10 @@ func editJob(c *gin.Context) {
 		j.DirtyMode = 0
 		j.DumbMode = 0
 		j.PersistCache = 0
+		j.NoAffinity = 0
+		j.SkipCrashes = 0
+		j.ShuffleQueue = 0
+		j.Autoresume = 0
 		if err := c.ShouldBind(&j); err != nil {
 			otherError(c, map[string]string{
 				"title": title,

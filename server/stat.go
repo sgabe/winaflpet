@@ -14,6 +14,7 @@ const (
 		"fuzzer_pid" INTEGER,
 		"start_time" INTEGER,
 		"last_update" INTEGER,
+		"run_time" INTEGER,
 		"cycles_done" INTEGER,
 		"execs_done" INTEGER,
 		"execs_per_sec" REAL,
@@ -49,6 +50,7 @@ type Stat struct {
 	FuzzerProcessID int     `json:"fuzzer_pid" stbl:"fuzzer_pid"`
 	StartTime       int     `json:"start_time" stbl:"start_time"`
 	LastUpdate      int     `json:"last_update" stbl:"last_update"`
+	RunTime         int     `json:"run_time" stbl:"run_time"`
 	CyclesDone      int     `json:"cycles_done" stbl:"cycles_done"`
 	ExecsDone       int     `json:"execs_done" stbl:"execs_done"`
 	ExecsPerSec     float64 `json:"execs_per_sec" stbl:"execs_per_sec"`
@@ -85,6 +87,7 @@ func newStat() *Stat {
 func (newStat *Stat) CopyStat(oldStat Stat) {
 	newStat.FuzzerProcessID = oldStat.FuzzerProcessID
 	newStat.StartTime = oldStat.StartTime
+	newStat.RunTime = oldStat.RunTime
 	newStat.LastUpdate = oldStat.LastUpdate
 	newStat.CyclesDone = oldStat.CyclesDone
 	newStat.ExecsDone = oldStat.ExecsDone

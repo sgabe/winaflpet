@@ -149,6 +149,12 @@ $(function () {
         });
     });
 
+    $("#autoresume").change(function() {
+        if($(this).is(":checked")) {
+            $("#skipCrashes").prop("checked", true);
+        }
+    });
+
 });
 
 $.ajaxTransport("+binary", function(options, originalOptions, jqXHR) {
