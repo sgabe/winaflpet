@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for using WinAFL as a pre-configured tool for DynamoRIO.
 - Support for afl-fuzz environment variables and autoresume.
 
+### Changed
+- Update fuzzing job templates.
+
 ### Fixed
 - Handle error when Python path is incorrect.
 - Use the randomly generated shared memory name.
