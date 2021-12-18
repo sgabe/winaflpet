@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update fuzzing job templates.
 
 ### Fixed
+- Purging of crash recrods from the database.
 - Handle error when Python path is incorrect.
 - Use the randomly generated shared memory name.
 

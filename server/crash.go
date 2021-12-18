@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Masterminds/squirrel"
+	sq "github.com/Masterminds/squirrel"
 	"github.com/gin-gonic/gin"
 	"github.com/parnurzeal/gorequest"
 	"github.com/rs/xid"
@@ -104,7 +104,7 @@ func loadCrashes(page uint64) ([]*Crash, error) {
 	c := &Crash{}
 	sc := structable.New(db, DB_FLAVOR).Bind(TB_NAME_CRASHES, c)
 
-	fn := func(d structable.Describer, q squirrel.SelectBuilder) (squirrel.SelectBuilder, error) {
+	fn := func(d structable.Describer, q sq.SelectBuilder) (sq.SelectBuilder, error) {
 		return q.OrderBy("id DESC").Limit(99).Offset(page * 99), nil
 	}
 
@@ -150,23 +150,12 @@ func viewCrashes(c *gin.Context) {
 }
 
 func deleteCrashes(c *gin.Context) {
-	crashes := squirrel.Select("id").From(TB_NAME_CRASHES)
-	rows, err := crashes.RunWith(db).Query()
+	b := sq.Delete("").From(TB_NAME_CRASHES).RunWith(db)
+
+	_, err := b.Exec()
 	if err != nil {
 		otherError(c, map[string]string{"alert": err.Error()})
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		crash := newCrash()
-		if err := rows.Scan(&crash.ID); err != nil {
-			otherError(c, map[string]string{"alert": err.Error()})
-		}
-		if err := crash.Load(); err != nil {
-			otherError(c, map[string]string{"alert": err.Error()})
-		}
-		crash.Delete()
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
