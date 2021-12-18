@@ -215,6 +215,18 @@
 
     </div>
 
+    <div class="form-row">
+
+      <div class="form-group col-3">
+        <div class="custom-control custom-switch">
+          <div class="col">
+            <input class="custom-control-input" type="checkbox" name="expert_mode" id="expertMode" value="1" {{ if eq .job.ExpertMode 1}}checked{{end}}>
+            <label class="custom-control-label" for="expertMode">Expert mode</label>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </fieldset>
 
   <fieldset class="form-group">

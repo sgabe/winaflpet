@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Support for using WinAFL as a pre-configured tool for DynamoRIO.
 - Support for afl-fuzz environment variables and autoresume.
 
 ### Fixed
