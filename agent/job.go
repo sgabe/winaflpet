@@ -129,7 +129,6 @@ func (j Job) Start(fID string) error {
 	args = append(args, fmt.Sprintf("-i %s", j.Input))
 	args = append(args, fmt.Sprintf("-o %s", j.Output))
 	args = append(args, fmt.Sprintf("-D %s", j.DrioDir))
-	args = append(args, fmt.Sprintf("-m %s", j.MemoryLimit))
 
 	timeoutSuffix := ""
 	if j.Autoresume != 0 || j.Input == "-" {
@@ -156,6 +155,10 @@ func (j Job) Start(fID string) error {
 
 	if j.DumbMode != 0 && j.CrashMode == 0 {
 		args = append(args, "-n")
+	}
+
+	if j.MemoryLimit != "0" && j.MemoryLimit != "" {
+		args = append(args, fmt.Sprintf("-m %s", j.MemoryLimit))
 	}
 
 	if j.AttachLib != "" {
