@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- Replace invalid execs_per_sec value for unmarshaling.
 - Ignore unspecified or zero value for memory limit.
 
 ## [0.3.0] - 2021-12-18

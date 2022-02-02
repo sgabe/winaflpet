@@ -69,7 +69,7 @@ func parseStats(content string) (Stats, error) {
 
 		s := strings.Split(line, ":")
 		name := strings.TrimSpace(s[0])
-		value := strings.TrimSpace(s[1])
+		value := strings.Replace(strings.TrimSpace(s[1]), "inf", "0.0", 1)
 		fields[name] = value
 
 		if strings.Contains(value, ".") {
