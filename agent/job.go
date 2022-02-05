@@ -14,6 +14,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -79,7 +80,7 @@ func newJob(GUID string) Job {
 	return *j
 }
 
-func (j Job) Start(fID string) error {
+func (j Job) Start(fID int) error {
 	afl, err := exec.LookPath(path.Join(j.AFLDir, AFL_EXECUTABLE))
 	if err != nil {
 		logger.Error(err)
@@ -120,12 +121,13 @@ func (j Job) Start(fID string) error {
 		targetArgs += "-f @@"
 	}
 
-	if j.Cores > 1 && fID != "fuzzer1" {
-		args = append(args, fmt.Sprintf("-S %s", fID))
-	} else {
-		args = append(args, fmt.Sprintf("-M %s", fID))
+	opRole := "-S"
+	fuzzerID := fmt.Sprintf("%s%d", j.Banner, fID)
+	if j.Cores > 1 && fID == 1 {
+		opRole = "-M"
 	}
 
+	args = append(args, fmt.Sprintf("%s %s", opRole, fuzzerID))
 	args = append(args, fmt.Sprintf("-i %s", j.Input))
 	args = append(args, fmt.Sprintf("-o %s", j.Output))
 	args = append(args, fmt.Sprintf("-D %s", j.DrioDir))
@@ -253,11 +255,11 @@ func (j Job) View() ([]Stats, error) {
 	var stats []Stats
 
 	for c := 1; c <= j.Cores; c++ {
-		fuzzerID := fmt.Sprintf("fuzzer%d", c)
+		fuzzerID := fmt.Sprintf("%s%d", j.Banner, c)
 		fileName := joinPath(j.AFLDir, j.Output, fuzzerID, AFL_STATS_FILE)
 
 		if !fileExists(fileName) {
-			text := fmt.Sprintf("Statistics are unavailable for %s", j.Name)
+			text := fmt.Sprintf("Statistics are unavailable for fuzzer instance #%d in job %s", c, j.Name)
 			err := errors.New(text)
 			return stats, err
 		}
@@ -314,7 +316,15 @@ func (j Job) Collect() ([]Crash, error) {
 
 func startJob(c *gin.Context) {
 	j := newJob(c.Param("guid"))
-	fuzzerID := c.DefaultQuery("fid", "fuzzer1")
+
+	fID, err := strconv.Atoi(c.DefaultQuery("fid", "1"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"guid":  c.Param("guid"),
+			"error": err.Error(),
+		})
+		return
+	}
 
 	if err := c.ShouldBindJSON(&j); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -324,7 +334,7 @@ func startJob(c *gin.Context) {
 		return
 	}
 
-	if err := j.Start(fuzzerID); err != nil {
+	if err := j.Start(fID); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"guid":  j.GUID,
 			"error": err.Error(),
@@ -338,7 +348,7 @@ func startJob(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"guid": j.GUID,
-		"msg":  fmt.Sprintf("Instance %s of job %s has been successfuly started!", fuzzerID, j.Name),
+		"msg":  fmt.Sprintf("Fuzzer instance #%d of job %s has been successfuly started!", fID, j.Name),
 	})
 }
 
@@ -470,7 +480,16 @@ func plotJob(c *gin.Context) {
 		return
 	}
 
-	fuzzerID := c.Query("fid")
+	fID, err := strconv.Atoi(c.Query("fid"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"guid":  c.Param("guid"),
+			"error": err.Error(),
+		})
+		return
+	}
+
+	fuzzerID := fmt.Sprintf("%s%d", j.Banner, fID)
 	filePath := joinPath(j.AFLDir, j.Output, fuzzerID, AFL_PLOT_FILE)
 	// TODO: Add a security check for filepath.
 	// if !strings.HasPrefix(filepath.Clean(filePath), "C:\\Tools\\") {

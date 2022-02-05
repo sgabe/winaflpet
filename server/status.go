@@ -1,7 +1,5 @@
 package main
 
-import "strconv"
-
 const (
 	F1 status = 1 << iota
 	F2
@@ -30,27 +28,27 @@ type status uint64
 func setStatus(b status, flag status) status    { return b | flag }
 func clearStatus(b status, flag status) status  { return b &^ flag }
 func toggleStatus(b status, flag status) status { return b ^ flag }
-func hasStatus(b status, i int) bool            { return b&statusMap["fuzzer"+strconv.Itoa(i)] != 0 }
+func hasStatus(b status, i int) bool            { return b&statusMap[i] != 0 }
 
-var statusMap = map[string]status{
-	"fuzzer1":  F1,
-	"fuzzer2":  F2,
-	"fuzzer3":  F3,
-	"fuzzer4":  F4,
-	"fuzzer5":  F5,
-	"fuzzer6":  F6,
-	"fuzzer7":  F7,
-	"fuzzer8":  F8,
-	"fuzzer9":  F9,
-	"fuzzer10": F10,
-	"fuzzer11": F11,
-	"fuzzer12": F12,
-	"fuzzer13": F13,
-	"fuzzer14": F14,
-	"fuzzer15": F15,
-	"fuzzer16": F16,
-	"fuzzer17": F17,
-	"fuzzer18": F18,
-	"fuzzer19": F19,
-	"fuzzer20": F20,
+var statusMap = map[int]status{
+	1:  F1,
+	2:  F2,
+	3:  F3,
+	4:  F4,
+	5:  F5,
+	6:  F6,
+	7:  F7,
+	8:  F8,
+	9:  F9,
+	10: F10,
+	11: F11,
+	12: F12,
+	13: F13,
+	14: F14,
+	15: F15,
+	16: F16,
+	17: F17,
+	18: F18,
+	19: F19,
+	20: F20,
 }

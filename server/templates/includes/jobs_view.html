@@ -35,7 +35,7 @@
           {{ else }}
             {{if not (hasStatus $.Status .) }}
               {{ $break = true }}
-        <a id="startJob{{.}}" href="/job/{{$.GUID}}/start?fid=fuzzer{{.}}" class="action play play-{{.}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
+        <a id="startJob{{.}}" href="/job/{{$.GUID}}/start?fid={{.}}" class="action play play-{{.}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
           <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="green">
             <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
           </svg>

@@ -65,14 +65,14 @@ type Plot struct {
 	ExecsPerSec   float64 `json:"execs_per_sec"`
 }
 
-func createPlots(jGUID string, fId string) error {
+func createPlots(jGUID string, fuzzerID string) error {
 	dimensions := 2
 	persist := false
 	debug := false
 
 	plot, _ := glot.NewPlot(dimensions, persist, debug)
 
-	plotCmd := fmt.Sprintf(GNUPLOT_CMDS, jGUID, fId)
+	plotCmd := fmt.Sprintf(GNUPLOT_CMDS, jGUID, fuzzerID)
 	if err := plot.Cmd(plotCmd); err != nil {
 		return err
 	}
@@ -80,11 +80,11 @@ func createPlots(jGUID string, fId string) error {
 	return nil
 }
 
-func collectPlots(jGUID string, fId string) ([]string, error) {
+func collectPlots(jGUID string, fuzzerID string) ([]string, error) {
 	var plots []string
 
 	for _, img := range [3]string{"exec_speed.png", "high_freq.png", "low_freq.png"} {
-		plot := fmt.Sprintf("/plots/%s/%s/%s", jGUID, fId, img)
+		plot := fmt.Sprintf("/plots/%s/%s/%s", jGUID, fuzzerID, img)
 		if fileEmpty(filepath.Join("public", plot)) {
 			return plots, errors.New("plot data is not yet available")
 		}
@@ -94,8 +94,8 @@ func collectPlots(jGUID string, fId string) ([]string, error) {
 	return plots, nil
 }
 
-func savePlotData(jGUID string, fId string, data []byte) error {
-	dirPath := filepath.Join("public", "plots", jGUID, fId)
+func savePlotData(jGUID string, fuzzerID string, data []byte) error {
+	dirPath := filepath.Join("public", "plots", jGUID, fuzzerID)
 	if err := os.MkdirAll(dirPath, os.ModePerm); err != nil {
 		return err
 	}

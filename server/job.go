@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -127,13 +128,13 @@ func (j *Job) LoadByGUID() error {
 	return j.Recorder.LoadWhere("guid = ?", j.GUID)
 }
 
-func (j *Job) GetProcessIDs(fuzzerID string) ([]int, error) {
+func (j *Job) GetProcessIDs(fID int) ([]int, error) {
 	var processIDs []int
 
-	if fuzzerID != "" {
+	if fID != 0 {
 		s := newStat()
 		s.JobID = j.ID
-		s.AFLBanner = fuzzerID
+		s.AFLBanner = fmt.Sprintf("%s%d", j.Banner, fID)
 		if err := s.LoadJobIDFuzzerID(); err != nil {
 			return processIDs, err
 		}
@@ -143,7 +144,7 @@ func (j *Job) GetProcessIDs(fuzzerID string) ([]int, error) {
 	for c := 1; c <= j.Cores; c++ {
 		s := newStat()
 		s.JobID = j.ID
-		s.AFLBanner = fmt.Sprintf("fuzzer%d", c)
+		s.AFLBanner = fmt.Sprintf("%s%d", j.Banner, c)
 		if err := s.LoadJobIDFuzzerID(); err != nil {
 			return processIDs, err
 		}
@@ -153,7 +154,8 @@ func (j *Job) GetProcessIDs(fuzzerID string) ([]int, error) {
 	return processIDs, nil
 }
 
-func (j *Job) Cleanup(fuzzerID string) error {
+func (j *Job) Cleanup(fID int) error {
+	fuzzerID := fmt.Sprintf("%s%d", j.Banner, fID)
 	crashes := squirrel.Select("id").From(TB_NAME_CRASHES).Where(squirrel.Eq{"jid": j.ID}, squirrel.Eq{"fuzzerid": fuzzerID})
 	rows, err := crashes.RunWith(db).Query()
 	if err != nil {
@@ -224,9 +226,14 @@ func startJob(c *gin.Context) {
 	request := gorequest.New().Timeout(300 * time.Second)
 	request.Debug = false
 
-	fuzzerID := c.DefaultQuery("fid", "fuzzer1")
+	fID, err := strconv.Atoi(c.DefaultQuery("fid", "1"))
+	if err != nil {
+		otherError(c, map[string]string{"alert": err.Error()})
+		return
+	}
+
 	targetURL := fmt.Sprintf("http://%s:%d/job/%s/start", a.Host, a.Port, j.GUID)
-	_, bodyBytes, errs := request.Post(targetURL).Query("fid="+fuzzerID).Set("X-Auth-Key", a.Key).Send(j).EndBytes()
+	_, bodyBytes, errs := request.Post(targetURL).Query(fmt.Sprintf("fid=%d", fID)).Set("X-Auth-Key", a.Key).Send(j).EndBytes()
 	if errs != nil {
 		otherError(c, map[string]string{"alert": errs[0].Error()})
 		return
@@ -242,14 +249,14 @@ func startJob(c *gin.Context) {
 		if strings.Contains(resp.Err, "At-risk data found") {
 			j.Input = "-"
 			j.Update()
-			j.Cleanup(fuzzerID)
+			j.Cleanup(fID)
 			resp.Err = "At-risk data found, try to start again to resume an aborted job."
 		}
 		otherError(c, map[string]string{"alert": resp.Err})
 		return
 	}
 
-	j.Status = setStatus(j.Status, statusMap[fuzzerID])
+	j.Status = setStatus(j.Status, statusMap[fID])
 	j.Update()
 
 	c.JSON(http.StatusOK, gin.H{
@@ -390,9 +397,18 @@ func plotJob(c *gin.Context) {
 		return
 	}
 
-	fuzzerID := c.Query("fid")
+	fID, err := strconv.Atoi(c.Query("fid"))
+	if err != nil {
+		c.HTML(http.StatusOK, "job_plot", gin.H{
+			"alert":   err.Error(),
+			"context": "danger",
+		})
+		return
+	}
+
 	jobGUID := j.GUID.String()
-	title := fmt.Sprintf("Stats for %s in job %s", fuzzerID, j.Name)
+	fuzzerID := fmt.Sprintf("%s%d", j.Banner, fID)
+	title := fmt.Sprintf("Stats for fuzzer instance #%d in job %s", fID, j.Name)
 
 	switch c.Request.Method {
 	case http.MethodGet:
@@ -416,7 +432,7 @@ func plotJob(c *gin.Context) {
 		request := gorequest.New()
 		request.Debug = false
 
-		targetURL := fmt.Sprintf("http://%s:%d/job/%s/plot?fid=%s", a.Host, a.Port, jobGUID, fuzzerID)
+		targetURL := fmt.Sprintf("http://%s:%d/job/%s/plot?fid=%d", a.Host, a.Port, jobGUID, fID)
 		resp, bodyBytes, errs := request.Post(targetURL).Set("X-Auth-Key", a.Key).EndBytes()
 		if errs != nil {
 			otherError(c, map[string]string{"alert": errs[0].Error()})
@@ -433,7 +449,7 @@ func plotJob(c *gin.Context) {
 
 		if len(bodyBytes) == 0 {
 			otherError(c, map[string]string{
-				"alert":   fmt.Sprintf("Plot data is not yet available for %s job %s.", fuzzerID, j.Name),
+				"alert":   fmt.Sprintf("Plot data is not yet available for fuzzer instance #%d in job %s.", fID, j.Name),
 				"context": "info",
 			})
 			return
@@ -454,7 +470,7 @@ func plotJob(c *gin.Context) {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"alert":   fmt.Sprintf("Plot data available for %s in job %s.", fuzzerID, j.Name),
+			"alert":   fmt.Sprintf("Plot data available for fuzzer instance #%d in job %s.", fID, j.Name),
 			"context": "success",
 		})
 		return
@@ -473,7 +489,15 @@ func checkJob(c *gin.Context) {
 		return
 	}
 
-	processIDs, _ := j.GetProcessIDs(c.Query("fid"))
+	fID, err := strconv.Atoi(c.DefaultQuery("fid", "0"))
+	if err != nil {
+		otherError(c, map[string]string{
+			"alert": err.Error(),
+		})
+		return
+	}
+
+	processIDs, _ := j.GetProcessIDs(fID)
 	// TODO: Handle errors.
 	a, _ := j.GetAgent()
 
@@ -503,7 +527,7 @@ func checkJob(c *gin.Context) {
 		s.FuzzerProcessID = resp.PID
 		s.LoadJobIDProcessID()
 
-		j.Status = clearStatus(j.Status, statusMap[s.AFLBanner])
+		j.Status = clearStatus(j.Status, statusMap[s.GetFID()])
 		j.Update()
 
 		otherError(c, map[string]string{
@@ -518,7 +542,7 @@ func checkJob(c *gin.Context) {
 		s.FuzzerProcessID = processID
 		s.LoadJobIDProcessID()
 
-		j.Status = setStatus(j.Status, statusMap[s.AFLBanner])
+		j.Status = setStatus(j.Status, statusMap[s.GetFID()])
 		j.Update()
 	}
 

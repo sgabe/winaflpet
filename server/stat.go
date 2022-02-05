@@ -1,6 +1,9 @@
 package main
 
 import (
+	"regexp"
+	"strconv"
+
 	"github.com/rs/xid"
 	"github.com/sgabe/structable"
 )
@@ -129,4 +132,16 @@ func (s *Stat) LoadJobIDFuzzerID() error {
 
 func (s *Stat) LoadJobIDProcessID() error {
 	return s.Recorder.LoadWhere("jid = ? and fuzzer_pid = ?", s.JobID, s.FuzzerProcessID)
+}
+
+func (s *Stat) GetFID() int {
+	fID := 0
+
+	re := regexp.MustCompile(`\d+$`)
+	matches := re.FindStringSubmatch(s.AFLBanner)
+	if matches != nil {
+		fID, _ = strconv.Atoi(matches[0])
+	}
+
+	return fID
 }
