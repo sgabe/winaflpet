@@ -122,6 +122,11 @@ a.navbar-brand i.fas {
   padding: .5rem .75rem;
 }
 
+.card-footer .btn {
+  padding: .1rem .5rem;
+  border-color:rgba(0,0,0,.125);
+}
+
 .card-footer a.action.float-right {
   float:none;
 }
