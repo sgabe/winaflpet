@@ -84,8 +84,7 @@ $(function () {
                             setTimeout(function() {
                                 window.location.href = context.attr('href');
                             }, 1000*5);
-                        }
-                        else if ($(this).is("a.verify") || $(this).is("a.play")) {
+                        } else if ($(this).is("a.verify") || $(this).is("a.play") || $(this).is("a.delete")) {
                             setTimeout(function() {
                                 location.reload()
                             }, 1000*5);

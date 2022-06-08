@@ -69,6 +69,17 @@
 {{if not .crashes}}
   <p>There are no existing crashes in the database.</p>
 {{else}}
+
+  <ul class="nav nav-pills">
+    <li class="nav-item">
+      <a href="/crashes" class="nav-link action delete" data-method="DELETE">
+        <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
+          <use xlink:href="/static/svg/bootstrap-icons.svg#eraser-fill"/>
+        </svg>
+      </a>
+    </li>
+  </ul>
+
   {{template "pagination" .currentPage}}
   <div class="card-columns">
   {{range .crashes}}

@@ -84,9 +84,9 @@ a.navbar-brand i.fas {
   margin-right: 0.25em;
 }
 
-.card.job a.action.play {
-  display: inline-block;
-  width: 20px;
+.nav-pills {
+  float: right;
+  margin-top: -50px;
 }
 
 .card.job a.action.disabled {

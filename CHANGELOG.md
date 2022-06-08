@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Ability to export/import jobs.
+- Button to purge crash records from database.
 
 ### Changed
 - Update button style for jobs.
