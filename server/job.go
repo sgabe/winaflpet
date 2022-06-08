@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"regexp"
@@ -22,7 +24,7 @@ const (
 	TB_SCHEMA_JOBS = `CREATE TABLE jobs (
 		"id" INTEGER PRIMARY KEY AUTOINCREMENT,
 		"aid" INTEGER,
-		"guid" TEXT NOT NULL,
+		"guid" TEXT NOT NULL UNIQUE,
 		"name" TEXT,
 		"desc" TEXT,
 		"banner" TEXT NOT NULL,
@@ -668,6 +670,61 @@ func createJobs(c *gin.Context) {
 	}
 }
 
+func uploadJobs(c *gin.Context) {
+	var err error
+	var f []byte
+	var r io.Reader
+	var fh *multipart.FileHeader
+
+	j := newJob()
+	title := "Upload job"
+
+	switch c.Request.Method {
+	case http.MethodGet:
+		c.HTML(http.StatusOK, "jobs_upload", gin.H{
+			"title": title,
+		})
+		return
+	case http.MethodPost:
+		fh, err = c.FormFile("job")
+		if err != nil {
+			break
+		}
+
+		r, err = fh.Open()
+		if err != nil {
+			break
+		}
+
+		f, err = ioutil.ReadAll(r)
+		if err != nil {
+			break
+		}
+
+		if err = json.Unmarshal([]byte(f), &j); err != nil {
+			break
+		}
+
+		if err = j.Insert(); err != nil {
+			break
+		}
+	}
+
+	if err != nil {
+		c.HTML(http.StatusOK, "jobs_upload", gin.H{
+			"title":   title,
+			"alert":   err.Error(),
+			"context": "danger",
+		})
+	} else {
+		c.HTML(http.StatusOK, "jobs_upload", gin.H{
+			"title":   title,
+			"alert":   fmt.Sprintf("Job %s has been successfully uploaded!", j.Name),
+			"context": "success",
+		})
+	}
+}
+
 func editJob(c *gin.Context) {
 	title := "Edit job"
 
@@ -744,4 +801,22 @@ func viewJobs(c *gin.Context) {
 		"title": title,
 		"jobs":  jobs,
 	})
+}
+
+func downloadJob(c *gin.Context) {
+	j := newJob()
+	j.GUID, _ = xid.FromString(c.Param("guid"))
+	if err := j.LoadByGUID(); err != nil {
+		otherError(c, map[string]string{
+			"alert": err.Error(),
+		})
+		return
+	}
+
+	t := time.Now()
+	date := fmt.Sprintf("%d%02d%02d", t.Year(), t.Month(), t.Day())
+	filename := fmt.Sprintf("winaflpet_%s_%s.json", j.Name, date)
+
+	c.Header("Content-Disposition", "attachment; filename="+filename)
+	c.IndentedJSON(http.StatusOK, j)
 }

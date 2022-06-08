@@ -157,6 +157,8 @@ func setupRouter() *gin.Engine {
 			switch c.Param("action") {
 			case "create":
 				createJobs(c)
+			case "upload":
+				uploadJobs(c)
 			case "view":
 				viewJobs(c)
 			default:
@@ -165,6 +167,7 @@ func setupRouter() *gin.Engine {
 		})
 
 		r.PUT("/jobs/create", createJobs)
+		r.POST("/jobs/upload", uploadJobs)
 
 		r.GET("/job/:guid/:action", func(c *gin.Context) {
 			switch c.Param("action") {
@@ -174,6 +177,8 @@ func setupRouter() *gin.Engine {
 				editJob(c)
 			case "plot":
 				plotJob(c)
+			case "download":
+				downloadJob(c)
 			default:
 				notFound(c)
 			}

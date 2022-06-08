@@ -63,6 +63,11 @@
               <use xlink:href="/static/svg/bootstrap-icons.svg#cloud-arrow-down-fill"/>
             </svg>
           </a>
+          <a href="/job/{{.GUID}}/download" class="action download">
+            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="#e67e22">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#download"/>
+            </svg>
+          </a>
           <a href="/job/{{.GUID}}/edit" class="btn btn-outline-secondary action edit {{if (ne .Status 0) }}disabled{{end}}">
             <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="brown">
               <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
