@@ -23,9 +23,12 @@ const (
 	DEFAULT_DATABASE_NAME = "database.db"
 
 	DEFAULT_USER_NAME = "admin"
+
+	DEFAULT_ALERT_INTERVAL = 10
 )
 
 var (
+	alert    Alert
 	BuildVer string
 	BuildRev string
 	db       squirrel.DBProxyBeginner
@@ -43,6 +46,14 @@ func setDefaults() {
 
 	viper.SetDefault("log", DEFAULT_LOG)
 	viper.BindEnv("log", "WINAFLPET_LOG")
+
+	viper.SetDefault("alert.interval", DEFAULT_ALERT_INTERVAL)
+	viper.BindEnv("alert.interval", "WINAFLPET_ALERT_INTERVAL")
+
+	viper.BindEnv("smtp.host", "WINAFLPET_SMTP_HOST")
+	viper.BindEnv("smtp.port", "WINAFLPET_SMTP_PORT")
+	viper.BindEnv("smtp.username", "WINAFLPET_SMTP_USERNAME")
+	viper.BindEnv("smtp.password", "WINAFLPET_SMTP_PASSWORD")
 }
 
 func main() {

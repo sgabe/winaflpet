@@ -198,6 +198,8 @@ func setupRouter() *gin.Engine {
 				collectJob(c)
 			case "plot":
 				plotJob(c)
+			case "alert":
+				alertJob(c)
 			default:
 				notImplemented(c)
 			}

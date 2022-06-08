@@ -18,7 +18,8 @@ const (
 		"username" TEXT UNIQUE NOT NULL,
 		"password" TEXT NOT NULL,
 		"firstname" TEXT NOT NULL,
-		"lastname" TEXT NOT NULL
+		"lastname" TEXT NOT NULL,
+		"email" TEXT NOT NULL
 	);`
 )
 
@@ -31,6 +32,7 @@ type User struct {
 	NewPasswordConfirmation string `json:"newPasswordConfirmation" form:"newPasswordConfirmation"`
 	FirstName               string `json:"firstname" form:"firstname" stbl:"firstname"`
 	LastName                string `json:"lastname" form:"lastname" stbl:"lastname"`
+	Email                   string `json:"email" form:"email" stbl:"email"`
 }
 
 func newUser() *User {
@@ -58,8 +60,8 @@ func initUser() {
 
 	db := getDB()
 	if _, err := sq.Insert("users").
-		Columns("username", "password", "firstname", "lastname").
-		Values(DEFAULT_USER_NAME, password, "", "").
+		Columns("username", "password", "firstname", "lastname", "email").
+		Values(DEFAULT_USER_NAME, password, "", "", "").
 		RunWith(db).Exec(); err != nil {
 		log.Fatal(err.Error())
 	}

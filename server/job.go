@@ -6,13 +6,16 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"mime/multipart"
 	"net/http"
+	"net/mail"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/Masterminds/squirrel"
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/parnurzeal/gorequest"
 	"github.com/rs/xid"
@@ -189,6 +192,13 @@ func (j *Job) GetAgent() (*Agent, error) {
 		return a, err
 	}
 	return a, nil
+}
+
+func (j *Job) HasAlert() bool {
+	if ok, _ := alert.FindJob(j.GUID); ok {
+		return true
+	}
+	return false
 }
 
 func loadJobs() ([]*Job, error) {
@@ -819,4 +829,43 @@ func downloadJob(c *gin.Context) {
 
 	c.Header("Content-Disposition", "attachment; filename="+filename)
 	c.IndentedJSON(http.StatusOK, j)
+}
+
+func alertJob(c *gin.Context) {
+	j := newJob()
+	j.GUID, _ = xid.FromString(c.Param("guid"))
+	if err := j.LoadByGUID(); err != nil {
+		otherError(c, map[string]string{
+			"alert": err.Error(),
+		})
+		return
+	}
+
+	claims := jwt.ExtractClaims(c)
+	user := newUser()
+	user.UserName = claims[identityKey].(string)
+	user.LoadByUsername()
+
+	m, err := mail.ParseAddress(user.Email)
+	if err != nil {
+		otherError(c, map[string]string{
+			"alert": err.Error(),
+		})
+		return
+	}
+
+	if ok, _ := alert.FindJob(j.GUID); !ok {
+		alert.AddJob(*j)
+
+		go alert.Monitor(*j, m)
+
+		c.JSON(http.StatusOK, gin.H{
+			"alert":   fmt.Sprintf("Alerts have been enabled for job %s", j.Name),
+			"context": "info",
+		})
+	} else {
+		otherError(c, map[string]string{
+			"alert": fmt.Sprintf("Alerts are already enabled for job %s", j.Name),
+		})
+	}
 }
