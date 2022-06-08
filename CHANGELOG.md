@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Button to purge crash records from database.
 
 ### Changed
+- Update Bootstrap icons to v1.8.3.
 - Update button style for jobs.
 - Update Docker base images.
 
