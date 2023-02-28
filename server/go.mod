@@ -31,7 +31,6 @@ require (
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
 	github.com/ugorji/go v1.2.6 // indirect
-	golang.org/x/crypto v0.0.0-20220210151621-f4118a5b28e2
-	golang.org/x/text v0.3.8 // indirect
+	golang.org/x/crypto v0.1.0
 	moul.io/http2curl v1.0.0 // indirect
 )
