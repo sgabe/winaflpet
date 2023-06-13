@@ -12,22 +12,25 @@ require (
 	github.com/danielkov/gin-helmet v0.0.0-20171108135313-1387e224435e
 	github.com/elazarl/goproxy v0.0.0-20200809112317-0581fc3aee2d // indirect
 	github.com/gin-contrib/multitemplate v0.0.0-20211002122701-e9e3201b87a0
-	github.com/gin-gonic/gin v1.9.0
+	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
+	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mattn/go-sqlite3 v1.14.12
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/parnurzeal/gorequest v0.2.16
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/rs/xid v1.3.0
 	github.com/sgabe/structable v0.0.0-20170407152004-a1a302ef78ec
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/spf13/cast v1.4.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.9.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.3
 	github.com/ugorji/go v1.2.6 // indirect
-	golang.org/x/crypto v0.5.0
+	golang.org/x/crypto v0.9.0
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	moul.io/http2curl v1.0.0 // indirect
 )
