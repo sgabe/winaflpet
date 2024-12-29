@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -101,7 +100,7 @@ func savePlotData(jGUID string, fuzzerID string, data []byte) error {
 	}
 
 	filePath := filepath.Join(dirPath, "plot_data")
-	if err := ioutil.WriteFile(filePath, data, 0600); err != nil {
+	if err := os.WriteFile(filePath, data, 0600); err != nil {
 		return err
 	}
 

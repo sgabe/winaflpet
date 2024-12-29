@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -715,7 +714,7 @@ func uploadJobs(c *gin.Context) {
 			break
 		}
 
-		f, err = ioutil.ReadAll(r)
+		f, err = io.ReadAll(r)
 		if err != nil {
 			break
 		}

@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Infer binary directory from target architecture.
 - Default risk set to none.
 
+### Fixed
+- Remove usage of deprecated io/ioutil package.
+
 ## [0.5.0] - 2022-06-08
 ### Added
 - Ability to export/import jobs.

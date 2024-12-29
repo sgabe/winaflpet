@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
@@ -294,7 +293,7 @@ func (j Job) View() ([]Stats, error) {
 			return stats, err
 		}
 
-		content, err := ioutil.ReadFile(fileName)
+		content, err := os.ReadFile(fileName)
 		if err != nil {
 			continue
 		}
