@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Support for 40 parallel fuzzer instances.
+- Variable mode to allow for varying parameters.
 
 ## [0.5.0] - 2022-06-08
 ### Added

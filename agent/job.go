@@ -7,6 +7,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"math/rand"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -66,6 +67,7 @@ type Job struct {
 	DumbMode       int    `json:"dumb_mode"`
 	CrashMode      int    `json:"crash_mode"`
 	ExpertMode     int    `json:"expert_mode"`
+	VariableMode   int    `json:"variable_mode"`
 	NoAffinity     int    `json:"no_affinity"`
 	SkipCrashes    int    `json:"skip_crashes"`
 	ShuffleQueue   int    `json:"shuffle_queue"`
@@ -81,6 +83,11 @@ func newJob(GUID string) Job {
 }
 
 func (j Job) Start(fID int) error {
+	if j.VariableMode != 0 {
+		j.CoverageType = []string{"edge", "bb"}[rand.Intn(2)]
+		j.FuzzIter = int(float64(j.FuzzIter) * (1 + (rand.Float64() - 0.5)))
+	}
+
 	afl, err := exec.LookPath(path.Join(j.AFLDir, AFL_EXECUTABLE))
 	if err != nil {
 		logger.Error(err)
