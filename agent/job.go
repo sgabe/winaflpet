@@ -84,6 +84,14 @@ func newJob(GUID string) Job {
 }
 
 func (j Job) Start(fID int) error {
+	binDir := "bin32"
+	if j.TargetArch == "x64" {
+		binDir = "bin64"
+	}
+
+	j.AFLDir = path.Join(j.AFLDir, binDir)
+	j.DrioDir = path.Join(j.DrioDir, binDir)
+
 	if j.VariableMode != 0 {
 		j.CoverageType = []string{"edge", "bb"}[rand.Intn(2)]
 		j.FuzzIter = int(float64(j.FuzzIter) * (1 + (rand.Float64() - 0.5)))

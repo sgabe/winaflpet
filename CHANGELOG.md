@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for 40 parallel fuzzer instances.
 - Variable mode to allow for varying parameters.
 
+### Changed
+- Infer binary directory from target architecture.
+
 ## [0.5.0] - 2022-06-08
 ### Added
 - Ability to export/import jobs.
