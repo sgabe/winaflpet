@@ -66,6 +66,7 @@ type Job struct {
 	DirtyMode      int    `json:"dirty_mode"`
 	DumbMode       int    `json:"dumb_mode"`
 	CrashMode      int    `json:"crash_mode"`
+	BugBucket      int    `json:"bug_bucket"`
 	ExpertMode     int    `json:"expert_mode"`
 	VariableMode   int    `json:"variable_mode"`
 	NoAffinity     int    `json:"no_affinity"`
@@ -152,6 +153,10 @@ func (j Job) Start(fID int) error {
 
 	if j.DirtyMode != 0 {
 		args = append(args, "-d")
+	}
+
+	if j.BugBucket != 0 {
+		args = append(args, "-b")
 	}
 
 	if j.ExpertMode != 0 {

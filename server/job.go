@@ -58,6 +58,7 @@ const (
 		"dirty_mode" INTEGER,
 		"dumb_mode" INTEGER,
 		"crash_mode" INTEGER,
+		"bug_bucket" INTEGER,
 		"expert_mode" INTEGER,
 		"variable_mode" INTEGER,
 		"skip_crashes" INTEGER,
@@ -104,6 +105,7 @@ type Job struct {
 	DirtyMode      int    `json:"dirty_mode" form:"dirty_mode" stbl:"dirty_mode"`
 	DumbMode       int    `json:"dumb_mode" form:"dumb_mode" stbl:"dumb_mode"`
 	CrashMode      int    `json:"crash_mode" form:"crash_mode" stbl:"crash_mode"`
+	BugBucket      int    `json:"bug_bucket" form:"bug_bucket" stbl:"bug_bucket"`
 	ExpertMode     int    `json:"expert_mode" form:"expert_mode" stbl:"expert_mode"`
 	VariableMode   int    `json:"variable_mode" form:"variable_mode" stbl:"variable_mode"`
 	NoAffinity     int    `json:"no_affinity" form:"no_affinity" stbl:"no_affinity"`
@@ -122,6 +124,7 @@ func newJob() *Job {
 	j.DirtyMode = 0
 	j.DumbMode = 0
 	j.PersistCache = 0
+	j.BugBucket = 0
 	j.ExpertMode = 0
 	j.VariableMode = 0
 	j.NoAffinity = 0
@@ -772,6 +775,7 @@ func editJob(c *gin.Context) {
 		j.DirtyMode = 0
 		j.DumbMode = 0
 		j.PersistCache = 0
+		j.BugBucket = 0
 		j.ExpertMode = 0
 		j.VariableMode = 0
 		j.NoAffinity = 0

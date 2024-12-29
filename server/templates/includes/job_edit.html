@@ -235,6 +235,15 @@
         </div>
       </div>
 
+      <div class="form-group col-3">
+        <div class="custom-control custom-switch">
+          <div class="col">
+            <input class="custom-control-input" type="checkbox" name="bug_bucket" id="bugBucket" value="1" {{ if eq .job.BugBucket 1}}checked{{end}}>
+            <label class="custom-control-label" for="bugBucket">Bug bucket</label>
+          </div>
+        </div>
+      </div>
+
     </div>
   </fieldset>
 
