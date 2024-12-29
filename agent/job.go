@@ -69,6 +69,7 @@ type Job struct {
 	BugBucket      int    `json:"bug_bucket"`
 	ExpertMode     int    `json:"expert_mode"`
 	VariableMode   int    `json:"variable_mode"`
+	SequentialMode int    `json:"sequential_mode"`
 	NoAffinity     int    `json:"no_affinity"`
 	SkipCrashes    int    `json:"skip_crashes"`
 	ShuffleQueue   int    `json:"shuffle_queue"`
@@ -104,6 +105,11 @@ func (j Job) Start(fID int) error {
 	}
 
 	targetCmd, targetArgs := splitCmdLine(j.TargetApp)
+	if j.SequentialMode != 0 {
+		targetCmd = sequentialName(targetCmd, fID)
+		j.TargetModule = sequentialName(j.TargetModule, fID)
+	}
+
 	targetApp, err := exec.LookPath(targetCmd)
 	if err != nil {
 		logger.Error(err)
@@ -247,8 +253,12 @@ func (j Job) Stop() error {
 	targetExe := filepath.Base(targetCmd)
 	targetProcs := []ps.Process{}
 
+	i := strings.LastIndex(targetExe, ".exe")
+	expr := fmt.Sprintf("^%s\\d*%s$", targetExe[:i], targetExe[i:])
+	re, _ := regexp.Compile(expr)
+
 	for _, p := range processes {
-		if p.Executable() == targetExe {
+		if re.MatchString(p.Executable()) {
 			p1, _ := ps.FindProcess(p.Pid())
 			if p1 != nil {
 				targetProcs = append(targetProcs, p1)

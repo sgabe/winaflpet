@@ -169,3 +169,12 @@ func readStdout(c chan error, rd *bufio.Reader) {
 		}
 	}
 }
+
+func sequentialName(name string, fID int) string {
+	i := strings.LastIndex(name, ".exe")
+	if i == -1 {
+		return name
+	}
+
+	return fmt.Sprintf("%s%d%s", name[:i], fID, name[i:])
+}

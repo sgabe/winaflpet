@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for custom bug bucket feature.
 - Support for 40 parallel fuzzer instances.
 - Variable mode to allow for varying parameters.
+- Sequential mode to allow execution of numbered target applications.
 
 ### Changed
 - Infer binary directory from target architecture.
