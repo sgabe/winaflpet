@@ -78,7 +78,7 @@ func (c *Crash) GetJob() (*Job, error) {
 }
 
 func (c *Crash) GetRisk() string {
-	risk := "unknown"
+	risk := "none"
 
 	re := regexp.MustCompile(`\w{2,3}(R|W|E)\W?`)
 	matches := re.FindStringSubmatch(c.BugID)
@@ -93,8 +93,6 @@ func (c *Crash) GetRisk() string {
 		risk = "medium"
 	case "E":
 		risk = "high"
-	default:
-		risk = "info"
 	}
 
 	return risk

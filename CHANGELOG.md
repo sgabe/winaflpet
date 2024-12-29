@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Infer binary directory from target architecture.
+- Default risk set to none.
 
 ## [0.5.0] - 2022-06-08
 ### Added
