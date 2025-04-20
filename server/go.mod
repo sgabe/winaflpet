@@ -10,7 +10,7 @@ require (
 	github.com/Masterminds/squirrel v1.5.1
 	github.com/appleboy/gin-jwt/v2 v2.7.0
 	github.com/danielkov/gin-helmet v0.0.0-20171108135313-1387e224435e
-	github.com/elazarl/goproxy v0.0.0-20200809112317-0581fc3aee2d // indirect
+	github.com/elazarl/goproxy v1.2.1 // indirect
 	github.com/gin-contrib/multitemplate v0.0.0-20211002122701-e9e3201b87a0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.3.0 // indirect
