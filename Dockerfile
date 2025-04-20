@@ -29,7 +29,7 @@ RUN apk update && \
             --uid "${UID}" "${USER}" && \
     cd /tmp/winaflpet/server && \
     go get -d -v . && \
-    CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build \
+    CGO_ENABLED=1 CGO_CFLAGS="-D_LARGEFILE64_SOURCE" GOOS=linux GOARCH=amd64 go build \
         -ldflags="-X main.BuildVer=$BUILD_VER -X main.BuildRev=$BUILD_REV -w -s -extldflags '-static'" -a \
         -o /tmp/winaflpet/winaflpet .
 
