@@ -33,7 +33,7 @@ RUN apk update && \
         -ldflags="-X main.BuildVer=$BUILD_VER -X main.BuildRev=$BUILD_REV -w -s -extldflags '-static'" -a \
         -o /tmp/winaflpet/winaflpet .
 
-FROM alpine@sha256:3df19e59930618e9eb2058d4682869df959283d56b988456ff8067f8e92dc958
+FROM alpine@sha256:1c4eef651f65e2f7daee7ee785882ac164b02b78fb74503052a26dc061c90474
 
 RUN apk update && \
     apk add --no-cache curl gnuplot
