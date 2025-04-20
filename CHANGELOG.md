@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- Tidied go.mod.
  - Update Docker base images.
 
 ## [0.6.0] - 2025-04-20
