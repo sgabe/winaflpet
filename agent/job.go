@@ -119,6 +119,15 @@ func (j Job) Start(fID int) error {
 
 	if j.Autoresume != 0 {
 		envs = append(envs, "AFL_AUTORESUME=1")
+	} else {
+		fuzzerDir := filepath.Join(j.AFLDir, j.Output, fuzzerID)
+		statsFile := filepath.Join(fuzzerDir, AFL_STATS_FILE)
+		if fileExists(statsFile) {
+			err := os.RemoveAll(fuzzerDir)
+			if err != nil {
+				logger.Error(err)
+			}
+		}
 	}
 
 	if j.SkipCrashes != 0 || j.Autoresume != 0 {
