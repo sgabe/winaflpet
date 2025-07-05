@@ -21,7 +21,7 @@ else
 endif
 
 agent:
-	go build -ldflags "$(LDFLAGS)" -o ./winaflpet-agent.exe ./agent
+	cd agent && go build -ldflags "$(LDFLAGS)" -o ../winaflpet-agent.exe .
 
 clean:
 	go clean && del winaflpet-server.exe && del winaflpet-agent.exe

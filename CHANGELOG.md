@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Removal of output directory upon resuming if autoresume is disabled.
 
+### Fixed
+- Agent build command to use correct working directory.
+
 ## [0.6.1] - 2025-04-20
 ### Changed
 - Tidied go.mod.
