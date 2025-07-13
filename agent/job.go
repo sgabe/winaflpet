@@ -84,6 +84,8 @@ func newJob(GUID string) Job {
 }
 
 func (j Job) Start(fID int) error {
+	fuzzerID := fmt.Sprintf("%s%d", j.Banner, fID)
+
 	binDir := "bin32"
 	if j.TargetArch == "x64" {
 		binDir = "bin64"
@@ -120,12 +122,13 @@ func (j Job) Start(fID int) error {
 	if j.Autoresume != 0 {
 		envs = append(envs, "AFL_AUTORESUME=1")
 	} else {
-		fuzzerDir := filepath.Join(j.AFLDir, j.Output, fuzzerID)
-		statsFile := filepath.Join(fuzzerDir, AFL_STATS_FILE)
+		fuzzerDir := joinPath(j.AFLDir, j.Output, fuzzerID)
+		statsFile := joinPath(fuzzerDir, AFL_STATS_FILE)
 		if fileExists(statsFile) {
 			err := os.RemoveAll(fuzzerDir)
 			if err != nil {
 				logger.Error(err)
+				return err
 			}
 		}
 	}
@@ -152,7 +155,6 @@ func (j Job) Start(fID int) error {
 	}
 
 	opRole := "-S"
-	fuzzerID := fmt.Sprintf("%s%d", j.Banner, fID)
 	if j.Cores > 1 && fID == 1 {
 		opRole = "-M"
 	}
