@@ -6,6 +6,7 @@ package main
 import (
 	"bufio"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -177,4 +178,57 @@ func sequentialName(name string, fID int) string {
 	}
 
 	return fmt.Sprintf("%s%d%s", name[:i], fID, name[i:])
+}
+
+func hashFile(path string) (string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%X", h.Sum(nil)), nil
+}
+
+func copyFile(src, dst string) (err error) {
+	if err = os.MkdirAll(filepath.Dir(dst), 0755); err != nil {
+		return err
+	}
+
+	if _, err := os.Stat(dst); err == nil {
+		return err
+	}
+
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+
+	tmp := dst + ".tmp"
+	out, err := os.OpenFile(tmp, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+
+	if _, err = io.Copy(out, in); err != nil {
+		out.Close()
+		return err
+	}
+
+	if err = out.Sync(); err != nil {
+		out.Close()
+		return err
+	}
+
+	if err = out.Close(); err != nil {
+		return err
+	}
+
+	return os.Rename(tmp, dst)
 }

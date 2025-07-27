@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Removal of output directory upon resuming if autoresume is disabled.
 
+### Changed
+- Copy hashed samples to a unified directory when collecting crashes.
+
 ### Fixed
 - Agent build command to use correct working directory.
 

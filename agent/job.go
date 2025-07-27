@@ -336,16 +336,29 @@ func (j Job) Check(pid int) (bool, error) {
 func (j Job) Collect() ([]Crash, error) {
 	var crashes []Crash
 
-	dirname := joinPath(j.AFLDir, j.Output)
+	outputDir := joinPath(j.AFLDir, j.Output)
 	re := regexp.MustCompile(`\\crashes(_\d{14})?\\id_\d{6}_\w+$`)
-	err := godirwalk.Walk(dirname, &godirwalk.Options{
+	err := godirwalk.Walk(outputDir, &godirwalk.Options{
 		Callback: func(osPathname string, de *godirwalk.Dirent) error {
-			if re.MatchString(osPathname) {
-				crashDir := strings.Split(filepath.Dir(osPathname), "\\")
-				fuzzerID := crashDir[len(crashDir)-2]
-				newCrash := newCrash(j.GUID, fuzzerID, osPathname)
-				crashes = append(crashes, newCrash)
+			if !re.MatchString(osPathname) {
+				return nil
 			}
+
+			fileHash, err := hashFile(osPathname)
+			if err != nil {
+				return err
+			}
+
+			crashPath := joinPath(outputDir, "crashes", fileHash)
+			if err := copyFile(osPathname, crashPath); err != nil {
+				return err
+			}
+
+			crashDir := strings.Split(filepath.Dir(osPathname), "\\")
+			fuzzerID := crashDir[len(crashDir)-2]
+			newCrash := newCrash(j.GUID, fuzzerID, crashPath)
+			crashes = append(crashes, newCrash)
+
 			return nil
 		},
 		Unsorted: true,
