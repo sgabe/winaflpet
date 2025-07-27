@@ -33,10 +33,11 @@ type Crash struct {
 	Args        string `json:"args"`
 }
 
-func newCrash(jobGUID xid.ID, fuzzerID string, args string) Crash {
+func newCrash(jobGUID xid.ID, fuzzerID string, function string, args string) Crash {
 	c := new(Crash)
 	c.JobGUID = jobGUID
 	c.FuzzerID = fuzzerID
+	c.Function = function
 	c.Args = args
 	return *c
 }

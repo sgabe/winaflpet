@@ -356,7 +356,8 @@ func (j Job) Collect() ([]Crash, error) {
 
 			crashDir := strings.Split(filepath.Dir(osPathname), "\\")
 			fuzzerID := crashDir[len(crashDir)-2]
-			newCrash := newCrash(j.GUID, fuzzerID, crashPath)
+			funcAddr := getFuncAddr(osPathname)
+			newCrash := newCrash(j.GUID, fuzzerID, funcAddr, crashPath)
 			crashes = append(crashes, newCrash)
 
 			return nil

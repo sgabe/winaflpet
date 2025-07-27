@@ -180,6 +180,14 @@ func sequentialName(name string, fID int) string {
 	return fmt.Sprintf("%s%d%s", name[:i], fID, name[i:])
 }
 
+func getFuncAddr(path string) string {
+	re := regexp.MustCompile(`id_\d{6}_([^_]+)`)
+	if m := re.FindStringSubmatch(path); len(m) > 1 {
+		return m[1]
+	}
+	return "Unknown"
+}
+
 func hashFile(path string) (string, error) {
 	f, err := os.Open(path)
 	if err != nil {

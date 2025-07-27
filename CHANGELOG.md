@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Copy hashed samples to a unified directory when collecting crashes.
+- Use function address as function name until verification.
 
 ### Fixed
 - Agent build command to use correct working directory.
