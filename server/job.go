@@ -120,7 +120,7 @@ func newJob() *Job {
 	j := new(Job)
 	j.GUID = xid.New()
 	j.Cores = 1
-	j.InstMode = "Dynamic" // The only supported instrumentation mode.
+	j.InstMode = "DynamoRIO"
 	j.CrashMode = 0
 	j.DirtyMode = 0
 	j.DumbMode = 0

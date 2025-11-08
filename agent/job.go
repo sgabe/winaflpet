@@ -162,7 +162,12 @@ func (j Job) Start(fID int) error {
 	args = append(args, fmt.Sprintf("%s %s", opRole, fuzzerID))
 	args = append(args, fmt.Sprintf("-i %s", j.Input))
 	args = append(args, fmt.Sprintf("-o %s", j.Output))
-	args = append(args, fmt.Sprintf("-D %s", j.DrioDir))
+
+	if j.InstMode == "TinyInst" {
+		args = append(args, "-y")
+	} else {
+		args = append(args, fmt.Sprintf("-D %s", j.DrioDir))
+	}
 
 	timeoutSuffix := ""
 	if j.Autoresume != 0 || j.Input == "-" {
@@ -171,8 +176,13 @@ func (j Job) Start(fID int) error {
 
 	args = append(args, fmt.Sprintf("-t %d%s", j.Timeout, timeoutSuffix))
 
-	if j.PersistCache != 0 {
-		args = append(args, "-p")
+	if j.InstMode == "DynamoRIO" {
+		if j.PersistCache != 0 {
+			args = append(args, "-p")
+		}
+		if j.ExpertMode != 0 {
+			args = append(args, "-e")
+		}
 	}
 
 	if j.DirtyMode != 0 {
@@ -181,10 +191,6 @@ func (j Job) Start(fID int) error {
 
 	if j.BugBucket != 0 {
 		args = append(args, "-b")
-	}
-
-	if j.ExpertMode != 0 {
-		args = append(args, "-e")
 	}
 
 	if j.CrashMode != 0 && j.DumbMode == 0 {
@@ -215,10 +221,21 @@ func (j Job) Start(fID int) error {
 	args = append(args, fmt.Sprintf("-covtype %s", j.CoverageType))
 
 	for _, m := range strings.Split(j.CoverageModule, ",") {
-		args = append(args, fmt.Sprintf("-coverage_module %s", m))
+		if j.InstMode == "TinyInst" {
+			args = append(args, fmt.Sprintf("-instrument_module %s", m))
+		} else {
+			args = append(args, fmt.Sprintf("-coverage_module %s", m))
+		}
 	}
 
-	args = append(args, fmt.Sprintf("-fuzz_iterations %d", j.FuzzIter))
+	if j.InstMode == "TinyInst" {
+		args = append(args, "-persist")
+		args = append(args, "-loop")
+		args = append(args, fmt.Sprintf("-iterations %d", j.FuzzIter))
+	} else {
+		args = append(args, fmt.Sprintf("-fuzz_iterations %d", j.FuzzIter))
+	}
+
 	args = append(args, fmt.Sprintf("-target_module %s", j.TargetModule))
 	args = append(args, fmt.Sprintf("-target_method %s", j.TargetMethod))
 	args = append(args, fmt.Sprintf("-target_offset %s", j.TargetOffset))

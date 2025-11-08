@@ -306,11 +306,22 @@
 
     <div class="form-row">
 
-      <div class="form-group col-md-6">
+      <div class="form-group col-md">
+        <label for="instMode" class="col-md col-form-label">Instrumentation mode</label>
+        <div class="col-md">
+          <select class="form-control" name="inst_mode" id="instMode">
+            <option value="DynamoRIO" {{if (eq .job.InstMode "DynamoRIO") }}selected{{end}}>DynamoRIO</option>
+            <option value="TinyInst" {{if (eq .job.InstMode "TinyInst") }}selected{{end}}>TinyInst</option>
+          </select>
+          <small id="instModeHelp" class="form-text text-muted">Tool used to instrument the target</small>
+        </div>
+      </div>
+
+      <div class="form-group col-md">
         <label for="coverageModule" class="col-md col-form-label">Coverage module(s)</label>
         <div class="col-md">
           <input type="text" class="form-control" name="cov_module" id="coverageModule" aria-describedby="coverageModuleHelp" value="{{.job.CoverageModule}}">
-          <small id="coverageModuleHelp" class="form-text text-muted">Module(s) to collect coverage for, separate multiple modules with comma (,)</small>
+          <small id="coverageModuleHelp" class="form-text text-muted">Module(s) to collect coverage for</small>
         </div>
       </div>
 
@@ -396,8 +407,6 @@
 
     </div>
   </fieldset>
-
-  <input type="hidden" id="inst_mode" name="inst_mode" value="DynamorIO">
 
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
