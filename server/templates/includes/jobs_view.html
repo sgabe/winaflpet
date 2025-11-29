@@ -2,92 +2,97 @@
 {{if not .jobs}}
   <p>There are no existing jobs in the database. Click <a href="/jobs/create">here</a> to create one!</p>
 {{else}}
-  <div class="card-columns">
-  {{range .jobs}}
-    <div class="card job">
-      <div class="card-header">
-        <small class="id {{if .GetAgent.Status}}on{{else}}off{{end}}">{{ .ID }}</small>
-        <h6>
-          <a data-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
-            <i class="fas fa-chevron-down float-right"></i>
-            <span class="label">{{.Name}}</span> @ <span class="host">{{.GetAgent.Name}}</span>
-          </a>
-        </h6>
-      </div>
+  <div id="cards" class="row row-cols-3">
+    {{range .jobs}}
+    <div class="col col-sm-6 col-lg-4 mb-3">
+      <div class="card job">
 
-      <div id="collapse-{{ .ID }}" class="collapse collapsed">
-        <div class="card-body">
-          <p class="card-text truncate">{{ .Desc }}</p>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><h6>Instrumentation <small>{{.InstMode}}</small></h6></li>
-            <li class="list-group-item"><h6>Coverage <small>{{.CoverageType}} for {{.CoverageModule}}</small></h6></li>
-            <li class="list-group-item"><h6>Iterations <small>{{.FuzzIter}}</small></h6></li>
-            <li class="list-group-item"><h6>Target <small>{{if ne .TargetOffset "0"}}{{.TargetOffset}}{{else}}{{.TargetMethod}}{{end}} in {{.TargetModule}} ({{.TargetArch}})</small></h6></li>
-          </ul>
+        <div class="card-header">
+          <small class="id rounded-top-3 rounded-end-0 {{if .GetAgent.Status}}on{{else}}off{{end}}">{{ .ID }}</small>
+          <h6 data-bs-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
+            <i class="fas fa-chevron-down float-end"></i>
+            <span class="name">{{.Name}}</span> @ <span class="host">{{.GetAgent.Name}}</span>
+          </h6>
         </div>
-      </div>
 
-      <div class="card-footer">
-        {{$ := .}}
-        {{ $break := false }}
-        {{range seq .Cores}}
-          {{ if $break }}
-          {{ else }}
-            {{if not (hasStatus $.Status .) }}
-              {{ $break = true }}
-        <a id="startJob{{.}}" href="/job/{{$.GUID}}/start?fid={{.}}" class="btn btn-outline-secondary action play play-{{.}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
-          <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="green">
-            <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
-          </svg>
-        </a>
+        <div id="collapse-{{ .ID }}" class="collapse collapsed">
+          <div class="card-body">
+            <p class="card-text truncate">{{ .Desc }}</p>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><h6>Instrumentation</h6> <small class="text-body-secondary float-end">{{.InstMode}}</small></li>
+              <li class="list-group-item"><h6>Coverage</h6> <small class="text-body-secondary float-end">{{.CoverageType}} for {{.CoverageModule}}</small></li>
+              <li class="list-group-item"><h6>Iterations</h6> <small class="text-body-secondary float-end">{{.FuzzIter}}</small></li>
+              <li class="list-group-item"><h6>Target</h6> <small class="text-body-secondary float-end">{{if ne .TargetOffset "0"}}{{.TargetOffset}}{{else}}{{.TargetMethod}}{{end}} in {{.TargetModule}} ({{.TargetArch}})</small></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="btn-group">
+          {{$ := .}}
+          {{ $break := false }}
+          {{range seq .Cores}}
+            {{ if $break }}
+            {{ else }}
+              {{if not (hasStatus $.Status .) }}
+                {{ $break = true }}
+            <a id="startJob{{.}}" href="/job/{{$.GUID}}/start?fid={{.}}" class="btn btn-outline-secondary action play play-{{.}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
+              <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
+              </svg>
+            </a>
+              {{end}}
             {{end}}
           {{end}}
-        {{end}}
-          <a href="/job/{{.GUID}}/stop" class="btn btn-outline-secondary action stop {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
-            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="orangered">
-              <use xlink:href="/static/svg/bootstrap-icons.svg#stop-fill"/>
-            </svg>
-          </a>
-          <a href="/job/{{.GUID}}/view" class="btn btn-outline-secondary action view {{if (eq .Status 0) }}disabled{{end}}">
-            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="blue">
-              <use xlink:href="/static/svg/bootstrap-icons.svg#eye-fill"/>
-            </svg>
-          </a>
-          <a href="/job/{{.GUID}}/check" class="btn btn-outline-secondary action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
-            <svg class="bi" width="1em" height="1em" fill="currentColor" color="grey">
-              <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
-            </svg>
-          </a>
-          <a href="/job/{{.GUID}}/collect" class="btn btn-outline-secondary action collect {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
-            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="purple">
-              <use xlink:href="/static/svg/bootstrap-icons.svg#cloud-arrow-down-fill"/>
-            </svg>
-          </a>
-          {{if not (.HasAlert) }}
-          <a href="/job/{{.GUID}}/alert" class="btn btn-outline-secondary action alarm {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
-            <svg class="bi" width="1.15em" height="1.15em" fill="currentColor" color="green">
-              <use xlink:href="/static/svg/bootstrap-icons.svg#alarm-fill"/>
-            </svg>
-          </a>
-          {{end}}
-          <a href="/job/{{.GUID}}/download" class="btn btn-outline-secondary action download">
-            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="#e67e22">
-              <use xlink:href="/static/svg/bootstrap-icons.svg#download"/>
-            </svg>
-          </a>
-          <a href="/job/{{.GUID}}/edit" class="btn btn-outline-secondary action edit {{if (ne .Status 0) }}disabled{{end}}">
-            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="brown">
-              <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
-            </svg>
-          </a>
-          <a href="/job/{{.GUID}}" class="btn btn-outline-secondary action delete {{if (ne .Status 0) }}disabled{{end}}" data-method="DELETE">
-            <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
-              <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
-            </svg>
-          </a>
+            <a href="/job/{{.GUID}}/stop" class="btn btn-outline-secondary action stop {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+              <svg class="bi stop-fill" width="20" height="20" fill="currentColor" color="orangered" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#stop-fill"/>
+              </svg>
+            </a>
+            <a href="/job/{{.GUID}}/view" class="btn btn-outline-secondary action view {{if (eq .Status 0) }}disabled{{end}}">
+              <svg class="bi eye-fill" width="20" height="20" fill="currentColor" color="blue" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#eye-fill"/>
+              </svg>
+            </a>
+            <a href="/job/{{.GUID}}/check" class="btn btn-outline-secondary action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+              <svg class="bi check-circle-fill" width="20" height="20" fill="currentColor" color="grey" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
+              </svg>
+            </a>
+            <a href="/job/{{.GUID}}/collect" class="btn btn-outline-secondary action collect {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+              <svg class="bi cloud-arrow-down-fill" width="20" height="20" fill="currentColor" color="purple" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#cloud-arrow-down-fill"/>
+              </svg>
+            </a>
+            {{if not (.HasAlert) }}
+            <a href="/job/{{.GUID}}/alert" class="btn btn-outline-secondary action alarm {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+              <svg class="bi alarm-fill" width="20" height="20" fill="currentColor" color="green"  viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#alarm-fill"/>
+              </svg>
+            </a>
+            {{end}}
+            <a href="/job/{{.GUID}}/download" class="btn btn-outline-secondary action download">
+              <svg class="bi bi-download" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#download"/>
+              </svg>
+            </a>
+            {{if (eq .Status 0) }}
+            <a href="/job/{{.GUID}}/edit" class="btn btn-outline-secondary action edit {{if (ne .Status 0) }}disabled{{end}}">
+              <svg class="bi bi-pencil" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
+              </svg>
+            </a>
+            <a href="/job/{{.GUID}}" class="btn btn-outline-secondary action delete {{if (ne .Status 0) }}disabled{{end}}" data-method="DELETE">
+              <svg class="bi bi-trash-fill" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
+              </svg>
+            </a>
+            {{end}}
+          </div>
+        </div>
       </div>
     </div>
     {{end}}
   </div>
-{{end}}
+  {{end}}
 {{end}}

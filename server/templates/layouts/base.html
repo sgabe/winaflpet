@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="/static/css/fontawesome-all.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/custom.css">
     <title>{{if .title}}{{.title}}{{else}}Home{{end}} | WinAFL Pet</title>
+    <script defer src="/static/js/bootstrap.bundle.min.js" type="text/javascript" charset="utf8"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -16,7 +17,7 @@
                 WinAFL Pet
             </a>
 
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -62,8 +63,8 @@
     {{if .title}}<h1>{{.title}}</h1>{{end}}
     <div id="alert" class="alert alert-{{if .context}}{{.context}}{{else}}empty{{end}} alert-dismissible fade show" role="alert">
         <div class="message">{{.alert}}</div>
-        <button type="button" class="close" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true" class="visually-hidden">&times;</span>
         </button>
     </div>
     <div id="wait" class="d-flex justify-content-center">
@@ -75,14 +76,11 @@
     </main>
     <footer class="footer">
       <div class="container">
-        <p class="float-left text-muted text-left copyright"><small>&copy; 2025 Gabor Seljan</small></p>
-        <p class="float-right text-muted text-right version"><small>{{ getVersion }}</small></p>
+        <p class="float-start text-muted text-left copyright"><small>&copy; 2025 Gabor Seljan</small></p>
+        <p class="float-end text-muted text-right version"><small>{{ getVersion }}</small></p>
       </div>
     </footer>
-    <script src="/static/js/popper.min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/jquery.min.js" type="text/javascript" charset="utf8"></script>
-    <script src="/static/js/bootstrap.bundle.min.js" type="text/javascript" charset="utf8"></script>
-    <script src="/static/js/bootstrap.min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/jquery-succinct-min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/custom.js" type="text/javascript" charset="utf8"></script>
 </body>

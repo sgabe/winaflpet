@@ -1,14 +1,14 @@
 {{define "content"}}
 <form id="editJob" method="POST" enctype="multipart/form-data">
 
-  <fieldset class="form-group">
+  <fieldset class="row mb-3">
     <legend>General settings</legend>
 
-    <div class="form-row">
-      <div class="form-group col-md">
+    <div class="row ms-0">
+      <div class="col-md">
         <label for="agent" class="col-md col-form-label">Agent</label>
         <div class="col-md">
-          <select class="form-control" id="aid" name="aid" required>
+          <select class="form-select" id="aid" name="aid" required>
             {{$ := .}}
             {{range .agents}}
               <option value="{{ .ID }}" {{if eq $.job.AgentID .ID }}selected{{end}}>{{.Name}}</option>
@@ -18,10 +18,10 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="cores" class="col-md col-form-label">CPU cores</label>
         <div class="col-md">
-          <select class="form-control" id="cores" name="cores">
+          <select class="form-select" id="cores" name="cores">
           {{range seq 40}}
             <option value="{{.}}" {{if (eq $.job.Cores .) }}selected{{end}}>{{.}}</option>
           {{end}}
@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
           <label for="name" class="col-md col-form-label">Name</label>
           <div class="col-md">
             <input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp" value="{{.job.Name}}">
@@ -38,7 +38,7 @@
           </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="banner" class="col-md col-form-label">Banner</label>
         <div class="col-md">
           <input type="text" class="form-control" name="banner" id="banner" aria-describedby="bannerHelp" value="{{.job.Banner}}">
@@ -47,8 +47,8 @@
       </div>
     </div>
 
-    <div class="form-row">
-      <div class="form-group col-md">
+    <div class="row ms-0">
+      <div class="col-md">
         <label for="desc" class="col-md col-form-label">Description</label>
         <div class="col-md">
           <input type="text" class="form-control" name="desc" id="desc" aria-describedby="descHelp" value="{{.job.Desc}}">
@@ -59,11 +59,11 @@
 
   </fieldset>
 
-  <fieldset class="form-group">
+  <fieldset class="row mb-3">
     <legend>Tool locations</legend>
-    <div class="form-row">
+    <div class="row ms-0">
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="aflDir" class="col-md col-form-label">AFL directory</label>
         <div class="col-md">
           <input type="text" class="form-control" name="afl_dir" id="aflDir" aria-describedby="aflDirHelp" value="{{.job.AFLDir}}">
@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="drioDir" class="col-md col-form-label">DynamorIO directory</label>
         <div class="col-md">
           <input type="text" class="form-control" name="drio_dir" id="drioDir" aria-describedby="drioDirHelp" value="{{.job.DrioDir}}">
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="pyDir" class="col-md col-form-label">Python directory</label>
         <div class="col-md">
           <input type="text" class="form-control" name="py_dir" id="pyDir" aria-describedby="pyDirHelp" value="{{.job.PyDir}}">
@@ -87,7 +87,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="bugidDir" class="col-md col-form-label">BugId directory</label>
         <div class="col-md">
           <input type="text" class="form-control" name="bugid_dir" id="bugidDir" aria-describedby="bugidDirHelp" value="{{.job.BugIdDir}}">
@@ -98,11 +98,11 @@
     </div>
   </fieldset>
 
-  <fieldset class="form-group">
+  <fieldset class="row mb-3">
     <legend>Basic parameters</legend>
-    <div class="form-row">
+    <div class="row ms-0">
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="input" class="col-md col-form-label">Input</label>
         <div class="col-md">
           <input type="text" class="form-control" name="input" id="input" aria-describedby="inputHelp" value="{{.job.Input}}">
@@ -110,7 +110,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="output" class="col-md col-form-label">Output</label>
         <div class="col-md">
           <input type="text" class="form-control" name="output" id="output" aria-describedby="outputHelp" value="{{.job.Output}}">
@@ -118,10 +118,10 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="delivMode" class="col-md col-form-label">Delivery</label>
         <div class="col-md">
-          <select class="form-control" name="deliv_mode" id="delivMode">
+          <select class="form-select" name="deliv_mode" id="delivMode">
             <option value="" {{if (eq .job.DelivMode "") }}selected{{end}}>File</option>
             <option value="sm" {{if (eq .job.DelivMode "sm") }}selected{{end}}>Shared memory</option>
           </select>
@@ -129,7 +129,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="timeout" class="col-md col-form-label">Timeout</label>
         <div class="col-md">
           <input type="number" class="form-control" name="timeout" id="timeout" aria-describedby="timeoutHelp" value="{{.job.Timeout}}" required>
@@ -139,9 +139,9 @@
 
     </div>
 
-    <div class="form-row">
+    <div class="row ms-0">
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="attachLib" class="col-md col-form-label">Attach library</label>
         <div class="col-md">
           <input type="text" class="form-control" name="attach_lib" id="attachLib" aria-describedby="attachLibHelp" value="{{.job.AttachLib}}">
@@ -149,7 +149,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="customLib" class="col-md col-form-label">Custom library</label>
         <div class="col-md">
           <input type="text" class="form-control" name="custom_lib" id="customLib" aria-describedby="customLibHelp" value="{{.job.CustomLib}}">
@@ -157,7 +157,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="extrasDir" class="col-md col-form-label">Extras directory</label>
         <div class="col-md">
           <input type="text" class="form-control" name="extras_dir" id="extrasDir" aria-describedby="extrasDirHelp" value="{{.job.ExtrasDir}}">
@@ -165,7 +165,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="memoryLimit" class="col-md col-form-label">Memory limit</label>
         <div class="col-md">
           <input type="text" class="form-control" name="memory_limit" id="memoryLimit" aria-describedby="memoryLimitHelp" value="{{.job.MemoryLimit}}">
@@ -175,80 +175,80 @@
 
     </div>
 
-    <div class="form-row">
+    <div class="row ms-0">
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="dirty_mode" id="dirtyMode" value="1" {{ if eq .job.DirtyMode 1}}checked{{end}}>
-            <label class="custom-control-label" for="dirtyMode">Quick & dirty mode</label>
+            <input class="form-check-input" type="checkbox" name="dirty_mode" id="dirtyMode" value="1" {{ if eq .job.DirtyMode 1}}checked{{end}}>
+            <label class="form-check-label" for="dirtyMode">Quick & dirty mode</label>
           </div>
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="dumb_mode" id="dumbMode" value="1" {{ if eq .job.DumbMode 1}}checked{{end}}>
-            <label class="custom-control-label" for="dumbMode">Without instrumentation</label>
+            <input class="form-check-input" type="checkbox" name="dumb_mode" id="dumbMode" value="1" {{ if eq .job.DumbMode 1}}checked{{end}}>
+            <label class="form-check-label" for="dumbMode">Without instrumentation</label>
           </div>
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="crash_mode" id="crashMode" value="1" {{ if eq .job.CrashMode 1}}checked{{end}}>
-            <label class="custom-control-label" for="crashMode">Crash exploration mode</label>
+            <input class="form-check-input" type="checkbox" name="crash_mode" id="crashMode" value="1" {{ if eq .job.CrashMode 1}}checked{{end}}>
+            <label class="form-check-label" for="crashMode">Crash exploration mode</label>
           </div>
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="persist_cache" id="persistCache" value="1" {{if eq .job.PersistCache 1}}checked{{end}}>
-            <label class="custom-control-label" for="persistCache">Persist DynamoRIO cache</label>
+            <input class="form-check-input" type="checkbox" name="persist_cache" id="persistCache" value="1" {{if eq .job.PersistCache 1}}checked{{end}}>
+            <label class="form-check-label" for="persistCache">Persist DynamoRIO cache</label>
           </div>
         </div>
       </div>
 
     </div>
 
-    <div class="form-row">
+    <div class="row ms-0">
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="expert_mode" id="expertMode" value="1" {{ if eq .job.ExpertMode 1}}checked{{end}}>
-            <label class="custom-control-label" for="expertMode">Expert mode</label>
+            <input class="form-check-input" type="checkbox" name="expert_mode" id="expertMode" value="1" {{ if eq .job.ExpertMode 1}}checked{{end}}>
+            <label class="form-check-label" for="expertMode">Expert mode</label>
           </div>
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="variable_mode" id="variableMode" value="1" {{ if eq .job.VariableMode 1}}checked{{end}}>
-            <label class="custom-control-label" for="variableMode">Variable mode</label>
+            <input class="form-check-input" type="checkbox" name="variable_mode" id="variableMode" value="1" {{ if eq .job.VariableMode 1}}checked{{end}}>
+            <label class="form-check-label" for="variableMode">Variable mode</label>
           </div>
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="sequential_mode" id="sequentialMode" value="1" {{ if eq .job.SequentialMode 1}}checked{{end}}>
-            <label class="custom-control-label" for="sequentialMode">Sequential mode</label>
+            <input class="form-check-input" type="checkbox" name="sequential_mode" id="sequentialMode" value="1" {{ if eq .job.SequentialMode 1}}checked{{end}}>
+            <label class="form-check-label" for="sequentialMode">Sequential mode</label>
           </div>
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="bug_bucket" id="bugBucket" value="1" {{ if eq .job.BugBucket 1}}checked{{end}}>
-            <label class="custom-control-label" for="bugBucket">Bug bucket</label>
+            <input class="form-check-input" type="checkbox" name="bug_bucket" id="bugBucket" value="1" {{ if eq .job.BugBucket 1}}checked{{end}}>
+            <label class="form-check-label" for="bugBucket">Bug bucket</label>
           </div>
         </div>
       </div>
@@ -256,43 +256,43 @@
     </div>
   </fieldset>
 
-  <fieldset class="form-group">
+  <fieldset class="row mb-3">
     <legend>Environment variables</legend>
 
-    <div class="form-row">
+    <div class="row ms-0">
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="no_affinity" id="noAffinity" value="1" {{if eq .job.NoAffinity 1}}checked{{end}}>
-            <label class="custom-control-label" for="noAffinity">No affinity</label>
+            <input class="form-check-input" type="checkbox" name="no_affinity" id="noAffinity" value="1" {{if eq .job.NoAffinity 1}}checked{{end}}>
+            <label class="form-check-label" for="noAffinity">No affinity</label>
           </div>
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="skip_crashes" id="skipCrashes" value="1" {{if eq .job.SkipCrashes 1}}checked{{end}}>
-            <label class="custom-control-label" for="skipCrashes">Skip crashes</label>
+            <input class="form-check-input" type="checkbox" name="skip_crashes" id="skipCrashes" value="1" {{if eq .job.SkipCrashes 1}}checked{{end}}>
+            <label class="form-check-label" for="skipCrashes">Skip crashes</label>
           </div>
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="shuffle_queue" id="shuffleQueue" value="1" {{if eq .job.ShuffleQueue 1}}checked{{end}}>
-            <label class="custom-control-label" for="shuffleQueue">Shuffle queue</label>
+            <input class="form-check-input" type="checkbox" name="shuffle_queue" id="shuffleQueue" value="1" {{if eq .job.ShuffleQueue 1}}checked{{end}}>
+            <label class="form-check-label" for="shuffleQueue">Shuffle queue</label>
           </div>
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="custom-control custom-switch">
+      <div class="col-3">
+        <div class="form-check form-switch">
           <div class="col">
-            <input class="custom-control-input" type="checkbox" name="autoresume" id="autoresume" value="1" {{ if eq .job.Autoresume 1}}checked{{end}}>
-            <label class="custom-control-label" for="autoresume">Autoresume</label>
+            <input class="form-check-input" type="checkbox" name="autoresume" id="autoresume" value="1" {{ if eq .job.Autoresume 1}}checked{{end}}>
+            <label class="form-check-label" for="autoresume">Autoresume</label>
           </div>
         </div>
       </div>
@@ -301,15 +301,15 @@
 
   </fieldset>
 
-  <fieldset class="form-group">
+  <fieldset class="row mb-3">
     <legend>Instrumentation settings</legend>
 
-    <div class="form-row">
+    <div class="row ms-0">
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="instMode" class="col-md col-form-label">Instrumentation mode</label>
         <div class="col-md">
-          <select class="form-control" name="inst_mode" id="instMode">
+          <select class="form-select" name="inst_mode" id="instMode">
             <option value="DynamoRIO" {{if (eq .job.InstMode "DynamoRIO") }}selected{{end}}>DynamoRIO</option>
             <option value="TinyInst" {{if (eq .job.InstMode "TinyInst") }}selected{{end}}>TinyInst</option>
           </select>
@@ -317,7 +317,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="coverageModule" class="col-md col-form-label">Coverage module(s)</label>
         <div class="col-md">
           <input type="text" class="form-control" name="cov_module" id="coverageModule" aria-describedby="coverageModuleHelp" value="{{.job.CoverageModule}}">
@@ -325,10 +325,10 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="coverageType" class="col-md col-form-label">Coverage type</label>
         <div class="col-md">
-          <select class="form-control" name="cov_type" id="coverageType">
+          <select class="form-select" name="cov_type" id="coverageType">
             <option value="bb" {{if (eq .job.CoverageType "bb") }}selected{{end}}>Basic block</option>
             <option value="edge" {{if (eq .job.CoverageType "edge") }}selected{{end}}>Edge</option>
           </select>
@@ -336,7 +336,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="fuzzIter" class="col-md col-form-label">Fuzz iterations</label>
         <div class="col-md">
           <input type="number" class="form-control" name="fuzz_iter" id="fuzzIter" aria-describedby="fuzzIterHelp" value="{{.job.FuzzIter}}" required>
@@ -345,8 +345,8 @@
       </div>
     </div>
 
-    <div class="form-row">
-      <div class="form-group col-md">
+    <div class="row ms-0">
+      <div class="col-md">
         <label for="targetModule" class="col-md col-form-label">Target module</label>
         <div class="col-md">
           <input type="text" class="form-control" name="target_module" id="targetModule" aria-describedby="targetModuleHelp" value="{{.job.TargetModule}}">
@@ -354,7 +354,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="targetMethod" class="col-md col-form-label">Target method</label>
         <div class="col-md">
           <input type="text" class="form-control" name="target_method" id="targetMethod" aria-describedby="targetMethodHelp" value="{{.job.TargetMethod}}">
@@ -362,7 +362,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="targetOffset" class="col-md col-form-label">Target offset</label>
         <div class="col-md">
           <input type="text" class="form-control" name="target_offset" id="targetOffset" aria-describedby="targetOffsetHelp" value="{{.job.TargetOffset}}">
@@ -370,7 +370,7 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="targetNArgs" class="col-md col-form-label">Target argument count</label>
         <div class="col-md">
           <input type="number" class="form-control" name="target_nargs" id="targetNArgs" aria-describedby="targetNArgsHelp" value="{{.job.TargetNArgs}}" required>
@@ -381,12 +381,12 @@
     </div>
   </fieldset>
 
-  <fieldset class="form-group">
+  <fieldset class="row mb-3">
     <legend>Target application</legend>
 
-    <div class="form-row">
+    <div class="row ms-0">
 
-      <div class="form-group col-md-9">
+      <div class="col-md-9">
         <label for="targetApp" class="col-md col-form-label">Target application command line</label>
         <div class="col-md">
           <input type="text" class="form-control" name="target_app" id="targetApp" aria-describedby="targetAppHelp" value="{{.job.TargetApp}}">
@@ -394,10 +394,10 @@
         </div>
       </div>
 
-      <div class="form-group col-md">
+      <div class="col-md">
         <label for="targetArch" class="col-md col-form-label">Architecture</label>
         <div class="col-md">
-          <select class="form-control" name="target_arch" id="targetArch">
+          <select class="form-select" name="target_arch" id="targetArch">
             <option value="x86" {{if (eq .job.TargetArch "x86") }}selected{{end}}>x86</option>
             <option value="x64" {{if (eq .job.TargetArch "x64") }}selected{{end}}>x64</option>
           </select>

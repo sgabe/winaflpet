@@ -2,49 +2,50 @@
 {{if not .agents}}
   <p>There are no existing agents in the database. Click <a href="/agents/create">here</a> to create one!</p>
 {{else}}
-  <div class="card-columns">
+  <div id="cards" class="row row-cols-3">
     {{range .agents}}
-    <div class="card agent">
+    <div class="col col-sm-6 col-lg-4 mb-3">
+      <div class="card agent">
 
-      <div class="card-header">
-        <small class="id {{if .Status}}on{{else}}off{{end}}">{{ .ID }}</small>
-        <h6>
-          <a data-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
-            <i class="fas fa-chevron-down float-right"></i>
+        <div class="card-header">
+          <small class="id rounded-top-3 rounded-end-0 {{if .Status}}on{{else}}off{{end}}">{{ .ID }}</small>
+          <h6 data-bs-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
+            <i class="fas fa-chevron-down float-end"></i>
             <span class="name">{{ .Name }}</span>
-          </a>
-        </h6>
-      </div>
+          </h6>
+        </div>
 
-      <div id="collapse-{{ .ID }}" class="collapse collapsed">
-        <div class="card-body">
-          <small class="card-text">{{ .Description }}</small>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><h6>Host <small>{{ .Host }}</small></h6></li>
-            <li class="list-group-item"><h6>Port <small>{{ .Port }}</small></h6></li>
-            <li class="list-group-item"><h6>Version <small>{{ .Version }}</small></h6></li>
-          </ul>
+        <div id="collapse-{{ .ID }}" class="collapse collapsed">
+          <div class="card-body">
+            <p class="card-text truncate">{{ .Description }}</p>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><h6>Host</h6> <small class="text-body-secondary float-end">{{ .Host }}</small></li>
+              <li class="list-group-item"><h6>Port</h6> <small class="text-body-secondary float-end">{{ .Port }}</small></li>
+              <li class="list-group-item"><h6>Version</h6> <small class="text-body-secondary float-end">{{ .Version }}</small></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="btn-group">
+          <a href="/agent/{{.GUID}}/check" class="btn btn-outline-secondary action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+            <svg class="bi" width="20" height="20" fill="currentColor" color="grey" viewBox="0 0 20 20">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
+            </svg>
+          </a>
+          <a href="/agent/{{.GUID}}/edit" class="btn btn-outline-secondary action edit">
+            <svg class="bi" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
+            </svg>
+          </a>
+          <a href="/agent/{{.GUID}}" class="btn btn-outline-secondary action delete" data-method="DELETE">
+            <svg class="bi" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20">
+              <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
+            </svg>
+          </a>
+          </div>
         </div>
       </div>
-
-      <div class="card-footer">
-        <a href="/agent/{{.GUID}}/check" class="action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
-          <svg class="bi" width="1em" height="1em" fill="currentColor" color="grey">
-            <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
-          </svg>
-        </a>
-        <a href="/agent/{{.GUID}}/edit" class="action edit">
-          <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="brown">
-            <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
-          </svg>
-        </a>
-        <a href="/agent/{{.GUID}}" class="action delete" data-method="DELETE">
-          <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
-            <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
-          </svg>
-        </a>
-      </div>
-
     </div>
     {{end}}
   </div>
