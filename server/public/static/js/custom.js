@@ -154,6 +154,12 @@ $(function () {
         }
     });
 
+    $('#cards').masonry({
+        itemSelector: '.col'
+    }).on('shown.bs.collapse hidden.bs.collapse', function() {
+        $('#cards').masonry();
+    });
+
 });
 
 $.ajaxTransport("+binary", function(options, originalOptions, jqXHR) {
