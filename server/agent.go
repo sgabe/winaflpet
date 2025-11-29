@@ -81,6 +81,7 @@ func createAgents(c *gin.Context) {
 	case http.MethodGet:
 		c.HTML(http.StatusOK, "agents_create", gin.H{
 			"title": "Create agent",
+			"path":  c.Request.URL.Path,
 		})
 		return
 	case http.MethodPut:
@@ -122,6 +123,7 @@ func viewAgents(c *gin.Context) {
 	c.HTML(http.StatusOK, "agents_view", gin.H{
 		"title":  title,
 		"agents": agents,
+		"path":   c.Request.URL.Path,
 	})
 }
 
@@ -223,6 +225,7 @@ func editAgent(c *gin.Context) {
 		c.HTML(http.StatusOK, "agent_edit", gin.H{
 			"title": title,
 			"agent": a,
+			"path":  c.Request.URL.Path,
 		})
 	case http.MethodPost:
 		if err := a.loadByGUID(); err != nil {

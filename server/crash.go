@@ -144,6 +144,7 @@ func viewCrashes(c *gin.Context) {
 		"title":       title,
 		"crashes":     crashes,
 		"currentPage": currentPage,
+		"path":        c.Request.URL.Path,
 	})
 }
 
@@ -248,6 +249,7 @@ func editCrash(c *gin.Context) {
 		c.HTML(http.StatusOK, "crash_edit", gin.H{
 			"title": title,
 			"crash": crash,
+			"path":  c.Request.URL.Path,
 		})
 	case http.MethodPost:
 		if err := crash.LoadByGUID(); err != nil {

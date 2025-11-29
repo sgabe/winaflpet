@@ -82,6 +82,7 @@ func editUser(c *gin.Context) {
 		c.HTML(http.StatusOK, "user_edit", gin.H{
 			"title": title,
 			"user":  user,
+			"path":  c.Request.URL.Path,
 		})
 		return
 	case http.MethodPost:
@@ -91,6 +92,7 @@ func editUser(c *gin.Context) {
 				"alert":   "Password invalid!",
 				"user":    user,
 				"context": "danger",
+				"path":    c.Request.URL.Path,
 			})
 			return
 		}
@@ -113,6 +115,7 @@ func editUser(c *gin.Context) {
 					"alert":   "The password confirmation does not match.",
 					"user":    user,
 					"context": "danger",
+					"path":    c.Request.URL.Path,
 				})
 				return
 			}
@@ -125,6 +128,7 @@ func editUser(c *gin.Context) {
 				"alert":   err.Error(),
 				"user":    user,
 				"context": "danger",
+				"path":    c.Request.URL.Path,
 			})
 			return
 		}
@@ -134,6 +138,7 @@ func editUser(c *gin.Context) {
 			"alert":   "User profile successfully updated.",
 			"user":    user,
 			"context": "success",
+			"path":    c.Request.URL.Path,
 		})
 		return
 	default:

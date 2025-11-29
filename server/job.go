@@ -403,6 +403,7 @@ func viewJob(c *gin.Context) {
 	c.HTML(http.StatusOK, "job_view", gin.H{
 		"title": title,
 		"stats": stats,
+		"path":  c.Request.URL.Path,
 	})
 }
 
@@ -444,6 +445,7 @@ func plotJob(c *gin.Context) {
 		c.HTML(http.StatusOK, "job_plot", gin.H{
 			"title": title,
 			"plots": plots,
+			"path":  c.Request.URL.Path,
 		})
 	case http.MethodPost:
 		// TODO: Handle errors.
@@ -663,6 +665,7 @@ func createJobs(c *gin.Context) {
 		c.HTML(http.StatusOK, "jobs_create", gin.H{
 			"title":  "Create job",
 			"agents": agents,
+			"path":   c.Request.URL.Path,
 		})
 		return
 	case http.MethodPut:
@@ -701,6 +704,7 @@ func uploadJobs(c *gin.Context) {
 	case http.MethodGet:
 		c.HTML(http.StatusOK, "jobs_upload", gin.H{
 			"title": title,
+			"path":  c.Request.URL.Path,
 		})
 		return
 	case http.MethodPost:
@@ -764,6 +768,7 @@ func editJob(c *gin.Context) {
 			"title":  title,
 			"job":    j,
 			"agents": agents,
+			"path":   c.Request.URL.Path,
 		})
 	case http.MethodPost:
 		if err := j.LoadByGUID(); err != nil {
@@ -821,6 +826,7 @@ func viewJobs(c *gin.Context) {
 	c.HTML(http.StatusOK, "jobs_view", gin.H{
 		"title": title,
 		"jobs":  jobs,
+		"path":  c.Request.URL.Path,
 	})
 }
 

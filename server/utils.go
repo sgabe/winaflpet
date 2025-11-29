@@ -337,3 +337,7 @@ func totalPages() int {
 
 	return int(pages)
 }
+
+func isActive(currentPath, targetPath string) bool {
+	return currentPath == targetPath
+}

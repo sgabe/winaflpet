@@ -23,29 +23,29 @@
 
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/">Home</a>
+                    <li class="nav-item">
+                        <a class="nav-link {{ if isActive .path "/" }}active{{ end }}" aria-current="{{ isActive .path "/"}}" href="/">Home</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Agents</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown01">
-                            <a class="dropdown-item" href="/agents/create">Create</a>
-                            <a class="dropdown-item" href="/agents/view">View</a>
-                        </div>
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Agents</a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdown01">
+                            <li><a class="dropdown-item {{ if isActive .path "/agents/create" }}active{{ end }}" aria-current="{{ isActive .path "/agents/create"}}" href="/agents/create">Create</a></li>
+                            <li><a class="dropdown-item {{ if isActive .path "/agents/view" }}active{{ end }}" aria-current="{{ isActive .path "/agents/view"}}" href="/agents/view">View</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Jobs</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown01">
-                            <a class="dropdown-item" href="/jobs/create">Create</a>
-                            <a class="dropdown-item" href="/jobs/upload">Upload</a>
-                            <a class="dropdown-item" href="/jobs/view">View</a>
-                        </div>
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-bs-toggle="dropdown" aria-current="" aria-expanded="false">Jobs</a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdown02">
+                            <li><a class="dropdown-item {{ if isActive .path "/jobs/create" }}active{{ end }}" aria-current="{{ isActive .path "/jobs/create"}}" href="/jobs/create">Create</a></li>
+                            <li><a class="dropdown-item {{ if isActive .path "/jobs/upload" }}active{{ end }}" aria-current="{{ isActive .path "/jobs/upload"}}" href="/jobs/upload">Upload</a></li>
+                            <li><a class="dropdown-item {{ if isActive .path "/jobs/view" }}active{{ end }}" aria-current="{{ isActive .path "/jobs/view"}}" href="/jobs/view">View</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/crashes/view">Crashes</a>
+                        <a class="nav-link {{ if isActive .path "/crashes/view" }}active{{ end }}" aria-current="{{ isActive .path "/crashes/view"}}" href="/crashes/view">Crashes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/user/edit">Profile</a>
+                        <a class="nav-link {{ if isActive .path "/user/edit" }}active{{ end }}" aria-current="{{ isActive .path "/user/edit"}}" href="/user/edit">Profile</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/user/logout">

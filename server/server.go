@@ -22,6 +22,7 @@ func customHTMLRender() multitemplate.Renderer {
 
 	funcs := template.FuncMap{
 		"seq":            seq,
+		"isActive":       isActive,
 		"hasStatus":      hasStatus,
 		"getVersion":     getVersion,
 		"totalPages":     totalPages,
@@ -57,7 +58,9 @@ func customHTMLRender() multitemplate.Renderer {
 }
 
 func home(c *gin.Context) {
-	c.HTML(http.StatusOK, "home", gin.H{})
+	c.HTML(http.StatusOK, "home", gin.H{
+		"path": c.Request.URL.Path,
+	})
 }
 
 func notFound(c *gin.Context) {
