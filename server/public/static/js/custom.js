@@ -181,7 +181,7 @@ $.ajaxTransport("+binary", function(options, originalOptions, jqXHR) {
                     data[options.dataType] = xhr.response;
                     callback(xhr.status, xhr.statusText, data, xhr.getAllResponseHeaders());
                 });
- 
+
                 xhr.open(type, url, async);
                 xhr.responseType = dataType;
                 xhr.send(data);
@@ -198,10 +198,11 @@ jQuery.expr[':'].contains = function(a, i, m) {
 };
 
 var filterCards = function() {
-    $('.card').removeClass('d-none');
+    $('#cards').find('.col').removeClass('d-none');
     var filter = $("#search").val();
     if (filter) {
-        $('.card-columns').find('.card .card-body:not(:contains("'+filter+'"))').parent().parent().addClass('d-none');
+        $('#cards').find('.card .card-body:not(:contains("'+filter+'"))').parent().parent().parent().addClass('d-none');
+        $('#cards').masonry();
     }
 }
 
