@@ -17,9 +17,11 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/danieljoos/wincred"
 	"github.com/mitchellh/go-ps"
+	"golang.org/x/sys/windows"
 )
 
 const (
@@ -239,4 +241,11 @@ func copyFile(src, dst string) (err error) {
 	}
 
 	return os.Rename(tmp, dst)
+}
+
+func jobCleanup(job windows.Handle, delay time.Duration) {
+	go func() {
+		time.Sleep(delay)
+		windows.CloseHandle(job)
+	}()
 }

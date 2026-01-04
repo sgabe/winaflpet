@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Agent build command to use correct working directory.
+- Zombie child processes during crash verification using Windows job objects.
 
 ## [0.6.1] - 2025-04-20
 ### Changed

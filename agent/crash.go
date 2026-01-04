@@ -15,9 +15,12 @@ import (
 	"regexp"
 	"strings"
 	"syscall"
+	"time"
+	"unsafe"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/xid"
+	"golang.org/x/sys/windows"
 )
 
 const BUGID_BUG_NOT_DETECTED = "The application terminated without a bug being detected"
@@ -63,9 +66,26 @@ func (c Crash) Verify() (Crash, error) {
 		return c, err
 	}
 
+	jobHandle, err := windows.CreateJobObject(nil, nil)
+	if err != nil {
+		return c, err
+	}
+
+	info := windows.JOBOBJECT_EXTENDED_LIMIT_INFORMATION{}
+	info.BasicLimitInformation.LimitFlags =
+		windows.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+
+	windows.SetInformationJobObject(
+		jobHandle,
+		windows.JobObjectExtendedLimitInformation,
+		uintptr(unsafe.Pointer(&info)),
+		uint32(unsafe.Sizeof(info)),
+	)
+
 	targetCmd, targetArgs := splitCmdLine(job.TargetApp)
 
 	args := fmt.Sprintf("-q"+
+		" --collateral=1"+
 		" --bShowLicenseAndDonationInfo=false"+
 		" --bGenerateReportHTML=false"+
 		" --cBugId.bEnsurePageHeap=false"+
@@ -80,39 +100,61 @@ func (c Crash) Verify() (Crash, error) {
 		os.Environ(),
 		fmt.Sprintf("PYTHON=%s", python),
 	)
-	cmd.SysProcAttr = &syscall.SysProcAttr{}
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		CreationFlags: syscall.CREATE_NEW_PROCESS_GROUP,
+	}
 	cmd.SysProcAttr.CmdLine = strings.Join(cmd.Args, ` `)
 	stdout, _ := cmd.StdoutPipe()
 	if err := cmd.Start(); err != nil {
 		logger.Error(err)
+		windows.CloseHandle(jobHandle)
 		return c, err
 	}
 
-	if cmd.Process != nil {
-		buf := bufio.NewReader(stdout)
-		for {
-			line, _, _ := buf.ReadLine()
-			s := string(line)
-			if strings.Contains(s, BUGID_BUG_NOT_DETECTED) {
-				return c, errors.New("no bug detected")
-			}
-			if m := regexp.MustCompile(`Id @ Location: +(.*) @ (.*)`).FindStringSubmatch(s); len(m) > 0 {
-				c.BugID = m[1]
-				re := regexp.MustCompile(`[!+]`)
-				c.Module = re.Split(m[2], -1)[1]
-				c.Function = re.Split(m[2], -1)[2]
-			}
-			if m := regexp.MustCompile(`Description: +(.*)`).FindStringSubmatch(s); len(m) > 0 {
-				c.Description = m[1]
-			}
-			if m := regexp.MustCompile(`Security impact: +(.*)`).FindStringSubmatch(s); len(m) > 0 {
-				c.Impact = m[1]
-				return c, nil
-			}
+	go cmd.Wait()
+
+	procHandle, err := windows.OpenProcess(
+		windows.PROCESS_ALL_ACCESS,
+		false,
+		uint32(cmd.Process.Pid),
+	)
+	if err != nil {
+		windows.CloseHandle(jobHandle)
+		return c, err
+	}
+	defer windows.CloseHandle(procHandle)
+
+	err = windows.AssignProcessToJobObject(jobHandle, procHandle)
+	if err != nil {
+		windows.CloseHandle(jobHandle)
+		return c, err
+	}
+
+	scanner := bufio.NewScanner(stdout)
+	for scanner.Scan() {
+		s := scanner.Text()
+		if strings.Contains(s, BUGID_BUG_NOT_DETECTED) {
+			jobCleanup(jobHandle, 2*time.Second)
+			return c, errors.New("no bug detected")
+		}
+		if m := regexp.MustCompile(`Id @ Location: +(.*) @ (.*)`).FindStringSubmatch(s); len(m) > 0 {
+			c.BugID = m[1]
+			re := regexp.MustCompile(`[!+]`)
+			c.Module = re.Split(m[2], -1)[1]
+			c.Function = re.Split(m[2], -1)[2]
+		}
+		if m := regexp.MustCompile(`Description: +(.*)`).FindStringSubmatch(s); len(m) > 0 {
+			c.Description = m[1]
+		}
+		if m := regexp.MustCompile(`Security impact: +(.*)`).FindStringSubmatch(s); len(m) > 0 {
+			c.Impact = m[1]
+			jobCleanup(jobHandle, 2*time.Second)
+			return c, nil
 		}
 	}
 
-	return c, nil
+	jobCleanup(jobHandle, 2*time.Second)
+	return c, errors.New("no bug detected")
 }
 
 func verifyCrash(c *gin.Context) {
