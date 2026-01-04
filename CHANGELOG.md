@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update dependencies.
 - Upgrade to Bootstrap 5.
 - Migrate card columns to Masonry.
+- Use the label "unavailable" for false positives.
 
 ### Fixed
 - Agent build command to use correct working directory.

@@ -85,10 +85,11 @@
 
   {{range .crashes}}
   <div class="col col-sm-6 col-lg-4 mb-3">
-    <div class="card crash {{if not .Verified }}unverified{{end}}">
+    <div class="card crash {{if not .Verified }}unverified{{end}}{{if and .Verified (not .Function) }}unavailable{{end}}">
       <div class="card-header">
         <small class="id {{ .GetRisk }} rounded-top-3 rounded-end-0">{{ .ID }}</small>
         {{if .Verified }}
+          {{if .Function }}
           <h6 data-bs-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
             <i class="fas fa-chevron-down float-end"></i>
             {{if .Label }}
@@ -100,6 +101,16 @@
             {{end}}
             <small class="text-body-secondary">{{ .GetJob.Name }}</small>
           </h6>
+          {{else}}
+          <h6 class="d-block">
+            <span class="label">Unavailable</span>
+            <small class="text-body-secondary">{{ .GetJob.Name }}</small>
+          </h6>
+          <div class="btn-group float-end">
+            {{template "deleteCrash" .GUID}}
+            {{template "downloadCrash" .GUID}}
+          </div>
+          {{end}}
         {{else}}
           <h6 class="d-block">
             <span class="label">Unverified</span>

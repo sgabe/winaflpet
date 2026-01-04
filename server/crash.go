@@ -194,15 +194,15 @@ func verifyCrash(c *gin.Context) {
 		return
 	}
 
-	if len(resp.Err) > 0 {
-		otherError(c, map[string]string{"alert": resp.Err})
-		return
-	}
-
 	crash.Verified = true
 
 	if err := crash.Update(); err != nil {
 		otherError(c, map[string]string{"alert": err.Error()})
+		return
+	}
+
+	if len(resp.Err) > 0 {
+		otherError(c, map[string]string{"alert": resp.Err})
 		return
 	}
 

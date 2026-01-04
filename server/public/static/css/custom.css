@@ -205,11 +205,13 @@ div.col:has(div.card) {
   cursor: auto;
 }
 
-.card.crash.unverified .card-header .id {
+.card.crash.unverified .card-header .id,
+.card.crash.unavailable .card-header .id {
   padding-bottom: 0px;
 }
 
-.card.crash.unverified .btn-group {
+.card.crash.unverified .btn-group,
+.card.crash.unavailable .btn-group {
   margin-top: -28.3px;
 }
 
