@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Use the label "unavailable" for false positives.
+
+### Fixed
+- Zombie child processes during crash verification using Windows job objects.
 
 ## [0.7.0] - 2025-11-30
 ### Added
@@ -18,11 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update dependencies.
 - Upgrade to Bootstrap 5.
 - Migrate card columns to Masonry.
-- Use the label "unavailable" for false positives.
 
 ### Fixed
 - Agent build command to use correct working directory.
-- Zombie child processes during crash verification using Windows job objects.
 
 ## [0.6.1] - 2025-04-20
 ### Changed
