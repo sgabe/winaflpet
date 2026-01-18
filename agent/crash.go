@@ -84,6 +84,18 @@ func (c Crash) Verify() (Crash, error) {
 
 	targetCmd, targetArgs := splitCmdLine(job.TargetApp)
 
+	dir := filepath.Dir(targetCmd)
+	base := filepath.Base(targetCmd)
+	ext := filepath.Ext(base)
+	name := base[:len(base)-len(ext)]
+
+	phPath := filepath.Join(dir, name+".ph"+ext)
+	if err := copyFile(targetCmd, phPath); err == nil {
+		targetCmd = phPath
+	} else if _, err := os.Stat(phPath); err == nil {
+		targetCmd = phPath
+	}
+
 	args := fmt.Sprintf("-q"+
 		" --collateral=1"+
 		" --bShowLicenseAndDonationInfo=false"+
