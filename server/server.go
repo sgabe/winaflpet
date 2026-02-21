@@ -113,6 +113,7 @@ func otherError(c *gin.Context, p map[string]string) {
 		"title":   title,
 		"alert":   alert,
 		"context": context,
+		"path":    c.Request.URL.Path,
 	})
 }
 
