@@ -243,7 +243,7 @@ func startJob(c *gin.Context) {
 	// TODO: Handle errors.
 	a, _ := j.GetAgent()
 
-	request := gorequest.New().Timeout(300 * time.Second)
+	request := gorequest.New().Timeout(10 * time.Second)
 	request.Debug = false
 
 	fID, err := strconv.Atoi(c.DefaultQuery("fid", "1"))
@@ -363,7 +363,13 @@ func viewJob(c *gin.Context) {
 	request := gorequest.New()
 	request.Debug = false
 
-	var statsTemp []Stat
+	type StatsTemp struct {
+		Stats   []Stat   `json:"stats"`
+		Missing []string `json:"missing"`
+	}
+
+	var statsTemp StatsTemp
+
 	targetURL := fmt.Sprintf("http://%s:%d/job/%s/view", a.Host, a.Port, j.GUID)
 	resp, _, errs := request.Post(targetURL).Set("X-Auth-Key", a.Key).EndStruct(&statsTemp)
 	if errs != nil {
@@ -385,7 +391,7 @@ func viewJob(c *gin.Context) {
 	}
 
 	var stats []Stat
-	for _, stat := range statsTemp {
+	for _, stat := range statsTemp.Stats {
 		s := newStat()
 		s.JobID = j.ID
 		s.AFLBanner = stat.AFLBanner
@@ -400,10 +406,20 @@ func viewJob(c *gin.Context) {
 		stats = append(stats, *s)
 	}
 
+	alert := ""
+	context := ""
+
+	if len(statsTemp.Missing) > 0 {
+		alert = strings.Join(statsTemp.Missing, "<br/>")
+		context = "warning"
+	}
+
 	c.HTML(http.StatusOK, "job_view", gin.H{
-		"title": title,
-		"stats": stats,
-		"path":  c.Request.URL.Path,
+		"title":   title,
+		"stats":   stats,
+		"alert":   alert,
+		"context": context,
+		"path":    c.Request.URL.Path,
 	})
 }
 
@@ -511,24 +527,24 @@ func checkJob(c *gin.Context) {
 		return
 	}
 
-	fID, err := strconv.Atoi(c.DefaultQuery("fid", "0"))
-	if err != nil {
-		otherError(c, map[string]string{
-			"alert": err.Error(),
-		})
-		return
-	}
-
-	processIDs, _ := j.GetProcessIDs(fID)
-	// TODO: Handle errors.
 	a, _ := j.GetAgent()
 
 	request := gorequest.New()
 	request.Debug = false
 
-	resp := APIResponse{}
+	type InstanceStatus struct {
+		FID    int    `json:"fid"`
+		Status string `json:"status"`
+		PID    int    `json:"pid"`
+	}
+
+	var resp struct {
+		Instances []InstanceStatus `json:"instances"`
+		Msg       string           `json:"msg"`
+	}
+
 	targetURL := fmt.Sprintf("http://%s:%d/job/%s/check", a.Host, a.Port, j.GUID)
-	_, _, errs := request.Post(targetURL).Set("X-Auth-Key", a.Key).Send(processIDs).EndStruct(&resp)
+	_, _, errs := request.Post(targetURL).Set("X-Auth-Key", a.Key).EndStruct(&resp)
 	if errs != nil {
 		otherError(c, map[string]string{
 			"alert": errs[0].Error(),
@@ -536,37 +552,21 @@ func checkJob(c *gin.Context) {
 		return
 	}
 
-	if len(resp.Err) > 0 {
-		otherError(c, map[string]string{
-			"alert": resp.Err,
-		})
-		return
-	}
+	for _, inst := range resp.Instances {
 
-	if resp.PID != 0 {
 		s := newStat()
 		s.JobID = j.ID
-		s.FuzzerProcessID = resp.PID
-		s.LoadJobIDProcessID()
+		s.LoadJobIDFuzzerID()
 
-		j.Status = clearStatus(j.Status, statusMap[s.GetFID()])
-		j.Update()
-
-		otherError(c, map[string]string{
-			"alert": resp.Msg,
-		})
-		return
+		switch inst.Status {
+		case "running":
+			j.Status = setStatus(j.Status, statusMap[inst.FID])
+		case "failed":
+			j.Status = clearStatus(j.Status, statusMap[inst.FID])
+		}
 	}
 
-	for _, processID := range processIDs {
-		s := newStat()
-		s.JobID = j.ID
-		s.FuzzerProcessID = processID
-		s.LoadJobIDProcessID()
-
-		j.Status = setStatus(j.Status, statusMap[s.GetFID()])
-		j.Update()
-	}
+	j.Update()
 
 	c.JSON(http.StatusOK, gin.H{
 		"alert":   resp.Msg,

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Use the label "unavailable" for false positives.
+- Make job startup to be async with per-instance status tracking.
 
 ### Fixed
 - Zombie child processes during crash verification using Windows job objects.

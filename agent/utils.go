@@ -21,6 +21,7 @@ import (
 
 	"github.com/danieljoos/wincred"
 	"github.com/mitchellh/go-ps"
+	"github.com/rs/xid"
 	"golang.org/x/sys/windows"
 )
 
@@ -154,21 +155,21 @@ func joinPath(workingDir string, outputDir string, pathNames ...string) string {
 	return p
 }
 
-func readStdout(c chan error, rd *bufio.Reader) {
+func readStdout(rd *bufio.Reader) error {
 	for {
 		l, _, err := rd.ReadLine()
 		if err != nil || err == io.EOF {
-			c <- err
+			return err
 		}
 
 		s := string(l)
 		if strings.Contains(s, AFL_SUCCESS_MSG) {
-			c <- nil
+			return nil
 		}
 
 		m := regexp.MustCompile(AFL_FAIL_REGEX).FindStringSubmatch(s)
 		if len(m) > 0 {
-			c <- errors.New(stripAnsi(m[1]))
+			return errors.New(stripAnsi(m[1]))
 		}
 	}
 }
@@ -248,4 +249,8 @@ func jobCleanup(job windows.Handle, delay time.Duration) {
 		time.Sleep(delay)
 		windows.CloseHandle(job)
 	}()
+}
+
+func instanceKey(guid xid.ID, fID int) string {
+	return fmt.Sprintf("%s:%d", guid.String(), fID)
 }
