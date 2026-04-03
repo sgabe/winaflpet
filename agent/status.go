@@ -36,19 +36,19 @@ func setPID(key string, pid int) {
 
 func getPID(key string) int {
 	pids.RLock()
-	defer pids.Unlock()
+	defer pids.RUnlock()
 	return pids.m[key]
 }
 
 func setStatus(key string, s status) {
 	states.Lock()
+	defer states.Unlock()
 	states.m[key] = s
-	states.Unlock()
 }
 
 func getStatus(key string) status {
-	states.Lock()
-	defer states.Unlock()
+	states.RLock()
+	defer states.RUnlock()
 	return states.m[key]
 }
 
