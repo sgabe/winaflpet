@@ -544,7 +544,7 @@ func checkJob(c *gin.Context) {
 
 	type InstanceStatus struct {
 		FID    int    `json:"fid"`
-		Status status `json:"status"`
+		Status string `json:"status"`
 		PID    int    `json:"pid,omitempty"`
 	}
 
@@ -581,7 +581,7 @@ func checkJob(c *gin.Context) {
 
 		instances = append(instances, InstanceStatus{
 			FID:    fID,
-			Status: status,
+			Status: string(status),
 			PID:    pid,
 		})
 	}
