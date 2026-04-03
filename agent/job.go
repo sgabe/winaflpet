@@ -467,7 +467,7 @@ func startJob(c *gin.Context) {
 					return
 				}
 
-				ok := waitUntilStarted(key, 2*time.Minute)
+				ok := waitUntilStarted(key, 10*time.Minute)
 				if !ok {
 					setStatus(key, failed)
 					return
