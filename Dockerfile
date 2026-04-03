@@ -1,4 +1,4 @@
-FROM golang@sha256:7772cb5322baa875edd74705556d08f0eeca7b9c4b5367754ce3f2f00041ccee as builder
+FROM golang@sha256:c8fe9eb001d3a0ae74c71fc47fa9c2e4b4fb455b6cffeb3623ff756549f237ec as builder
 
 ARG BUILD_VER
 ARG BUILD_REV
@@ -33,7 +33,7 @@ RUN apk update && \
         -ldflags="-X main.BuildVer=$BUILD_VER -X main.BuildRev=$BUILD_REV -w -s -extldflags '-static'" -a \
         -o /tmp/winaflpet/winaflpet .
 
-FROM alpine@sha256:1c4eef651f65e2f7daee7ee785882ac164b02b78fb74503052a26dc061c90474
+FROM alpine@sha256:a76a5883dc20c193bd6eb522e940c5d3979ab4af8011d5972a928fb7156fcb9e
 
 RUN apk update && \
     apk add --no-cache curl gnuplot
