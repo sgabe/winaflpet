@@ -470,7 +470,7 @@ func startJob(c *gin.Context) {
 				ok := waitUntilStarted(key, 10*time.Minute)
 				if !ok {
 					setStatus(key, failed)
-					logger.Warnf("Fuzzer instance %d of job %s failed to start.", fID, j.Name)
+					logger.Warningf("Fuzzer instance %d of job %s failed to start.", fID, j.Name)
 					continue
 				}
 			}
