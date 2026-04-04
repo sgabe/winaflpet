@@ -30,17 +30,30 @@
         <div class="card-footer">
           <div class="btn-group">
           {{$ := .}}
-          {{ $break := false }}
+          {{ $hasRunning := false }}
           {{range seq .Cores}}
-            {{ if $break }}
-            {{ else }}
-              {{if not (hasStatus $.Status .) }}
-                {{ $break = true }}
-            <a id="startJob{{.}}" href="/job/{{$.GUID}}/start?fid={{.}}" class="btn btn-outline-secondary action play play-{{.}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
-              <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20">
-                <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
-              </svg>
-            </a>
+            {{if (hasStatus $.Status .)}}
+              {{ $hasRunning = true }}
+            {{end}}
+          {{end}}
+          {{if not $hasRunning }}
+              <a id="startJob-{{.GUID}}" href="/job/{{$.GUID}}/start" class="btn btn-outline-secondary action play" data-method="POST">
+                <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20">
+                  <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
+                </svg>
+              </a>
+          {{ else }}
+            {{ $break := false }}
+            {{range seq .Cores}}
+              {{if not $break}}
+                {{if not (hasStatus $.Status .) }}
+                  {{ $break = true }}
+              <a id="startJob-{{.GUID}}-{{.}}" href="/job/{{$.GUID}}/start?fid={{.}}" class="btn btn-outline-secondary action play play-{{.}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
+                <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20">
+                  <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
+                </svg>
+              </a>
+                {{end}}
               {{end}}
             {{end}}
           {{end}}

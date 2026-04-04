@@ -246,7 +246,7 @@ func startJob(c *gin.Context) {
 	request := gorequest.New().Timeout(10 * time.Second)
 	request.Debug = false
 
-	fID, err := strconv.Atoi(c.DefaultQuery("fid", "1"))
+	fID, err := strconv.Atoi(c.DefaultQuery("fid", "0"))
 	if err != nil {
 		otherError(c, map[string]string{"alert": err.Error()})
 		return
