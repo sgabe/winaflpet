@@ -67,7 +67,7 @@
                 <use xlink:href="/static/svg/bootstrap-icons.svg#eye-fill"/>
               </svg>
             </a>
-            <a href="/job/{{.GUID}}/check" class="btn btn-outline-secondary action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+            <a href="/job/{{.GUID}}/check" class="btn btn-outline-secondary action check {{if and (eq .Status 0) (not $hasRunning) }}disabled{{end}}" data-method="POST">
               <svg class="bi check-circle-fill" width="20" height="20" fill="currentColor" color="grey" viewBox="0 0 20 20">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
               </svg>
