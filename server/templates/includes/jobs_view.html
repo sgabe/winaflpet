@@ -37,7 +37,7 @@
             {{end}}
           {{end}}
           {{if not $hasRunning }}
-              <a id="startJob-{{.GUID}}" href="/job/{{$.GUID}}/start" class="btn btn-outline-secondary action play" data-method="POST">
+              <a id="startJob-{{$.GUID}}" href="/job/{{$.GUID}}/start" class="btn btn-outline-secondary action play" data-method="POST">
                 <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20">
                   <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
                 </svg>
@@ -48,7 +48,7 @@
               {{if not $break}}
                 {{if not (hasStatus $.Status .) }}
                   {{ $break = true }}
-              <a id="startJob-{{.GUID}}-{{.}}" href="/job/{{$.GUID}}/start?fid={{.}}" class="btn btn-outline-secondary action play play-{{.}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
+              <a id="startJob-{{$.GUID}}-{{.}}" href="/job/{{$.GUID}}/start?fid={{.}}" class="btn btn-outline-secondary action play play-{{.}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
                 <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20">
                   <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
                 </svg>
