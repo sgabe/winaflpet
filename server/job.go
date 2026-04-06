@@ -52,6 +52,8 @@ const (
 		"extras_dir" TEXT,
 		"attach_lib" TEXT,
 		"custom_lib" TEXT,
+		"post_lib" TEXT,
+		"post_lib_args" TEXT,
 		"memory_limit" TEXT,
 		"persist_cache" INTEGER,
 		"dirty_mode" INTEGER,
@@ -100,6 +102,8 @@ type Job struct {
 	ExtrasDir      string `json:"extras_dir" form:"extras_dir" stbl:"extras_dir"`
 	AttachLib      string `json:"attach_lib" form:"attach_lib" stbl:"attach_lib"`
 	CustomLib      string `json:"custom_lib" form:"custom_lib" stbl:"custom_lib"`
+	PostLib        string `json:"post_lib" form:"post_lib" stbl:"post_lib"`
+	PostLibArgs    string `json:"post_lib_args" form:"post_lib_args" stbl:"post_lib_args"`
 	MemoryLimit    string `json:"memory_limit" form:"memory_limit" stbl:"memory_limit"`
 	PersistCache   int    `json:"persist_cache" form:"persist_cache" stbl:"persist_cache"`
 	DirtyMode      int    `json:"dirty_mode" form:"dirty_mode" stbl:"dirty_mode"`

@@ -299,6 +299,26 @@
 
     </div>
 
+    <div class="row ms-0">
+
+      <div class="col-md">
+        <label for="postLib" class="col-md col-form-label">Postprocessor library name</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="post_lib" id="postLib" aria-describedby="postLibHelp" value="{{.job.PostLib}}">
+          <small id="postLibHelp" class="form-text text-muted">Name (or full path) of the postprocessor library to load</small>
+        </div>
+      </div>
+
+      <div class="col-md">
+        <label for="postLibArgs" class="col-md col-form-label">Postprocessor library arguments</label>
+        <div class="col-md">
+          <input type="text" class="form-control" name="post_lib_args" id="postLibArgs" aria-describedby="postLibArgsHelp" value="{{.job.PostLibArgs}}">
+          <small id="postLibArgsHelp" class="form-text text-muted">Custom arguments (space-separated) for the postprocessor library</small>
+        </div>
+      </div>
+
+    </div>
+
   </fieldset>
 
   <fieldset class="row mb-3">

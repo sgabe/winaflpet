@@ -59,6 +59,8 @@ type Job struct {
 	ExtrasDir      string `json:"extras_dir"`
 	AttachLib      string `json:"attach_lib"`
 	CustomLib      string `json:"custom_lib"`
+	PostLib        string `json:"post_lib"`
+	PostLibArgs    string `json:"post_lib_args"`
 	MemoryLimit    string `json:"memory_limit"`
 	PersistCache   int    `json:"persist_cache"`
 	DirtyMode      int    `json:"dirty_mode"`
@@ -210,6 +212,13 @@ func (j Job) Start(fID int) error {
 
 	if j.CustomLib != "" {
 		args = append(args, fmt.Sprintf("-l %s", j.CustomLib))
+	}
+
+	if j.PostLib != "" {
+		envs = append(envs, fmt.Sprintf("AFL_POST_LIBRARY=%s", j.PostLib))
+		if j.PostLibArgs != "" {
+			envs = append(envs, fmt.Sprintf("AFL_POST_LIBRARY_ARGS=%s", j.PostLibArgs))
+		}
 	}
 
 	if j.ExtrasDir != "" {

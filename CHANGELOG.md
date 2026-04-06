@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Support for PageHeap‑enabled .ph harness during crash verification.
+- Support for AFL postprocessor library.
 
 ### Changed
 - Use the label "unavailable" for false positives.
