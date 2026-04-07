@@ -157,6 +157,14 @@ func deleteCrashes(c *gin.Context) {
 		return
 	}
 
+	b = sq.Delete("sqlite_sequence").Where(sq.Eq{"name": TB_NAME_CRASHES}).RunWith(db)
+
+	_, err = b.Exec()
+	if err != nil {
+		otherError(c, map[string]string{"alert": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"alert":   "All crash records have been successfully deleted!",
 		"context": "success",

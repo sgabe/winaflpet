@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Zombie child processes during crash verification using Windows job objects.
+- Crash auto-increment counter not resetting after deletion.
 
 ## [0.7.0] - 2025-11-30
 ### Added
