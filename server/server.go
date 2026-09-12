@@ -151,6 +151,8 @@ func setupRouter() *gin.Engine {
 	r.Use(auth.MiddlewareFunc())
 	{
 		r.GET("/", home)
+		r.GET("/settings", editSettings)
+		r.POST("/settings", editSettings)
 
 		r.GET("/user/edit", editUser)
 		r.POST("/user/edit", editUser)

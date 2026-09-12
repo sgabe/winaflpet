@@ -45,6 +45,9 @@
                         <a class="nav-link {{ if isActive .path "/crashes/view" }}active{{ end }}" aria-current="{{ isActive .path "/crashes/view"}}" href="/crashes/view">Crashes</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ if isActive .path "/settings" }}active{{ end }}" href="/settings">Settings</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ if isActive .path "/user/edit" }}active{{ end }}" aria-current="{{ isActive .path "/user/edit"}}" href="/user/edit">Profile</a>
                     </li>
                     <li class="nav-item">
