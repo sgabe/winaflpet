@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -73,7 +74,8 @@ const (
 )
 
 type Job struct {
-	structable.Recorder
+	structable.Recorder `json:"-"`
+
 	ID             int    `stbl:"id, PRIMARY_KEY, AUTO_INCREMENT"`
 	AgentID        int    `json:"aid" form:"aid" stbl:"aid"`
 	GUID           xid.ID `json:"guid" stbl:"guid"`
@@ -236,101 +238,112 @@ func loadJobs() ([]*Job, error) {
 	return jobs, err
 }
 
+// Stream the stored upload with server-loaded job settings. No destination from
+// the browser or the ZIP is trusted, and uploads are never automatically retried.
 func startJob(c *gin.Context) {
+	unlock := lockJob(c.Param("guid"))
+	defer unlock()
 	j := newJob()
-	j.GUID, _ = xid.FromString(c.Param("guid"))
-	if err := j.LoadByGUID(); err != nil {
-		otherError(c, map[string]string{"alert": err.Error()})
-		return
-	}
-
-	// TODO: Handle errors.
-	a, _ := j.GetAgent()
-
-	request := gorequest.New().Timeout(10 * time.Second)
-	request.Debug = false
-
-	fID, err := strconv.Atoi(c.DefaultQuery("fid", "0"))
+	var err error
+	j.GUID, err = xid.FromString(c.Param("guid"))
 	if err != nil {
-		otherError(c, map[string]string{"alert": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	targetURL := fmt.Sprintf("http://%s:%d/job/%s/start", a.Host, a.Port, j.GUID)
-	_, bodyBytes, errs := request.Post(targetURL).Query(fmt.Sprintf("fid=%d", fID)).Set("X-Auth-Key", a.Key).Send(j).EndBytes()
-	if errs != nil {
-		otherError(c, map[string]string{"alert": errs[0].Error()})
+	if err = j.LoadByGUID(); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-
-	resp := APIResponse{}
-	if err := json.Unmarshal(bodyBytes, &resp); err != nil {
-		otherError(c, map[string]string{"alert": err.Error()})
+	fid, err := strconv.Atoi(c.DefaultQuery("fid", "0"))
+	if err != nil || fid < 0 || fid > j.Cores || j.Cores < 1 || j.Cores > 40 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid instance selection"})
 		return
 	}
-
-	if len(resp.Err) > 0 {
-		if strings.Contains(resp.Err, "At-risk data found") {
-			j.Input = "-"
-			j.Update()
-			j.Cleanup(fID)
-			resp.Err = "At-risk data found, try to start again to resume an aborted job."
+	// Refuse delivery to an older agent; it cannot safely deduplicate retries.
+	var capability JobSnapshot
+	if err = agentRequest(j, "check", nil, &capability); err != nil || capability.Protocol != 2 {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Start not submitted: a reachable lifecycle protocol 2 agent is required"})
+		return
+	}
+	if !capability.Known {
+		if err = j.allowUnknownRun(); err != nil {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
 		}
-		otherError(c, map[string]string{"alert": resp.Err})
+	}
+	requestID, payload, err := j.pendingStart(fid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	j.Status = setStatus(j.Status, statusMap[fID])
-	j.Update()
-
-	c.JSON(http.StatusOK, gin.H{
-		"alert":   resp.Msg,
-		"context": "success",
-	})
+	var snapshot JobSnapshot
+	err = agentRequest(j, fmt.Sprintf("start?fid=%d&request_id=%s", fid, requestID), payload, &snapshot)
+	if err != nil {
+		var responseError *agentHTTPError
+		if errors.As(err, &responseError) && responseError.Code >= 400 && responseError.Code < 500 {
+			_ = j.clearPendingStart(fid)
+		}
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Start unconfirmed: " + err.Error()})
+		return
+	}
+	if err = validateSnapshot(snapshot, payload.Cores); err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Start unconfirmed: " + err.Error()})
+		return
+	}
+	snapshot.ObservedAt = time.Now().Unix()
+	if err = j.saveSnapshot(snapshot); err == nil {
+		err = j.clearPendingStart(fid)
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusAccepted, gin.H{"alert": snapshot.Msg, "snapshot": snapshot, "request_id": requestID, "context": "success"})
 }
 
 func stopJob(c *gin.Context) {
+	unlock := lockJob(c.Param("guid"))
+	defer unlock()
 	j := newJob()
-	j.GUID, _ = xid.FromString(c.Param("guid"))
-	if err := j.LoadByGUID(); err != nil {
-		otherError(c, map[string]string{"alert": err.Error()})
+	var err error
+	j.GUID, err = xid.FromString(c.Param("guid"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	j.Status = 0
-	j.Update()
-
-	// TODO: Handle errors.
-	a, _ := j.GetAgent()
-
-	request := gorequest.New()
-	request.Debug = false
-
-	targetURL := fmt.Sprintf("http://%s:%d/job/%s/stop", a.Host, a.Port, j.GUID)
-	_, bodyBytes, errs := request.Post(targetURL).Set("X-Auth-Key", a.Key).EndBytes()
-	if errs != nil {
-		otherError(c, map[string]string{"alert": errs[0].Error()})
+	if err = j.LoadByGUID(); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-
-	resp := APIResponse{}
-	if err := json.Unmarshal(bodyBytes, &resp); err != nil {
-		otherError(c, map[string]string{"alert": err.Error()})
+	var snapshot JobSnapshot
+	ids, err := j.pendingStartIDs()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
-	if len(resp.Err) > 0 {
-		otherError(c, map[string]string{"alert": resp.Err})
+	if err = agentRequest(j, "stop", gin.H{"job": j, "request_ids": ids}, &snapshot); err == nil {
+		err = validateSnapshot(snapshot, j.Cores)
+	}
+	if err != nil {
+		previous, _ := j.snapshot()
+		c.JSON(http.StatusBadGateway, gin.H{"error": "Stop unconfirmed: " + err.Error(), "snapshot": previous, "stale": true})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"alert":   resp.Msg,
-		"context": "success",
-	})
+	snapshot.ObservedAt = time.Now().Unix()
+	if err = j.saveSnapshot(snapshot); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Stop response could not be saved: " + err.Error()})
+		return
+	}
+	if _, err = db.Exec("DELETE FROM job_start_requests WHERE guid=?", j.GUID.String()); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Stop accepted, but pending request cancellation could not be saved: " + err.Error()})
+		return
+	}
+	c.JSON(http.StatusAccepted, gin.H{"alert": snapshot.Msg, "snapshot": snapshot, "context": "info"})
 }
 
 func deleteJob(c *gin.Context) {
+	unlock := lockJob(c.Param("guid"))
+	defer unlock()
 	j := newJob()
 	j.GUID, _ = xid.FromString(c.Param("guid"))
 	if err := j.LoadByGUID(); err != nil {
@@ -338,7 +351,11 @@ func deleteJob(c *gin.Context) {
 		return
 	}
 
-	if err := j.Delete(); err != nil {
+	if err := j.allowConfigChange(); err != nil {
+		otherError(c, map[string]string{"alert": err.Error()})
+		return
+	}
+	if err := j.deleteConfiguration(); err != nil {
 		otherError(c, map[string]string{"alert": err.Error()})
 		return
 	}
@@ -522,60 +539,54 @@ func plotJob(c *gin.Context) {
 }
 
 func checkJob(c *gin.Context) {
+	unlock := lockJob(c.Param("guid"))
+	defer unlock()
 	j := newJob()
-	j.GUID, _ = xid.FromString(c.Param("guid"))
-	if err := j.LoadByGUID(); err != nil {
-		otherError(c, map[string]string{
-			"alert": err.Error(),
-		})
+	var err error
+	j.GUID, err = xid.FromString(c.Param("guid"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	a, _ := j.GetAgent()
-
-	request := gorequest.New()
-	request.Debug = false
-
-	type InstanceStatus struct {
-		FID    int    `json:"fid"`
-		Status string `json:"status"`
-		PID    int    `json:"pid"`
-	}
-
-	var resp struct {
-		Instances []InstanceStatus `json:"instances"`
-		Msg       string           `json:"msg"`
-	}
-
-	targetURL := fmt.Sprintf("http://%s:%d/job/%s/check", a.Host, a.Port, j.GUID)
-	_, _, errs := request.Post(targetURL).Set("X-Auth-Key", a.Key).EndStruct(&resp)
-	if errs != nil {
-		otherError(c, map[string]string{
-			"alert": errs[0].Error(),
-		})
+	if err = j.LoadByGUID(); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-
-	for _, inst := range resp.Instances {
-
-		s := newStat()
-		s.JobID = j.ID
-		s.LoadJobIDFuzzerID()
-
-		switch inst.Status {
-		case "running":
-			j.Status = setStatus(j.Status, statusMap[inst.FID])
-		case "failed":
-			j.Status = clearStatus(j.Status, statusMap[inst.FID])
+	var snapshot JobSnapshot
+	if err = agentRequest(j, "check", nil, &snapshot); err != nil {
+		previous, _ := j.snapshot()
+		kind := "status_unavailable"
+		var agentErr *agentHTTPError
+		if errors.As(err, &agentErr) && agentErr.Code == http.StatusNotFound && agentErr.Message == "Job not found" {
+			kind = "job_missing"
 		}
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error(), "error_kind": kind, "snapshot": previous, "stale": true, "can_edit": j.CanChangeConfig()})
+		return
 	}
-
-	j.Update()
-
-	c.JSON(http.StatusOK, gin.H{
-		"alert":   resp.Msg,
-		"context": "info",
-	})
+	if snapshot.Protocol == 2 && !snapshot.Known {
+		if err = j.allowUnknownRun(); err != nil {
+			previous, _ := j.snapshot()
+			c.JSON(http.StatusBadGateway, gin.H{"error": err.Error(), "error_kind": "run_unrecognized", "snapshot": previous, "stale": true, "can_edit": j.CanChangeConfig()})
+			return
+		}
+		snapshot.Msg = "Ready to start"
+		for id := 1; id <= j.Cores; id++ {
+			snapshot.Instances = append(snapshot.Instances, InstanceState{FID: id, Status: "stopped"})
+		}
+		c.JSON(http.StatusOK, gin.H{"snapshot": snapshot, "alert": snapshot.Msg, "stale": false, "can_edit": j.CanChangeConfig()})
+		return
+	}
+	if snapshot, err = resizeIdleSnapshot(snapshot, j.Cores); err != nil {
+		previous, _ := j.snapshot()
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error(), "snapshot": previous, "stale": true, "can_edit": j.CanChangeConfig()})
+		return
+	}
+	snapshot.ObservedAt = time.Now().Unix()
+	if err = j.saveSnapshot(snapshot); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"snapshot": snapshot, "alert": snapshot.Msg, "context": "info", "stale": false, "can_edit": j.CanChangeConfig()})
 }
 
 func collectJob(c *gin.Context) {
@@ -752,6 +763,8 @@ func uploadJobs(c *gin.Context) {
 }
 
 func editJob(c *gin.Context) {
+	unlock := lockJob(c.Param("guid"))
+	defer unlock()
 	title := "Edit job"
 
 	j := newJob()
@@ -779,6 +792,10 @@ func editJob(c *gin.Context) {
 			otherError(c, map[string]string{
 				"alert": err.Error(),
 			})
+			return
+		}
+		if err := j.allowConfigChange(); err != nil {
+			otherError(c, map[string]string{"alert": err.Error()})
 			return
 		}
 		// Set default values for empty checkboxes.

@@ -68,6 +68,12 @@ func getDB() squirrel.DBProxyBeginner {
 	}
 
 	con, _ := sql.Open(dataType, dataSrc)
+	if _, err := con.Exec(`CREATE TABLE IF NOT EXISTS job_runtime (guid TEXT PRIMARY KEY, snapshot TEXT NOT NULL)`); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := con.Exec(`CREATE TABLE IF NOT EXISTS job_start_requests (guid TEXT NOT NULL, fid INTEGER NOT NULL, request_id TEXT NOT NULL, payload TEXT NOT NULL, PRIMARY KEY(guid,fid))`); err != nil {
+		log.Fatal(err)
+	}
 	cache := squirrel.NewStmtCacheProxy(con)
 
 	return cache

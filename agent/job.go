@@ -4,7 +4,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -16,7 +15,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/karrick/godirwalk"
@@ -84,7 +82,7 @@ func newJob(GUID string) Job {
 	return *j
 }
 
-func (j Job) Start(fID int) error {
+func (j Job) GetCmd(fID int) (*exec.Cmd, error) {
 	fuzzerID := fmt.Sprintf("%s%d", j.Banner, fID)
 
 	binDir := "bin32"
@@ -103,7 +101,7 @@ func (j Job) Start(fID int) error {
 	afl, err := exec.LookPath(path.Join(j.AFLDir, AFL_EXECUTABLE))
 	if err != nil {
 		logger.Error(err)
-		return err
+		return nil, err
 	}
 
 	targetCmd, targetArgs := splitCmdLine(j.TargetApp)
@@ -115,7 +113,7 @@ func (j Job) Start(fID int) error {
 	targetApp, err := exec.LookPath(targetCmd)
 	if err != nil {
 		logger.Error(err)
-		return err
+		return nil, err
 	}
 
 	envs := os.Environ()
@@ -129,7 +127,7 @@ func (j Job) Start(fID int) error {
 			err := os.RemoveAll(fuzzerDir)
 			if err != nil {
 				logger.Error(err)
-				return err
+				return nil, err
 			}
 		}
 	}
@@ -257,82 +255,7 @@ func (j Job) Start(fID int) error {
 	cmd.Env = envs
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.CmdLine = strings.Join(cmd.Args, ` `)
-	stdoutPipe, _ := cmd.StdoutPipe()
-
-	if err := cmd.Start(); err != nil {
-		logger.Error(err)
-		return err
-	}
-
-	key := instanceKey(j.GUID, fID)
-	setStatus(key, starting)
-	setPID(key, cmd.Process.Pid)
-
-	go func() {
-		reader := bufio.NewReader(stdoutPipe)
-
-		setStatus(key, bootstrapping)
-		if err := readStdout(reader); err != nil {
-			setStatus(key, failed)
-			return
-		}
-
-		setStatus(key, running)
-
-		for {
-			if _, _, err := reader.ReadLine(); err != nil {
-				setStatus(key, failed)
-				return
-			}
-		}
-	}()
-
-	go func() {
-		if err := cmd.Wait(); err != nil {
-			setStatus(key, failed)
-		}
-	}()
-
-	return nil
-}
-
-func (j Job) Stop() error {
-	processes, err := ps.Processes()
-	if err != nil {
-		logger.Error(err)
-		return err
-	}
-
-	targetCmd, _ := splitCmdLine(j.TargetApp)
-	targetExe := filepath.Base(targetCmd)
-	targetProcs := []ps.Process{}
-
-	i := strings.LastIndex(targetExe, ".exe")
-	expr := fmt.Sprintf("^%s\\d*%s$", targetExe[:i], targetExe[i:])
-	re, _ := regexp.Compile(expr)
-
-	for _, p := range processes {
-		if re.MatchString(p.Executable()) {
-			p1, _ := ps.FindProcess(p.Pid())
-			if p1 != nil {
-				targetProcs = append(targetProcs, p1)
-				p2, _ := ps.FindProcess(p1.PPid())
-				if p2 != nil {
-					targetProcs = append(targetProcs, p2)
-					p3, _ := ps.FindProcess(p2.PPid())
-					if p3 != nil {
-						targetProcs = append(targetProcs, p3)
-					}
-				}
-			}
-		}
-	}
-
-	for _, p := range targetProcs {
-		killProcess(p)
-	}
-
-	return nil
+	return cmd, nil
 }
 
 func (j Job) View() ([]Stats, []string, error) {
@@ -417,105 +340,64 @@ func (j Job) Collect() ([]Crash, error) {
 }
 
 func startJob(c *gin.Context) {
-	j := newJob(c.Param("guid"))
-
-	fID, err := strconv.Atoi(c.DefaultQuery("fid", "0"))
+	var j Job
+	guid, err := xid.FromString(c.Param("guid"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"guid":  c.Param("guid"),
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := c.ShouldBindJSON(&j); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"guid":  c.Param("guid"),
-			"error": err.Error(),
-		})
+	fid, err := strconv.Atoi(c.DefaultQuery("fid", "0"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid instance ID"})
 		return
 	}
-
-	if ok, _ := project.FindJob(j.GUID); !ok {
-		project.AddJob(j)
+	if err = c.ShouldBindJSON(&j); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-
-	if fID != 0 {
-		key := instanceKey(j.GUID, fID)
-
-		if err := j.Start(fID); err != nil {
-			setStatus(key, failed)
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"guid":  j.GUID,
-				"error": err.Error(),
-			})
-			return
-		}
-
-		ok := waitUntilStarted(key, 2*time.Minute)
-		if !ok {
-			setStatus(key, failed)
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"guid":  j.GUID,
-				"error": fmt.Sprintf("Fuzzer instance #%d of job %s failed to start!", fID, j.Name),
-			})
-			return
-		}
-
-		c.JSON(http.StatusCreated, gin.H{
-			"guid": j.GUID,
-			"msg":  fmt.Sprintf("Fuzzer instance #%d of job %s has been successfully started!", fID, j.Name),
-		})
-	} else {
-		go func(job Job) {
-			for fID := 1; fID <= job.Cores; fID++ {
-				key := instanceKey(job.GUID, fID)
-
-				if err := job.Start(fID); err != nil {
-					setStatus(key, failed)
-					return
-				}
-
-				ok := waitUntilStarted(key, 10*time.Minute)
-				if !ok {
-					setStatus(key, failed)
-					logger.Warningf("Fuzzer instance %d of job %s failed to start.", fID, j.Name)
-					continue
-				}
-			}
-		}(j)
-
-		c.JSON(http.StatusCreated, gin.H{
-			"guid": j.GUID,
-			"msg":  fmt.Sprintf("Fuzzer instances of job %s are starting sequentially.", j.Name),
-		})
+	if j.GUID != guid || j.Cores < 1 || j.Cores > 40 || fid < 0 || fid > j.Cores || strings.TrimSpace(j.TargetApp) == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid job, target or instance selection"})
+		return
 	}
+	requestID := c.Query("request_id")
+	if _, err = xid.FromString(requestID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "A valid request_id is required"})
+		return
+	}
+	snapshot, err := supervisor.start(j, fid, requestID)
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusAccepted, snapshot)
 }
 
 func stopJob(c *gin.Context) {
-	j, i, err := project.GetJob(c.Param("guid"))
+	guid, err := xid.FromString(c.Param("guid"))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"guid":  c.Param("guid"),
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := j.Stop(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"guid":  j.GUID,
-			"error": err.Error(),
-		})
+	var request struct {
+		Job        Job      `json:"job"`
+		RequestIDs []string `json:"request_ids"`
+	}
+	if err = c.ShouldBindJSON(&request); err != nil || request.Job.GUID != guid || request.Job.Cores < 1 || request.Job.Cores > 40 || len(request.RequestIDs) > 41 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stop request"})
 		return
 	}
-
-	project.RemoveJob(i)
-
-	c.JSON(http.StatusOK, gin.H{
-		"guid": j.GUID,
-		"msg":  fmt.Sprintf("Job %s has been successfully stopped!", j.Name),
-	})
+	for _, id := range request.RequestIDs {
+		if _, err = xid.FromString(id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request ID"})
+			return
+		}
+	}
+	snapshot, err := supervisor.stopRequests(request.Job, request.RequestIDs)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusAccepted, snapshot)
 }
 
 func viewJob(c *gin.Context) {
@@ -544,69 +426,12 @@ func viewJob(c *gin.Context) {
 }
 
 func checkJob(c *gin.Context) {
-	j, _, err := project.GetJob(c.Param("guid"))
+	guid, err := xid.FromString(c.Param("guid"))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	type InstanceStatus struct {
-		FID    int    `json:"fid"`
-		Status string `json:"status"`
-		PID    int    `json:"pid,omitempty"`
-	}
-
-	var instances []InstanceStatus
-
-	runningCount := 0
-	failedCount := 0
-	startingCount := 0
-
-	for fID := 1; fID <= j.Cores; fID++ {
-
-		key := instanceKey(j.GUID, fID)
-		status := getStatus(key)
-
-		pid := getPID(key)
-
-		if status == running && pid > 0 {
-			ok, _ := j.Check(pid)
-			if !ok {
-				setStatus(key, failed)
-				status = failed
-				setPID(key, 0)
-			}
-		}
-
-		switch status {
-		case running:
-			runningCount++
-		case failed:
-			failedCount++
-		case starting, bootstrapping:
-			startingCount++
-		}
-
-		instances = append(instances, InstanceStatus{
-			FID:    fID,
-			Status: string(status),
-			PID:    pid,
-		})
-	}
-
-	msg := fmt.Sprintf(
-		"%d running, %d starting, %d failed.",
-		runningCount,
-		startingCount,
-		failedCount,
-	)
-
-	c.JSON(http.StatusOK, gin.H{
-		"msg":       msg,
-		"instances": instances,
-	})
+	c.JSON(http.StatusOK, supervisor.snapshot(guid))
 }
 
 func collectJob(c *gin.Context) {
