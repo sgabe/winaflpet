@@ -71,6 +71,8 @@ func (a *Agent) Run() {
 		switch action := c.Param("action"); action {
 		case "start":
 			startJob(c)
+		case "input":
+			inputJob(c)
 		case "stop":
 			stopJob(c)
 		case "view":

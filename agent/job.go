@@ -4,6 +4,8 @@
 package main
 
 import (
+	"archive/zip"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -23,12 +25,20 @@ import (
 )
 
 const (
-	AFL_EXECUTABLE  = "afl-fuzz.exe"
-	AFL_SUCCESS_MSG = "All set and ready to roll!"
-	AFL_FAIL_REGEX  = `(?:PROGRAM ABORT|OS message) : (.*)`
-	AFL_STATS_FILE  = "fuzzer_stats"
-	AFL_PLOT_FILE   = "plot_data"
+	AFL_EXECUTABLE        = "afl-fuzz.exe"
+	AFL_SUCCESS_MSG       = "All set and ready to roll!"
+	AFL_FAIL_REGEX        = `(?:PROGRAM ABORT|OS message) : (.*)`
+	AFL_STATS_FILE        = "fuzzer_stats"
+	AFL_PLOT_FILE         = "plot_data"
+	MAX_ZIP_BYTES   int64 = 256 << 20
+	MAX_EXP_BYTES   int64 = 1 << 30
 )
+
+type inputUploadResult struct {
+	Files     int    `json:"files"`
+	Bytes     int64  `json:"bytes"`
+	Directory string `json:"directory"`
+}
 
 type Job struct {
 	GUID           xid.ID `json:"guid"`
@@ -487,4 +497,94 @@ func plotJob(c *gin.Context) {
 	c.Header("Content-Disposition", "attachment; filename="+AFL_PLOT_FILE)
 	c.Header("Content-Type", "application/octet-stream")
 	c.File(filePath)
+}
+
+func inputJob(c *gin.Context) {
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, MAX_ZIP_BYTES+(1<<20))
+	defer func() {
+		if c.Request.MultipartForm != nil {
+			_ = c.Request.MultipartForm.RemoveAll()
+		}
+	}()
+	if err := c.Request.ParseMultipartForm(1 << 20); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid upload or ZIP exceeds 256 MiB"})
+		return
+	}
+	var j Job
+	guid, err := xid.FromString(c.Param("guid"))
+	if err != nil || json.Unmarshal([]byte(c.PostForm("job")), &j) != nil || j.GUID != guid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid job configuration"})
+		return
+	}
+	supervisor.mu.Lock()
+	busy := supervisor.shuttingDown
+	if job := supervisor.jobs[guid]; job != nil {
+		for _, instance := range job.instances {
+			busy = busy || active(instance.state.Status)
+		}
+	}
+	supervisor.mu.Unlock()
+	if busy {
+		c.JSON(http.StatusConflict, gin.H{"error": "Agent is shutting down or the job is active"})
+		return
+	}
+	header, err := c.FormFile("input")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Select a ZIP file"})
+		return
+	}
+	if header.Size <= 0 || header.Size > MAX_ZIP_BYTES {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ZIP must be between 1 byte and 256 MiB"})
+		return
+	}
+	file, err := header.Open()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	defer file.Close()
+	archive, err := zip.NewReader(file, header.Size)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid ZIP: %s", err)})
+		return
+	}
+	result := inputUploadResult{Directory: j.Input}
+	for _, entry := range archive.File {
+		if entry.FileInfo().IsDir() {
+			continue
+		}
+		if entry.UncompressedSize64 > uint64(MAX_EXP_BYTES-result.Bytes) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "ZIP expands beyond 1 GiB"})
+			return
+		}
+		result.Files++
+		result.Bytes += int64(entry.UncompressedSize64)
+	}
+	if result.Files == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ZIP contains no files"})
+		return
+	}
+	// ReadDir also checks that Input exists and is a directory.
+	entries, err := os.ReadDir(j.Input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	for _, entry := range entries {
+		if err := c.Request.Context().Err(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		if !entry.IsDir() {
+			if err := os.Remove(filepath.Join(j.Input, entry.Name())); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+		}
+	}
+	if err := os.CopyFS(j.Input, archive); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Input upload failed: %s", err)})
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }

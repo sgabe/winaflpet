@@ -64,6 +64,11 @@
               </svg>
             </a>
             {{end}}
+            <a href="/job/{{.GUID}}/input" class="btn btn-outline-secondary action upload" title="Upload" aria-label="Upload">
+              <svg class="bi bi-upload" width="20" height="20" fill="currentColor" color="teal" viewBox="0 0 20 20" aria-hidden="true">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#upload"/>
+              </svg>
+            </a>
             <a href="/job/{{.GUID}}/download" class="btn btn-outline-secondary action download" title="Download" aria-label="Download">
               <svg class="bi bi-download" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#download"/>

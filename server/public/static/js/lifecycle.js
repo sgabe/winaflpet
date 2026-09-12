@@ -19,8 +19,9 @@ $(function () {
             card.find(".job-start[data-fid='0']").toggleClass("d-none", anyActive).removeClass("disabled").prop("disabled", blocked || startUnconfirmed);
             card.find(".job-stop").toggleClass("d-none", !anyActive && !pendingStop).prop("disabled", busy);
             card.find(".view,.alarm,.collect").toggleClass("d-none", !anyRunning);
-            // Configuration actions are available while no instance is active.
-            card.find(".edit,.delete,.download").toggleClass("d-none", anyActive).toggleClass("disabled", blocked).prop("disabled", blocked);
+            // Upload follows Edit and Delete exactly: all three are available
+            // while no instance is active, and hidden as soon as a run starts.
+            card.find(".edit,.delete,.upload,.download").toggleClass("d-none", anyActive).toggleClass("disabled", blocked).prop("disabled", blocked);
         }
         function render(snapshot, stale) {
             startUnconfirmed = !!stale;
@@ -86,7 +87,7 @@ $(function () {
             if (busy || $(this).prop("disabled")) return;
             var start = $(this).hasClass("job-start"), fid = $(this).attr("data-fid") || "0";
             busy = true; epoch++; if (!start) pendingStop = true;
-            card.find(".download").addClass("d-none");
+            card.find(".upload,.download").addClass("d-none");
             card.find(".edit,.delete").addClass("disabled");
             card.find(".job-start,.job-stop").prop("disabled", true);
             commandUnconfirmed = false;

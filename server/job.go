@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -238,8 +240,77 @@ func loadJobs() ([]*Job, error) {
 	return jobs, err
 }
 
+const maxInputZIPBytes int64 = 256 << 20
+
+type inputUploadResult struct {
+	Files     int    `json:"files"`
+	Bytes     int64  `json:"bytes"`
+	Directory string `json:"directory"`
+}
+
 // Stream the stored upload with server-loaded job settings. No destination from
 // the browser or the ZIP is trusted, and uploads are never automatically retried.
+func sendInputZIP(ctx context.Context, url, key string, job interface{}, archive io.Reader, size int64) (result inputUploadResult, err error) {
+	if size <= 0 || size > maxInputZIPBytes {
+		return result, errors.New("ZIP must be between 1 byte and 256 MiB")
+	}
+	config, err := json.Marshal(job)
+	if err != nil {
+		return result, err
+	}
+	var framing bytes.Buffer
+	writer := multipart.NewWriter(&framing)
+	if err = writer.WriteField("job", string(config)); err != nil {
+		return result, err
+	}
+	if _, err = writer.CreateFormFile("input", "input.zip"); err != nil {
+		return result, err
+	}
+	prefix := append([]byte(nil), framing.Bytes()...)
+	framing.Reset()
+	if err = writer.Close(); err != nil {
+		return result, err
+	}
+	body := io.MultiReader(bytes.NewReader(prefix), io.LimitReader(archive, size), bytes.NewReader(framing.Bytes()))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, body)
+	if err != nil {
+		return result, err
+	}
+	req.ContentLength = int64(len(prefix)) + size + int64(framing.Len())
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("X-Auth-Key", key)
+	client := &http.Client{Timeout: 5 * time.Minute, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	resp, err := client.Do(req)
+	if err != nil {
+		return result, fmt.Errorf("Input upload unconfirmed: %w. Check the agent's Input directory before retrying", err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		var failure struct {
+			Error string `json:"error"`
+		}
+		_ = json.NewDecoder(io.LimitReader(resp.Body, 65536)).Decode(&failure)
+		if resp.StatusCode == http.StatusNotImplemented || resp.StatusCode == http.StatusNotFound {
+			return result, errors.New("This agent does not support input uploads; update the agent")
+		}
+		return result, fmt.Errorf("Agent rejected input upload (HTTP %d): %s", resp.StatusCode, failure.Error)
+	}
+	if err = json.NewDecoder(io.LimitReader(resp.Body, 65536)).Decode(&result); err != nil || result.Files <= 0 || result.Directory == "" {
+		return result, errors.New("Input upload unconfirmed: invalid agent response. Check the agent's Input directory before retrying")
+	}
+	return result, nil
+}
+
+func (j *Job) confirmInputUpload() error {
+	if strings.TrimSpace(j.Input) == "" || j.Input == "-" {
+		return errors.New("Set and save an Input directory before uploading. '-' is a resume marker, not a directory.")
+	}
+	if err := j.allowConfigChange(); err != nil {
+		return fmt.Errorf("Cannot upload while the job is running or its state is unconfirmed: %w", err)
+	}
+	return nil
+}
+
 func startJob(c *gin.Context) {
 	unlock := lockJob(c.Param("guid"))
 	defer unlock()
@@ -908,4 +979,73 @@ func alertJob(c *gin.Context) {
 			"alert": fmt.Sprintf("Alerts are already enabled for job %s", j.Name),
 		})
 	}
+}
+
+func inputJob(c *gin.Context) {
+	unlock := lockJob(c.Param("guid"))
+	defer unlock()
+	j := newJob()
+	guid, err := xid.FromString(c.Param("guid"))
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	j.GUID = guid
+	if err = j.LoadByGUID(); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+	canUpload := false
+	render := func(code int, message, context string) {
+		c.HTML(code, "job_input", gin.H{"job": j, "can_upload": canUpload, "title": "Upload input files", "path": c.Request.URL.Path, "alert": message, "context": context})
+	}
+	if err = j.confirmInputUpload(); err != nil {
+		render(http.StatusConflict, err.Error(), "danger")
+		return
+	}
+	canUpload = true
+	if c.Request.Method == http.MethodGet {
+		render(http.StatusOK, "", "empty")
+		return
+	}
+	if strings.TrimSpace(j.Input) == "" || j.Input == "-" {
+		render(http.StatusBadRequest, "Set and save an Input directory before uploading. '-' is a resume marker, not a directory.", "danger")
+		return
+	}
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxInputZIPBytes+(1<<20))
+	defer func() {
+		if c.Request.MultipartForm != nil {
+			_ = c.Request.MultipartForm.RemoveAll()
+		}
+	}()
+	if err = c.Request.ParseMultipartForm(1 << 20); err != nil {
+		render(http.StatusBadRequest, "Invalid upload or ZIP exceeds 256 MiB.", "danger")
+		return
+	}
+	header, err := c.FormFile("input")
+	if err != nil {
+		render(http.StatusBadRequest, "Select a ZIP file.", "danger")
+		return
+	}
+	if header.Size <= 0 || header.Size > maxInputZIPBytes {
+		render(http.StatusBadRequest, "ZIP must be between 1 byte and 256 MiB.", "danger")
+		return
+	}
+	file, err := header.Open()
+	if err != nil {
+		render(http.StatusBadRequest, err.Error(), "danger")
+		return
+	}
+	defer file.Close()
+	a, err := j.GetAgent()
+	if err != nil {
+		render(http.StatusBadGateway, err.Error(), "danger")
+		return
+	}
+	result, err := sendInputZIP(c.Request.Context(), fmt.Sprintf("http://%s:%d/job/%s/input", a.Host, a.Port, j.GUID), a.Key, j, file, header.Size)
+	if err != nil {
+		render(http.StatusBadGateway, err.Error(), "danger")
+		return
+	}
+	render(http.StatusOK, fmt.Sprintf("Uploaded %d input files (%d bytes) to %s.", result.Files, result.Bytes, result.Directory), "success")
 }
