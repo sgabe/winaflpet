@@ -69,9 +69,14 @@
                 <use xlink:href="/static/svg/bootstrap-icons.svg#upload"/>
               </svg>
             </a>
-            <a href="/job/{{.GUID}}/download" class="btn btn-outline-secondary action download" title="Download" aria-label="Download">
-              <svg class="bi bi-download" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20">
+            <a href="/job/{{.GUID}}/download" class="btn btn-outline-secondary job-download download d-none" title="Download" aria-label="Download">
+              <svg class="bi bi-download" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#download"/>
+              </svg>
+            </a>
+            <a href="/job/{{.GUID}}/export" class="btn btn-outline-secondary action export" title="Export" aria-label="Export">
+              <svg class="bi bi-box-arrow-right" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#box-arrow-right"/>
               </svg>
             </a>
             <a href="/job/{{.GUID}}/edit" class="btn btn-outline-secondary action edit" title="Edit" aria-label="Edit">

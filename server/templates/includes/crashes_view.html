@@ -109,6 +109,7 @@
           <div class="btn-group float-end">
             {{template "deleteCrash" .GUID}}
             {{template "downloadCrash" .GUID}}
+            {{template "reportCrash" .GUID}}
           </div>
           {{end}}
         {{else}}
@@ -140,6 +141,7 @@
             {{template "deleteCrash" .GUID}}
             {{template "editCrash" .GUID}}
             {{template "downloadCrash" .GUID}}
+            {{template "reportCrash" .GUID}}
           </div>
         </div>
       </div>
@@ -150,4 +152,12 @@
   </div>
   {{template "pagination" .currentPage}}
 {{end}}
+{{end}}
+
+{{define "reportCrash"}}
+<a href="/crash/{{.}}/report" class="btn btn-outline-secondary crash-report" title="Report" aria-label="Report" data-method="POST">
+  <svg class="bi" width="20" height="20" fill="currentColor" color="purple" viewBox="0 0 20 20" aria-hidden="true">
+    <use xlink:href="/static/svg/bootstrap-icons.svg#file-earmark-text"/>
+  </svg>
+</a>
 {{end}}

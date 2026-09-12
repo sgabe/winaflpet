@@ -185,6 +185,8 @@ func setupRouter() *gin.Engine {
 				plotJob(c)
 			case "download":
 				downloadJob(c)
+			case "export":
+				exportJob(c)
 			default:
 				notFound(c)
 			}
@@ -233,6 +235,8 @@ func setupRouter() *gin.Engine {
 				downloadCrash(c)
 			case "edit":
 				editCrash(c)
+			case "report":
+				reportCrash(c)
 			case "verify":
 				verifyCrash(c)
 			default:

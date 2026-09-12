@@ -7,6 +7,7 @@ import (
 	"archive/zip"
 	"encoding/json"
 	"fmt"
+	"io"
 	"math/rand"
 	"net/http"
 	"os"
@@ -587,4 +588,73 @@ func inputJob(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, result)
+}
+
+func downloadJob(c *gin.Context) {
+	j, _, err := project.GetJob(c.Param("guid"))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	directory := joinPath(j.AFLDir, j.Output, "crashes")
+	entries, err := os.ReadDir(directory)
+	if os.IsNotExist(err) {
+		c.Status(http.StatusNoContent)
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	var names []string
+	for _, entry := range entries {
+		if entry.Type().IsRegular() {
+			names = append(names, entry.Name())
+		}
+	}
+	if len(names) == 0 {
+		c.Status(http.StatusNoContent)
+		return
+	}
+	archive, err := os.CreateTemp("", "winaflpet-crashes-*.zip")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer os.Remove(archive.Name())
+	defer archive.Close()
+	writer := zip.NewWriter(archive)
+	for _, name := range names {
+		file, openErr := os.Open(filepath.Join(directory, name))
+		if openErr != nil {
+			err = openErr
+			break
+		}
+		var entry io.Writer
+		entry, err = writer.Create(name)
+		if err == nil {
+			_, err = io.Copy(entry, file)
+		}
+		file.Close()
+		if err != nil {
+			break
+		}
+	}
+	closeErr := writer.Close()
+	if err == nil {
+		err = closeErr
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	info, err := archive.Stat()
+	if err == nil {
+		_, err = archive.Seek(0, io.SeekStart)
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.DataFromReader(http.StatusOK, info.Size(), "application/zip", archive, nil)
 }

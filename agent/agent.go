@@ -71,6 +71,8 @@ func (a *Agent) Run() {
 		switch action := c.Param("action"); action {
 		case "start":
 			startJob(c)
+		case "download":
+			downloadJob(c)
 		case "input":
 			inputJob(c)
 		case "stop":
@@ -90,6 +92,8 @@ func (a *Agent) Run() {
 
 	r.POST("/crash/:guid/:action", func(c *gin.Context) {
 		switch action := c.Param("action"); action {
+		case "report":
+			reportCrash(c)
 		case "verify":
 			verifyCrash(c)
 		case "download":

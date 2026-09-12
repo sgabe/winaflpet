@@ -924,7 +924,7 @@ func viewJobs(c *gin.Context) {
 	})
 }
 
-func downloadJob(c *gin.Context) {
+func exportJob(c *gin.Context) {
 	j := newJob()
 	j.GUID, _ = xid.FromString(c.Param("guid"))
 	if err := j.LoadByGUID(); err != nil {
@@ -1048,4 +1048,50 @@ func inputJob(c *gin.Context) {
 		return
 	}
 	render(http.StatusOK, fmt.Sprintf("Uploaded %d input files (%d bytes) to %s.", result.Files, result.Bytes, result.Directory), "success")
+}
+
+func downloadJob(c *gin.Context) {
+	j := newJob()
+	guid, err := xid.FromString(c.Param("guid"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid job ID"})
+		return
+	}
+	j.GUID = guid
+	if err = j.LoadByGUID(); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	a, err := j.GetAgent()
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+	req, err := http.NewRequestWithContext(c.Request.Context(), http.MethodPost, fmt.Sprintf("http://%s:%d/job/%s/download", a.Host, a.Port, j.GUID), nil)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+	req.Header.Set("X-Auth-Key", a.Key)
+	client := &http.Client{Timeout: 5 * time.Minute, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusNoContent {
+		c.JSON(http.StatusOK, gin.H{"context": "info", "alert": "No crash samples yet."})
+		return
+	}
+	if resp.StatusCode != http.StatusOK {
+		var failure struct {
+			Error string `json:"error"`
+		}
+		_ = json.NewDecoder(io.LimitReader(resp.Body, 65536)).Decode(&failure)
+		c.JSON(http.StatusBadGateway, gin.H{"error": fmt.Sprintf("Agent could not download crash samples (HTTP %d): %s", resp.StatusCode, failure.Error)})
+		return
+	}
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%q", "winaflpet_"+j.Name+"_crashes.zip"))
+	c.DataFromReader(http.StatusOK, resp.ContentLength, "application/zip", resp.Body, nil)
 }

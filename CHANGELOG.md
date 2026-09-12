@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-09
+### Added
+- Crash downloads, HTML reports and a separate job Export action.
+
 ## [1.2.0] - 2026-09-08
 ### Added
 - Seed uploads for idle jobs, with file replacement.
@@ -193,7 +197,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redirect logged in users to jobs when page was not found.
 - Improved template renderer to use layouts.
 
-[Unreleased]: https://github.com/sgabe/winaflpet/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/sgabe/winaflpet/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/sgabe/winaflpet/releases/tag/v2.0.0
 [1.2.0]: https://github.com/sgabe/winaflpet/releases/tag/v1.2.0
 [1.1.0]: https://github.com/sgabe/winaflpet/releases/tag/v1.1.0
 [1.0.0]: https://github.com/sgabe/winaflpet/releases/tag/v1.0.0
