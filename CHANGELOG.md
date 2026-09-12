@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-07
+### Changed
+- Compact live job indicators, contextual actions and improved navigation.
+
 ## [1.0.0] - 2026-09-06
 ### Fixed
 - Reliable job startup, retries, cancellation, shutdown and restart tracking.
@@ -185,7 +189,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redirect logged in users to jobs when page was not found.
 - Improved template renderer to use layouts.
 
-[Unreleased]: https://github.com/sgabe/winaflpet/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/sgabe/winaflpet/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/sgabe/winaflpet/releases/tag/v1.1.0
 [1.0.0]: https://github.com/sgabe/winaflpet/releases/tag/v1.0.0
 [0.8.0]: https://github.com/sgabe/winaflpet/releases/tag/v0.8.0
 [0.7.0]: https://github.com/sgabe/winaflpet/releases/tag/v0.7.0

@@ -752,12 +752,14 @@ func uploadJobs(c *gin.Context) {
 			"title":   title,
 			"alert":   err.Error(),
 			"context": "danger",
+			"path":    c.Request.URL.Path,
 		})
 	} else {
 		c.HTML(http.StatusOK, "jobs_upload", gin.H{
 			"title":   title,
 			"alert":   fmt.Sprintf("Job %s has been successfully uploaded!", j.Name),
 			"context": "success",
+			"path":    c.Request.URL.Path,
 		})
 	}
 }
