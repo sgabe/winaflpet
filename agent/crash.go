@@ -46,6 +46,11 @@ func newCrash(jobGUID xid.ID, fuzzerID string, function string, args string) Cra
 }
 
 func (c Crash) Verify() (Crash, error) {
+	return c.verify("")
+}
+
+// A report directory enables HTML output; ordinary verification remains lightweight.
+func (c Crash) verify(reportDir string) (Crash, error) {
 	GUID := c.JobGUID.String()
 
 	job, _, err := project.GetJob(GUID)
@@ -96,16 +101,20 @@ func (c Crash) Verify() (Crash, error) {
 		targetCmd = phPath
 	}
 
+	reportOptions := " --bGenerateReportHTML=false"
+	if reportDir != "" {
+		reportOptions = " --bGenerateReportHTML=true --reports=" + windows.EscapeArg(reportDir)
+	}
 	args := fmt.Sprintf("-q"+
 		" --collateral=1"+
 		" --bShowLicenseAndDonationInfo=false"+
-		" --bGenerateReportHTML=false"+
+		"%s"+
 		" --cBugId.bEnsurePageHeap=false"+
 		" --isa=%s"+
 		" %s --"+
 		" %s"+
 		" -f %s", // Sample delivery via file.
-		job.TargetArch, targetCmd, targetArgs, c.Args)
+		reportOptions, job.TargetArch, targetCmd, targetArgs, c.Args)
 	cmd := exec.Command(bugid, args)
 	cmd.Dir = job.BugIdDir
 	cmd.Env = append(
@@ -123,7 +132,9 @@ func (c Crash) Verify() (Crash, error) {
 		return c, err
 	}
 
-	go cmd.Wait()
+	if reportDir == "" {
+		go cmd.Wait()
+	}
 
 	procHandle, err := windows.OpenProcess(
 		windows.PROCESS_ALL_ACCESS,
@@ -132,6 +143,10 @@ func (c Crash) Verify() (Crash, error) {
 	)
 	if err != nil {
 		windows.CloseHandle(jobHandle)
+		if reportDir != "" {
+			_ = cmd.Process.Kill()
+			_ = cmd.Wait()
+		}
 		return c, err
 	}
 	defer windows.CloseHandle(procHandle)
@@ -139,33 +154,61 @@ func (c Crash) Verify() (Crash, error) {
 	err = windows.AssignProcessToJobObject(jobHandle, procHandle)
 	if err != nil {
 		windows.CloseHandle(jobHandle)
+		if reportDir != "" {
+			_ = cmd.Process.Kill()
+			_ = cmd.Wait()
+		}
 		return c, err
 	}
 
+	detected := false
 	scanner := bufio.NewScanner(stdout)
+	scanner.Buffer(make([]byte, 4096), 1024*1024)
 	for scanner.Scan() {
 		s := scanner.Text()
 		if strings.Contains(s, BUGID_BUG_NOT_DETECTED) {
-			jobCleanup(jobHandle, 2*time.Second)
-			return c, errors.New("no bug detected")
+			if reportDir == "" {
+				jobCleanup(jobHandle, 2*time.Second)
+				return c, errors.New("no bug detected")
+			}
 		}
 		if m := regexp.MustCompile(`Id @ Location: +(.*) @ (.*)`).FindStringSubmatch(s); len(m) > 0 {
 			c.BugID = m[1]
 			re := regexp.MustCompile(`[!+]`)
-			c.Module = re.Split(m[2], -1)[1]
-			c.Function = re.Split(m[2], -1)[2]
+			parts := re.Split(m[2], -1)
+			if len(parts) > 1 {
+				c.Module = parts[1]
+			}
+			if len(parts) > 2 {
+				c.Function = parts[2]
+			}
 		}
 		if m := regexp.MustCompile(`Description: +(.*)`).FindStringSubmatch(s); len(m) > 0 {
 			c.Description = m[1]
 		}
 		if m := regexp.MustCompile(`Security impact: +(.*)`).FindStringSubmatch(s); len(m) > 0 {
 			c.Impact = m[1]
-			jobCleanup(jobHandle, 2*time.Second)
-			return c, nil
+			detected = true
+			if reportDir == "" {
+				jobCleanup(jobHandle, 2*time.Second)
+				return c, nil
+			}
 		}
 	}
 
+	if reportDir != "" {
+		if err := scanner.Err(); err != nil {
+			jobCleanup(jobHandle, 2*time.Second)
+			_ = cmd.Wait()
+			return c, err
+		}
+		// Drain stdout before waiting: the HTML is saved after the bug summary.
+		_ = cmd.Wait()
+	}
 	jobCleanup(jobHandle, 2*time.Second)
+	if detected {
+		return c, nil
+	}
 	return c, errors.New("no bug detected")
 }
 
@@ -211,4 +254,35 @@ func downloadCrash(c *gin.Context) {
 	c.Header("Content-Type", "application/octet-stream")
 
 	c.File(filePath)
+}
+
+func reportCrash(c *gin.Context) {
+	var crash Crash
+	if err := c.ShouldBindJSON(&crash); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	directory, err := os.MkdirTemp("", "winaflpet-report-")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer os.RemoveAll(directory)
+	if _, err = crash.verify(directory); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	entries, err := os.ReadDir(directory)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	for _, entry := range entries {
+		if entry.Type().IsRegular() && strings.EqualFold(filepath.Ext(entry.Name()), ".html") {
+			c.Header("Content-Type", "text/html; charset=utf-8")
+			c.FileAttachment(filepath.Join(directory, entry.Name()), filepath.Base(crash.Args)+".html")
+			return
+		}
+	}
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "BugId did not generate an HTML report."})
 }

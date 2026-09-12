@@ -161,6 +161,19 @@ div.col:has(div.card) {
   padding: .5rem .75rem;
 }
 
+/* Bootstrap counts hidden siblings when choosing the ends of a button group.
+   Round the visible ends as lifecycle controls appear and disappear. */
+.card.job .card-footer .btn-group > .btn:nth-child(1 of .btn:not(.d-none):not(a.action.disabled)) {
+  margin-left: 0;
+  border-top-left-radius: var(--bs-border-radius, .375rem);
+  border-bottom-left-radius: var(--bs-border-radius, .375rem);
+}
+
+.card.job .card-footer .btn-group > .btn:nth-last-child(1 of .btn:not(.d-none):not(a.action.disabled)) {
+  border-top-right-radius: var(--bs-border-radius, .375rem);
+  border-bottom-right-radius: var(--bs-border-radius, .375rem);
+}
+
 .card-footer a.action.float-right {
   float:none;
 }
@@ -238,6 +251,56 @@ div.col:has(div.card) {
 .card-body pre {
   display:inline;
   font-size: 75%;
+}
+
+.card.job .instance-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.card.job .instance-progress:empty { display: none; }
+
+.card.job .instance-indicator {
+  position: relative;
+  flex: 0 0 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid #687078;
+  border-radius: 4px;
+  background: #e9ecef;
+  color: #343a40;
+  font-size: 11px;
+  line-height: 22px;
+  text-align: center;
+  cursor: help;
+}
+
+.card.job .instance-indicator.state-running { background: #d1e7dd; border-color: #198754; color: #0f5132; }
+.card.job .instance-indicator.state-queued,
+.card.job .instance-indicator.state-starting,
+.card.job .instance-indicator.state-bootstrapping { background: #cff4fc; border-color: #087990; color: #055160; }
+.card.job .instance-indicator.state-stopping { background: #fff3cd; border-color: #997404; color: #664d03; }
+.card.job .instance-indicator.state-failed,
+.card.job .instance-indicator.state-stop_failed { background: #f8d7da; border-color: #b02a37; color: #842029; }
+.card.job .instance-indicator.is-stale { border-style: dashed; background: #f8f9fa; }
+.card.job .instance-indicator.job-start:not(:disabled) { cursor: pointer; }
+.card.job .instance-indicator:focus-visible { outline: 2px solid #212529; outline-offset: 2px; }
+.card.job .instance-indicator:focus-visible::after {
+  content: attr(data-detail);
+  position: absolute;
+  z-index: 10;
+  bottom: 28px;
+  left: -60px;
+  width: 160px;
+  padding: 6px;
+  border-radius: 4px;
+  background: #212529;
+  color: white;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  pointer-events: none;
 }
 
 .card-body h6 {

@@ -53,6 +53,39 @@ $(function () {
         }
     }
 
+    $("a.job-download,a.crash-report").click(async function(e) {
+        e.preventDefault();
+        var button = $(this);
+        if (button.hasClass("disabled")) return;
+        button.addClass("disabled");
+        var report = button.hasClass("crash-report");
+        if (report) $("#alert").removeClass("alert-empty alert-danger alert-success").addClass("alert-info").find(".message").text("Generating HTML report...");
+        try {
+            var response = await fetch(button.attr("href"), {method: button.attr("data-method") || "GET"});
+            var type = response.headers.get("Content-Type") || "";
+            if (type.includes("application/json")) {
+                var status = await response.json();
+                $("#alert").removeClass("alert-empty alert-danger alert-info alert-success")
+                    .addClass(response.ok ? "alert-info" : "alert-danger").find(".message")
+                    .text(status.alert || status.error || "Download failed.");
+            } else {
+                if (!response.ok || !type.includes(report ? "text/html" : "application/zip") || (report && !response.headers.get("Content-Disposition"))) throw new Error("Unable to download the file. Check your connection and login.");
+                var blob = await response.blob();
+                var url = URL.createObjectURL(blob);
+                var link = document.createElement("a");
+                link.href = url;
+                link.download = getFilename({getResponseHeader: key => response.headers.get(key)}) || (report ? "report.html" : "crashes.zip");
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                if (report) $("#alert").removeClass("alert-info alert-danger").addClass("alert-success").find(".message").text("HTML report downloaded.");
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            }
+        } catch (error) {
+            $("#alert").removeClass("alert-empty alert-info alert-success").addClass("alert-danger").find(".message").text(error.message);
+        } finally { button.removeClass("disabled"); }
+    });
+
     $("a.action").click(function(e) {
         var isCustom = $(this).attr("data-method");
         var isDisabled = $(this).is("a.disabled");

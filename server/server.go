@@ -151,6 +151,8 @@ func setupRouter() *gin.Engine {
 	r.Use(auth.MiddlewareFunc())
 	{
 		r.GET("/", home)
+		r.GET("/settings", editSettings)
+		r.POST("/settings", editSettings)
 
 		r.GET("/user/edit", editUser)
 		r.POST("/user/edit", editUser)
@@ -175,6 +177,8 @@ func setupRouter() *gin.Engine {
 
 		r.GET("/job/:guid/:action", func(c *gin.Context) {
 			switch c.Param("action") {
+			case "input":
+				inputJob(c)
 			case "view":
 				viewJob(c)
 			case "edit":
@@ -183,6 +187,8 @@ func setupRouter() *gin.Engine {
 				plotJob(c)
 			case "download":
 				downloadJob(c)
+			case "export":
+				exportJob(c)
 			default:
 				notFound(c)
 			}
@@ -190,6 +196,8 @@ func setupRouter() *gin.Engine {
 
 		r.POST("/job/:guid/:action", func(c *gin.Context) {
 			switch c.Param("action") {
+			case "input":
+				inputJob(c)
 			case "start":
 				startJob(c)
 			case "stop":
@@ -229,6 +237,8 @@ func setupRouter() *gin.Engine {
 				downloadCrash(c)
 			case "edit":
 				editCrash(c)
+			case "report":
+				reportCrash(c)
 			case "verify":
 				verifyCrash(c)
 			default:

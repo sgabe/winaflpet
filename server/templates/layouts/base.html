@@ -45,6 +45,9 @@
                         <a class="nav-link {{ if isActive .path "/crashes/view" }}active{{ end }}" aria-current="{{ isActive .path "/crashes/view"}}" href="/crashes/view">Crashes</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ if isActive .path "/settings" }}active{{ end }}" href="/settings">Settings</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ if isActive .path "/user/edit" }}active{{ end }}" aria-current="{{ isActive .path "/user/edit"}}" href="/user/edit">Profile</a>
                     </li>
                     <li class="nav-item">
@@ -84,5 +87,6 @@
     <script src="/static/js/jquery-succinct-min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/masonry.pkgd.min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/custom.js" type="text/javascript" charset="utf8"></script>
+    <script src="/static/js/lifecycle.js"></script>
 </body>
 </html>

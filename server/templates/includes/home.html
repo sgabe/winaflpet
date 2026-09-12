@@ -1,4 +1,21 @@
 {{define "content"}}
 <h1>Home</h1>
 <p>Welcome to <strong>WinAFL Pet</strong>!</p>
+<p>Manage fuzzing jobs across your Windows machines, monitor progress, and collect crashes for analysis.</p>
+
+<h2>Start your first job</h2>
+<ol>
+  <li><strong>Prepare your machine.</strong> Set up WinAFL and confirm your target runs successfully from the command line. Prepare a few valid sample inputs, then install and start the WinAFL Pet agent.</li>
+  <li><strong>Connect an agent.</strong> Open <a href="/agents/create">Agents</a> and register your fuzzing machine using the secret key generated during installation.</li>
+  <li><strong>Create a job.</strong> Open <a href="/jobs/create">Jobs</a>, select your agent, and configure tool locations, input/output directories, and target settings. Paths refer to the remote fuzzing machine.</li>
+  <li><strong>Start and monitor.</strong> Click <strong>Start</strong> on the <a href="/jobs/view">Jobs page</a> and allow the initial dry run to finish. Use <strong>View</strong> to inspect fuzzing statistics and <strong>Stop</strong> when needed.</li>
+  <li><strong>Review crashes.</strong> Click <strong>Collect</strong> on the job, then open <a href="/crashes/view">Crashes</a> and use <strong>Verify</strong> to analyze findings with BugId.</li>
+</ol>
+
+<h2>New to fuzzing?</h2>
+<ul>
+  <li><a href="https://www.fuzzingbook.org/">The Fuzzing Book</a> &mdash; Learn the fundamentals through explanations and practical examples.</li>
+  <li><a href="https://github.com/google/fuzzing/blob/master/docs/intro-to-fuzzing.md">Google&rsquo;s introduction to fuzzing</a> &mdash; Explore core concepts and terminology.</li>
+  <li><a href="https://github.com/googleprojectzero/winafl#readme">WinAFL documentation</a> &mdash; Learn how to build WinAFL, prepare a target, and run your first fuzzing session.</li>
+</ul>
 {{end}}

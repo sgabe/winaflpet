@@ -11,7 +11,7 @@ require (
 	github.com/pjebs/restgate v0.0.0-20200504001537-fd9a58a4fe75
 	github.com/rs/xid v1.3.0
 	github.com/spf13/pflag v1.0.5
-	golang.org/x/crypto v0.51.0
+	golang.org/x/crypto v0.52.0
 	golang.org/x/sys v0.45.0
 )
 
@@ -39,7 +39,7 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/net v0.54.0 // indirect
 	golang.org/x/term v0.43.0 // indirect
 	golang.org/x/text v0.37.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect

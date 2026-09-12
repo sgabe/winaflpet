@@ -5,8 +5,7 @@
   <div id="cards" class="row row-cols-3">
     {{range .jobs}}
     <div class="col col-sm-6 col-lg-4 mb-3">
-      <div class="card job">
-
+      <div class="card job" data-guid="{{.GUID}}" data-cores="{{.Cores}}">
         <div class="card-header">
           <small class="id rounded-top-3 rounded-end-0 {{if .GetAgent.Status}}on{{else}}off{{end}}">{{ .ID }}</small>
           <h6 data-bs-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
@@ -17,6 +16,15 @@
 
         <div id="collapse-{{ .ID }}" class="collapse collapsed">
           <div class="card-body">
+            <section class="bg-light border rounded p-2 mb-3" aria-labelledby="job-status-{{.ID}}">
+              <div class="d-flex align-items-baseline gap-2">
+                <h6 id="job-status-{{.ID}}" class="small fw-semibold text-secondary flex-shrink-0 mb-0">Status</h6>
+                <div class="flex-grow-1 text-break" style="min-width: 0;">
+                  <div class="job-progress small" role="status">Checking agent...</div>
+                </div>
+              </div>
+              <div class="instance-progress small"></div>
+            </section>
             <p class="card-text truncate">{{ .Desc }}</p>
             <ul class="list-group list-group-flush">
               <li class="list-group-item"><h6>Instrumentation</h6> <small class="text-body-secondary float-end">{{.InstMode}}</small></li>
@@ -29,78 +37,58 @@
 
         <div class="card-footer">
           <div class="btn-group">
-          {{$ := .}}
-          {{ $hasRunning := false }}
-          {{range seq .Cores}}
-            {{if (hasStatus $.Status .)}}
-              {{ $hasRunning = true }}
-            {{end}}
-          {{end}}
-          {{if not $hasRunning }}
-              <a id="startJob-{{$.GUID}}" href="/job/{{$.GUID}}/start" class="btn btn-outline-secondary action play" data-method="POST">
-                <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20">
-                  <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
-                </svg>
-              </a>
-          {{ else }}
-            {{ $break := false }}
-            {{range seq .Cores}}
-              {{if not $break}}
-                {{if not (hasStatus $.Status .) }}
-                  {{ $break = true }}
-              <a id="startJob-{{$.GUID}}-{{.}}" href="/job/{{$.GUID}}/start?fid={{.}}" class="btn btn-outline-secondary action play play-{{.}} {{if (eq . $.Cores) }}last{{end}}" data-method="POST">
-                <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20">
-                  <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
-                </svg>
-              </a>
-                {{end}}
-              {{end}}
-            {{end}}
-          {{end}}
-            <a href="/job/{{.GUID}}/stop" class="btn btn-outline-secondary action stop {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
-              <svg class="bi stop-fill" width="20" height="20" fill="currentColor" color="orangered" viewBox="0 0 20 20">
+            <button type="button" class="btn btn-outline-secondary job-start" data-fid="0" title="Start" aria-label="Start">
+              <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20" aria-hidden="true">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
+              </svg>
+            </button>
+            <button type="button" class="btn btn-outline-secondary job-stop d-none" title="Stop" aria-label="Stop">
+              <svg class="bi stop-fill" width="20" height="20" fill="currentColor" color="orangered" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#stop-fill"/>
               </svg>
-            </a>
-            <a href="/job/{{.GUID}}/view" class="btn btn-outline-secondary action view {{if (eq .Status 0) }}disabled{{end}}">
+            </button>
+            <a href="/job/{{.GUID}}/view" class="btn btn-outline-secondary action view d-none" title="View" aria-label="View">
               <svg class="bi eye-fill" width="20" height="20" fill="currentColor" color="blue" viewBox="0 0 20 20">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#eye-fill"/>
               </svg>
             </a>
-            <a href="/job/{{.GUID}}/check" class="btn btn-outline-secondary action check {{if and (eq .Status 0) (not $hasRunning) }}disabled{{end}}" data-method="POST">
-              <svg class="bi check-circle-fill" width="20" height="20" fill="currentColor" color="grey" viewBox="0 0 20 20">
-                <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
-              </svg>
-            </a>
-            <a href="/job/{{.GUID}}/collect" class="btn btn-outline-secondary action collect {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+            <a href="/job/{{.GUID}}/collect" class="btn btn-outline-secondary action collect d-none" data-method="POST" title="Collect" aria-label="Collect">
               <svg class="bi cloud-arrow-down-fill" width="20" height="20" fill="currentColor" color="purple" viewBox="0 0 20 20">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#cloud-arrow-down-fill"/>
               </svg>
             </a>
             {{if not (.HasAlert) }}
-            <a href="/job/{{.GUID}}/alert" class="btn btn-outline-secondary action alarm {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+            <a href="/job/{{.GUID}}/alert" class="btn btn-outline-secondary action alarm d-none" data-method="POST" title="Alert" aria-label="Alert">
               <svg class="bi alarm-fill" width="20" height="20" fill="currentColor" color="green"  viewBox="0 0 20 20">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#alarm-fill"/>
               </svg>
             </a>
             {{end}}
-            <a href="/job/{{.GUID}}/download" class="btn btn-outline-secondary action download">
-              <svg class="bi bi-download" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20">
+            <a href="/job/{{.GUID}}/input" class="btn btn-outline-secondary action upload" title="Upload" aria-label="Upload">
+              <svg class="bi bi-upload" width="20" height="20" fill="currentColor" color="teal" viewBox="0 0 20 20" aria-hidden="true">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#upload"/>
+              </svg>
+            </a>
+            <a href="/job/{{.GUID}}/download" class="btn btn-outline-secondary job-download download d-none" title="Download" aria-label="Download">
+              <svg class="bi bi-download" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#download"/>
               </svg>
             </a>
-            {{if (eq .Status 0) }}
-            <a href="/job/{{.GUID}}/edit" class="btn btn-outline-secondary action edit {{if (ne .Status 0) }}disabled{{end}}">
+            <a href="/job/{{.GUID}}/export" class="btn btn-outline-secondary action export" title="Export" aria-label="Export">
+              <svg class="bi bi-box-arrow-right" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20">
+                <use xlink:href="/static/svg/bootstrap-icons.svg#box-arrow-right"/>
+              </svg>
+            </a>
+            <a href="/job/{{.GUID}}/edit" class="btn btn-outline-secondary action edit" title="Edit" aria-label="Edit">
               <svg class="bi bi-pencil" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
               </svg>
             </a>
-            <a href="/job/{{.GUID}}" class="btn btn-outline-secondary action delete {{if (ne .Status 0) }}disabled{{end}}" data-method="DELETE">
+            <a href="/job/{{.GUID}}" class="btn btn-outline-secondary action delete" data-method="DELETE" title="Delete" aria-label="Delete">
               <svg class="bi bi-trash-fill" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
               </svg>
             </a>
-            {{end}}
           </div>
         </div>
       </div>

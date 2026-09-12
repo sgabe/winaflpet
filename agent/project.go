@@ -1,59 +1,36 @@
 //go:build windows
-// +build windows
 
 package main
 
 import (
 	"errors"
-
 	"github.com/rs/xid"
+	"sync"
 )
 
 type Project struct {
-	Jobs []Job
+	mu   sync.RWMutex
+	jobs map[xid.ID]Job
 }
 
-func (p *Project) AddJob(j Job) []Job {
-	p.Jobs = append(p.Jobs, j)
-	return p.Jobs
-}
-
-func (p *Project) RemoveJob(i int) []Job {
-	copy(p.Jobs[i:], p.Jobs[i+1:])
-
-	if len(p.Jobs) == 1 {
-		p.Jobs = nil
-	} else {
-		p.Jobs[i] = p.Jobs[len(p.Jobs)-1]
-		p.Jobs = p.Jobs[:len(p.Jobs)-1]
+func (p *Project) AddJob(j Job) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if p.jobs == nil {
+		p.jobs = make(map[xid.ID]Job)
 	}
-
-	return p.Jobs
+	p.jobs[j.GUID] = j
 }
-
 func (p *Project) GetJob(guid string) (Job, int, error) {
-	var j Job
-
-	GUID, err := xid.FromString(guid)
+	id, err := xid.FromString(guid)
 	if err != nil {
-		return j, 0, nil
+		return Job{}, 0, err
 	}
-
-	for index, j := range p.Jobs {
-		if j.GUID == GUID {
-			return j, index, nil
-		}
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+	j, ok := p.jobs[id]
+	if !ok {
+		return Job{}, 0, errors.New("Job not found")
 	}
-
-	return j, 0, errors.New("Job not found")
-}
-
-func (p *Project) FindJob(GUID xid.ID) (bool, error) {
-	for _, j := range p.Jobs {
-		if j.GUID == GUID {
-			return true, nil
-		}
-	}
-
-	return false, nil
+	return j, 0, nil
 }

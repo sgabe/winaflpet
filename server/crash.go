@@ -1,13 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/gin-gonic/gin"
@@ -334,4 +337,60 @@ func downloadCrash(c *gin.Context) {
 	c.Header("Content-Disposition", "attachment; filename="+filepath.Base(strings.Replace(crash.Args, "\\", "/", -1)))
 
 	c.Data(http.StatusOK, "application/octet-stream", bodyBytes)
+}
+
+func reportCrash(c *gin.Context) {
+	crash := newCrash()
+	guid, err := xid.FromString(c.Param("guid"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid crash ID"})
+		return
+	}
+	crash.GUID = guid
+	if err = crash.LoadByGUID(); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	j := newJob()
+	j.ID = crash.JobID
+	if err = j.Load(); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	a, err := j.GetAgent()
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+	crash.JobGUID = j.GUID
+	payload, err := json.Marshal(crash)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	req, err := http.NewRequestWithContext(c.Request.Context(), http.MethodPost, fmt.Sprintf("http://%s:%d/crash/%s/report", a.Host, a.Port, crash.GUID), bytes.NewReader(payload))
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+	req.Header.Set("X-Auth-Key", a.Key)
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{Timeout: 30 * time.Minute, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		var failure struct {
+			Error string `json:"error"`
+		}
+		_ = json.NewDecoder(io.LimitReader(resp.Body, 65536)).Decode(&failure)
+		c.JSON(http.StatusBadGateway, gin.H{"error": fmt.Sprintf("Report generation failed (HTTP %d): %s", resp.StatusCode, failure.Error)})
+		return
+	}
+	filename := filepath.Base(strings.ReplaceAll(crash.Args, "\\", "/")) + ".html"
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%q", filename))
+	c.DataFromReader(http.StatusOK, resp.ContentLength, "text/html; charset=utf-8", resp.Body, nil)
 }
