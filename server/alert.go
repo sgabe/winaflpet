@@ -4,16 +4,17 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"net/mail"
 	"net/smtp"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/parnurzeal/gorequest"
 	"github.com/rs/xid"
-	"github.com/spf13/viper"
 )
 
 type Alert struct {
@@ -61,10 +62,25 @@ func (a *Alert) FindJob(GUID xid.ID) (bool, error) {
 }
 
 func (a *Alert) Monitor(j Job, m *mail.Address) {
-	d := time.Duration(viper.GetInt("alert.interval")) * time.Minute
-	ticker := time.NewTicker(d)
+	settings, err := loadSettings()
+	if err != nil {
+		log.Println("Unable to load alert settings:", err)
+		if _, i, err := a.GetJob(j.GUID); err == nil {
+			a.RemoveJob(i)
+		}
+		return
+	}
+	ticker := time.NewTicker(time.Duration(settings.Interval) * time.Minute)
+	defer ticker.Stop()
 
-	for _ = range ticker.C {
+	for range ticker.C {
+		updated, err := loadSettings()
+		if err != nil {
+			log.Println("Unable to refresh alert settings:", err)
+		} else {
+			settings = updated
+		}
+		ticker.Reset(time.Duration(settings.Interval) * time.Minute)
 		j.Recorder.Load()
 		if j.Status == 0 {
 			ticker.Stop()
@@ -135,12 +151,12 @@ func (a *Alert) Monitor(j Job, m *mail.Address) {
 		}
 
 		if len(crashes) > 0 {
-			host := viper.GetString("smtp.host")
-			port := viper.GetInt("smtp.port")
-			username := viper.GetString("smtp.username")
-			password := viper.GetString("smtp.password")
+			host := settings.Host
+			port := settings.Port
+			username := settings.Username
+			password := settings.Password
 
-			addr := fmt.Sprintf("%s:%d", host, port)
+			addr := net.JoinHostPort(host, strconv.Itoa(port))
 			auth := smtp.PlainAuth("", username, password, host)
 			to := []string{m.Address}
 

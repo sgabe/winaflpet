@@ -4,8 +4,10 @@
 package main
 
 import (
-	"bufio"
+	"archive/zip"
+	"encoding/json"
 	"fmt"
+	"io"
 	"math/rand"
 	"net/http"
 	"os"
@@ -16,7 +18,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/karrick/godirwalk"
@@ -25,12 +26,20 @@ import (
 )
 
 const (
-	AFL_EXECUTABLE  = "afl-fuzz.exe"
-	AFL_SUCCESS_MSG = "All set and ready to roll!"
-	AFL_FAIL_REGEX  = `(?:PROGRAM ABORT|OS message) : (.*)`
-	AFL_STATS_FILE  = "fuzzer_stats"
-	AFL_PLOT_FILE   = "plot_data"
+	AFL_EXECUTABLE        = "afl-fuzz.exe"
+	AFL_SUCCESS_MSG       = "All set and ready to roll!"
+	AFL_FAIL_REGEX        = `(?:PROGRAM ABORT|OS message) : (.*)`
+	AFL_STATS_FILE        = "fuzzer_stats"
+	AFL_PLOT_FILE         = "plot_data"
+	MAX_ZIP_BYTES   int64 = 256 << 20
+	MAX_EXP_BYTES   int64 = 1 << 30
 )
+
+type inputUploadResult struct {
+	Files     int    `json:"files"`
+	Bytes     int64  `json:"bytes"`
+	Directory string `json:"directory"`
+}
 
 type Job struct {
 	GUID           xid.ID `json:"guid"`
@@ -84,7 +93,7 @@ func newJob(GUID string) Job {
 	return *j
 }
 
-func (j Job) Start(fID int) error {
+func (j Job) GetCmd(fID int) (*exec.Cmd, error) {
 	fuzzerID := fmt.Sprintf("%s%d", j.Banner, fID)
 
 	binDir := "bin32"
@@ -103,7 +112,7 @@ func (j Job) Start(fID int) error {
 	afl, err := exec.LookPath(path.Join(j.AFLDir, AFL_EXECUTABLE))
 	if err != nil {
 		logger.Error(err)
-		return err
+		return nil, err
 	}
 
 	targetCmd, targetArgs := splitCmdLine(j.TargetApp)
@@ -115,7 +124,7 @@ func (j Job) Start(fID int) error {
 	targetApp, err := exec.LookPath(targetCmd)
 	if err != nil {
 		logger.Error(err)
-		return err
+		return nil, err
 	}
 
 	envs := os.Environ()
@@ -129,7 +138,7 @@ func (j Job) Start(fID int) error {
 			err := os.RemoveAll(fuzzerDir)
 			if err != nil {
 				logger.Error(err)
-				return err
+				return nil, err
 			}
 		}
 	}
@@ -257,82 +266,7 @@ func (j Job) Start(fID int) error {
 	cmd.Env = envs
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
 	cmd.SysProcAttr.CmdLine = strings.Join(cmd.Args, ` `)
-	stdoutPipe, _ := cmd.StdoutPipe()
-
-	if err := cmd.Start(); err != nil {
-		logger.Error(err)
-		return err
-	}
-
-	key := instanceKey(j.GUID, fID)
-	setStatus(key, starting)
-	setPID(key, cmd.Process.Pid)
-
-	go func() {
-		reader := bufio.NewReader(stdoutPipe)
-
-		setStatus(key, bootstrapping)
-		if err := readStdout(reader); err != nil {
-			setStatus(key, failed)
-			return
-		}
-
-		setStatus(key, running)
-
-		for {
-			if _, _, err := reader.ReadLine(); err != nil {
-				setStatus(key, failed)
-				return
-			}
-		}
-	}()
-
-	go func() {
-		if err := cmd.Wait(); err != nil {
-			setStatus(key, failed)
-		}
-	}()
-
-	return nil
-}
-
-func (j Job) Stop() error {
-	processes, err := ps.Processes()
-	if err != nil {
-		logger.Error(err)
-		return err
-	}
-
-	targetCmd, _ := splitCmdLine(j.TargetApp)
-	targetExe := filepath.Base(targetCmd)
-	targetProcs := []ps.Process{}
-
-	i := strings.LastIndex(targetExe, ".exe")
-	expr := fmt.Sprintf("^%s\\d*%s$", targetExe[:i], targetExe[i:])
-	re, _ := regexp.Compile(expr)
-
-	for _, p := range processes {
-		if re.MatchString(p.Executable()) {
-			p1, _ := ps.FindProcess(p.Pid())
-			if p1 != nil {
-				targetProcs = append(targetProcs, p1)
-				p2, _ := ps.FindProcess(p1.PPid())
-				if p2 != nil {
-					targetProcs = append(targetProcs, p2)
-					p3, _ := ps.FindProcess(p2.PPid())
-					if p3 != nil {
-						targetProcs = append(targetProcs, p3)
-					}
-				}
-			}
-		}
-	}
-
-	for _, p := range targetProcs {
-		killProcess(p)
-	}
-
-	return nil
+	return cmd, nil
 }
 
 func (j Job) View() ([]Stats, []string, error) {
@@ -417,105 +351,64 @@ func (j Job) Collect() ([]Crash, error) {
 }
 
 func startJob(c *gin.Context) {
-	j := newJob(c.Param("guid"))
-
-	fID, err := strconv.Atoi(c.DefaultQuery("fid", "0"))
+	var j Job
+	guid, err := xid.FromString(c.Param("guid"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"guid":  c.Param("guid"),
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := c.ShouldBindJSON(&j); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"guid":  c.Param("guid"),
-			"error": err.Error(),
-		})
+	fid, err := strconv.Atoi(c.DefaultQuery("fid", "0"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid instance ID"})
 		return
 	}
-
-	if ok, _ := project.FindJob(j.GUID); !ok {
-		project.AddJob(j)
+	if err = c.ShouldBindJSON(&j); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-
-	if fID != 0 {
-		key := instanceKey(j.GUID, fID)
-
-		if err := j.Start(fID); err != nil {
-			setStatus(key, failed)
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"guid":  j.GUID,
-				"error": err.Error(),
-			})
-			return
-		}
-
-		ok := waitUntilStarted(key, 2*time.Minute)
-		if !ok {
-			setStatus(key, failed)
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"guid":  j.GUID,
-				"error": fmt.Sprintf("Fuzzer instance #%d of job %s failed to start!", fID, j.Name),
-			})
-			return
-		}
-
-		c.JSON(http.StatusCreated, gin.H{
-			"guid": j.GUID,
-			"msg":  fmt.Sprintf("Fuzzer instance #%d of job %s has been successfully started!", fID, j.Name),
-		})
-	} else {
-		go func(job Job) {
-			for fID := 1; fID <= job.Cores; fID++ {
-				key := instanceKey(job.GUID, fID)
-
-				if err := job.Start(fID); err != nil {
-					setStatus(key, failed)
-					return
-				}
-
-				ok := waitUntilStarted(key, 10*time.Minute)
-				if !ok {
-					setStatus(key, failed)
-					logger.Warningf("Fuzzer instance %d of job %s failed to start.", fID, j.Name)
-					continue
-				}
-			}
-		}(j)
-
-		c.JSON(http.StatusCreated, gin.H{
-			"guid": j.GUID,
-			"msg":  fmt.Sprintf("Fuzzer instances of job %s are starting sequentially.", j.Name),
-		})
+	if j.GUID != guid || j.Cores < 1 || j.Cores > 40 || fid < 0 || fid > j.Cores || strings.TrimSpace(j.TargetApp) == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid job, target or instance selection"})
+		return
 	}
+	requestID := c.Query("request_id")
+	if _, err = xid.FromString(requestID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "A valid request_id is required"})
+		return
+	}
+	snapshot, err := supervisor.start(j, fid, requestID)
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusAccepted, snapshot)
 }
 
 func stopJob(c *gin.Context) {
-	j, i, err := project.GetJob(c.Param("guid"))
+	guid, err := xid.FromString(c.Param("guid"))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"guid":  c.Param("guid"),
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if err := j.Stop(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"guid":  j.GUID,
-			"error": err.Error(),
-		})
+	var request struct {
+		Job        Job      `json:"job"`
+		RequestIDs []string `json:"request_ids"`
+	}
+	if err = c.ShouldBindJSON(&request); err != nil || request.Job.GUID != guid || request.Job.Cores < 1 || request.Job.Cores > 40 || len(request.RequestIDs) > 41 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid stop request"})
 		return
 	}
-
-	project.RemoveJob(i)
-
-	c.JSON(http.StatusOK, gin.H{
-		"guid": j.GUID,
-		"msg":  fmt.Sprintf("Job %s has been successfully stopped!", j.Name),
-	})
+	for _, id := range request.RequestIDs {
+		if _, err = xid.FromString(id); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request ID"})
+			return
+		}
+	}
+	snapshot, err := supervisor.stopRequests(request.Job, request.RequestIDs)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusAccepted, snapshot)
 }
 
 func viewJob(c *gin.Context) {
@@ -544,69 +437,12 @@ func viewJob(c *gin.Context) {
 }
 
 func checkJob(c *gin.Context) {
-	j, _, err := project.GetJob(c.Param("guid"))
+	guid, err := xid.FromString(c.Param("guid"))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	type InstanceStatus struct {
-		FID    int    `json:"fid"`
-		Status string `json:"status"`
-		PID    int    `json:"pid,omitempty"`
-	}
-
-	var instances []InstanceStatus
-
-	runningCount := 0
-	failedCount := 0
-	startingCount := 0
-
-	for fID := 1; fID <= j.Cores; fID++ {
-
-		key := instanceKey(j.GUID, fID)
-		status := getStatus(key)
-
-		pid := getPID(key)
-
-		if status == running && pid > 0 {
-			ok, _ := j.Check(pid)
-			if !ok {
-				setStatus(key, failed)
-				status = failed
-				setPID(key, 0)
-			}
-		}
-
-		switch status {
-		case running:
-			runningCount++
-		case failed:
-			failedCount++
-		case starting, bootstrapping:
-			startingCount++
-		}
-
-		instances = append(instances, InstanceStatus{
-			FID:    fID,
-			Status: string(status),
-			PID:    pid,
-		})
-	}
-
-	msg := fmt.Sprintf(
-		"%d running, %d starting, %d failed.",
-		runningCount,
-		startingCount,
-		failedCount,
-	)
-
-	c.JSON(http.StatusOK, gin.H{
-		"msg":       msg,
-		"instances": instances,
-	})
+	c.JSON(http.StatusOK, supervisor.snapshot(guid))
 }
 
 func collectJob(c *gin.Context) {
@@ -662,4 +498,163 @@ func plotJob(c *gin.Context) {
 	c.Header("Content-Disposition", "attachment; filename="+AFL_PLOT_FILE)
 	c.Header("Content-Type", "application/octet-stream")
 	c.File(filePath)
+}
+
+func inputJob(c *gin.Context) {
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, MAX_ZIP_BYTES+(1<<20))
+	defer func() {
+		if c.Request.MultipartForm != nil {
+			_ = c.Request.MultipartForm.RemoveAll()
+		}
+	}()
+	if err := c.Request.ParseMultipartForm(1 << 20); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid upload or ZIP exceeds 256 MiB"})
+		return
+	}
+	var j Job
+	guid, err := xid.FromString(c.Param("guid"))
+	if err != nil || json.Unmarshal([]byte(c.PostForm("job")), &j) != nil || j.GUID != guid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid job configuration"})
+		return
+	}
+	supervisor.mu.Lock()
+	busy := supervisor.shuttingDown
+	if job := supervisor.jobs[guid]; job != nil {
+		for _, instance := range job.instances {
+			busy = busy || active(instance.state.Status)
+		}
+	}
+	supervisor.mu.Unlock()
+	if busy {
+		c.JSON(http.StatusConflict, gin.H{"error": "Agent is shutting down or the job is active"})
+		return
+	}
+	header, err := c.FormFile("input")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Select a ZIP file"})
+		return
+	}
+	if header.Size <= 0 || header.Size > MAX_ZIP_BYTES {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ZIP must be between 1 byte and 256 MiB"})
+		return
+	}
+	file, err := header.Open()
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	defer file.Close()
+	archive, err := zip.NewReader(file, header.Size)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid ZIP: %s", err)})
+		return
+	}
+	result := inputUploadResult{Directory: j.Input}
+	for _, entry := range archive.File {
+		if entry.FileInfo().IsDir() {
+			continue
+		}
+		if entry.UncompressedSize64 > uint64(MAX_EXP_BYTES-result.Bytes) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "ZIP expands beyond 1 GiB"})
+			return
+		}
+		result.Files++
+		result.Bytes += int64(entry.UncompressedSize64)
+	}
+	if result.Files == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ZIP contains no files"})
+		return
+	}
+	// ReadDir also checks that Input exists and is a directory.
+	entries, err := os.ReadDir(j.Input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	for _, entry := range entries {
+		if err := c.Request.Context().Err(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		if !entry.IsDir() {
+			if err := os.Remove(filepath.Join(j.Input, entry.Name())); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+		}
+	}
+	if err := os.CopyFS(j.Input, archive); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Input upload failed: %s", err)})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+func downloadJob(c *gin.Context) {
+	j, _, err := project.GetJob(c.Param("guid"))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	directory := joinPath(j.AFLDir, j.Output, "crashes")
+	entries, err := os.ReadDir(directory)
+	if os.IsNotExist(err) {
+		c.Status(http.StatusNoContent)
+		return
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	var names []string
+	for _, entry := range entries {
+		if entry.Type().IsRegular() {
+			names = append(names, entry.Name())
+		}
+	}
+	if len(names) == 0 {
+		c.Status(http.StatusNoContent)
+		return
+	}
+	archive, err := os.CreateTemp("", "winaflpet-crashes-*.zip")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer os.Remove(archive.Name())
+	defer archive.Close()
+	writer := zip.NewWriter(archive)
+	for _, name := range names {
+		file, openErr := os.Open(filepath.Join(directory, name))
+		if openErr != nil {
+			err = openErr
+			break
+		}
+		var entry io.Writer
+		entry, err = writer.Create(name)
+		if err == nil {
+			_, err = io.Copy(entry, file)
+		}
+		file.Close()
+		if err != nil {
+			break
+		}
+	}
+	closeErr := writer.Close()
+	if err == nil {
+		err = closeErr
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	info, err := archive.Stat()
+	if err == nil {
+		_, err = archive.Seek(0, io.SeekStart)
+	}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.DataFromReader(http.StatusOK, info.Size(), "application/zip", archive, nil)
 }

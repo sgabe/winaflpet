@@ -1,0 +1,17 @@
+{{define "content"}}
+{{if .job}}
+<p>Upload input files for <strong>{{.job.Name}}</strong> to <code>{{.job.Input}}</code> on the Windows agent.</p>
+{{if .can_upload}}
+<p class="text-muted">This deletes files directly inside Input, then extracts the ZIP there with its directory structure. Prepare the archive in the layout required by your job. Existing subfolders are not deleted. Like Edit, Upload is available while the job is idle and is blocked once startup begins.</p>
+<form method="POST" enctype="multipart/form-data" action="/job/{{.job.GUID}}/input">
+  <div class="mb-3">
+    <label for="inputZip" class="form-label">Input files (ZIP)</label>
+    <input id="inputZip" name="input" type="file" class="form-control" accept=".zip,application/zip" required aria-describedby="inputHelp">
+    <small id="inputHelp" class="form-text text-muted">Maximum 256 MiB ZIP, 1 GiB extracted. Input must be an existing directory. Existing files are deleted before extraction; a failed extraction may leave a partial input set.</small>
+  </div>
+  <button type="submit" class="btn btn-primary">Replace input files</button>
+</form>
+{{end}}
+<a href="/jobs/view" class="btn btn-outline-secondary mt-2">Back to jobs</a>
+{{end}}
+{{end}}
