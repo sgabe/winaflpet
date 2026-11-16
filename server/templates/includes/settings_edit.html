@@ -1,10 +1,10 @@
 {{define "content"}}
 <div class="settings-layout"><div class="settings-main">
-<form class="settings-panel" method="POST" action="/settings">
+<form class="settings-panel" method="POST" action="/settings" data-validation-summary>
 
   <fieldset class="settings-section">
-    <legend>Email alerts</legend>
-    <p class="settings-description text-muted">SMTP server used to send crash alert emails.</p>
+    <legend>SMTP server</legend>
+    <p class="settings-description text-muted">Outgoing mail server used to send crash alert emails.</p>
     <div class="settings-fields">
 
       <div class="settings-field settings-field-half">
@@ -17,6 +17,14 @@
         <input type="number" class="form-control" id="smtp_port" name="smtp_port" min="1" max="65535" value="{{.settings.Port}}" required>
         <small class="form-text text-muted">Usually 587 for STARTTLS. Implicit TLS on port 465 is not supported.</small>
       </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset class="settings-section">
+    <legend>Sender &amp; sign-in</legend>
+    <p class="settings-description text-muted">SMTP account used to sign in and send alerts. The username is also the sender address.</p>
+    <div class="settings-fields">
 
       <div class="settings-field settings-field-half">
         <label for="smtp_username" class="form-label">SMTP username</label>

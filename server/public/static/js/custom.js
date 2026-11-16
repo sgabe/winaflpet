@@ -1196,6 +1196,37 @@ function initValidationSummaries() {
 
 $(initValidationSummaries);
 
+function initSettingsPasswordClear() {
+    var toggle = document.getElementById("clear_password");
+    var password = document.getElementById("smtp_password");
+    var help = document.getElementById("password_help");
+    if (!toggle || !password || !help || toggle.type !== "checkbox" || toggle.dataset.passwordClearBound) return;
+    toggle.dataset.passwordClearBound = "1";
+    var disabled = password.disabled;
+    var text = help.textContent;
+
+    var sync = function() {
+        if (toggle.checked) {
+            password.value = "";
+            password.disabled = true;
+            help.textContent = "The saved password will be removed when you save settings.";
+        } else {
+            password.disabled = disabled;
+            help.textContent = text;
+        }
+    };
+
+    toggle.addEventListener("change", sync);
+    if (toggle.form) {
+        toggle.form.addEventListener("reset", function() {
+            setTimeout(sync, 0);
+        });
+    }
+    sync();
+}
+
+$(initSettingsPasswordClear);
+
 function initPlotRefresh() {
     var plots = document.getElementById("plots");
     if (!plots || plots.dataset.plotRefreshBound) return;
