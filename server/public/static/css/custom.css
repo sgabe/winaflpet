@@ -2083,6 +2083,41 @@ footer .version:before {
   outline-offset: 2px;
 }
 
+.settings-form-layout {
+  min-width: 0;
+}
+
+.settings-form-layout > form {
+  min-width: 0;
+}
+
+@media (min-width: 1200px) {
+  .settings-form-layout.has-section-navigation {
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .settings-form-layout.has-section-navigation > nav.settings-navigation {
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    margin-bottom: 0;
+    max-height: calc(100dvh - 6rem);
+    overflow-y: auto;
+  }
+  .settings-form-layout.has-section-navigation > nav.settings-navigation .settings-navigation-label {
+    flex: none;
+  }
+  .settings-form-layout.has-section-navigation > nav.settings-navigation .settings-navigation-link {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
 .settings-panel > .settings-section {
   scroll-margin-top: 7rem;
 }

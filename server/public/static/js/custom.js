@@ -554,6 +554,9 @@ $(function () {
         });
 
         form.parentNode.insertBefore(nav, form);
+        if (form.parentNode.classList.contains("settings-form-layout")) {
+            form.parentNode.classList.add("has-section-navigation");
+        }
     });
 });
 
