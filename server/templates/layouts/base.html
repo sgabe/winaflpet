@@ -10,6 +10,7 @@
     <script defer src="/static/js/bootstrap.bundle.min.js" type="module" charset="utf8"></script>
 </head>
 <body>
+    {{$currentPath := default "" .path}}
     <nav class="navbar md:navbar-expand navbar-dark bg-dark fixed-top" aria-label="Main navigation">
         <div class="container">
             <a class="navbar-brand" href="/">
@@ -24,31 +25,31 @@
             <div class="collapse navbar-collapse" id="navbar">
                 <ul class="nav navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link {{ if isActive .path "/" }}active{{ end }}" {{ if isActive .path "/" }}aria-current="page" {{ end }}href="/">Home</a>
+                        <a class="nav-link {{ if isActive $currentPath "/" }}active{{ end }}" {{ if isActive $currentPath "/" }}aria-current="page" {{ end }}href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="nav-link {{ if or (hasPrefix "/agents/" .path) (hasPrefix "/agent/" .path) }}active{{ end }}" id="dropdown01" data-bs-toggle="menu" aria-expanded="false">Agents</button>
+                        <button type="button" class="nav-link {{ if or (hasPrefix "/agents/" $currentPath) (hasPrefix "/agent/" $currentPath) }}active{{ end }}" id="dropdown01" data-bs-toggle="menu" aria-expanded="false">Agents</button>
                         <div class="menu" aria-labelledby="dropdown01">
-                            <a class="menu-item {{ if isActive .path "/agents/create" }}active{{ end }}" {{ if isActive .path "/agents/create" }}aria-current="page" {{ end }}href="/agents/create">Create</a>
-                            <a class="menu-item {{ if isActive .path "/agents/view" }}active{{ end }}" {{ if isActive .path "/agents/view" }}aria-current="page" {{ end }}href="/agents/view">View</a>
+                            <a class="menu-item {{ if isActive $currentPath "/agents/create" }}active{{ end }}" {{ if isActive $currentPath "/agents/create" }}aria-current="page" {{ end }}href="/agents/create">Create</a>
+                            <a class="menu-item {{ if isActive $currentPath "/agents/view" }}active{{ end }}" {{ if isActive $currentPath "/agents/view" }}aria-current="page" {{ end }}href="/agents/view">View</a>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="nav-link {{ if or (hasPrefix "/jobs/" .path) (hasPrefix "/job/" .path) }}active{{ end }}" id="dropdown02" data-bs-toggle="menu" aria-expanded="false">Jobs</button>
+                        <button type="button" class="nav-link {{ if or (hasPrefix "/jobs/" $currentPath) (hasPrefix "/job/" $currentPath) }}active{{ end }}" id="dropdown02" data-bs-toggle="menu" aria-expanded="false">Jobs</button>
                         <div class="menu" aria-labelledby="dropdown02">
-                            <a class="menu-item {{ if isActive .path "/jobs/create" }}active{{ end }}" {{ if isActive .path "/jobs/create" }}aria-current="page" {{ end }}href="/jobs/create">Create</a>
-                            <a class="menu-item {{ if isActive .path "/jobs/upload" }}active{{ end }}" {{ if isActive .path "/jobs/upload" }}aria-current="page" {{ end }}href="/jobs/upload">Upload</a>
-                            <a class="menu-item {{ if isActive .path "/jobs/view" }}active{{ end }}" {{ if isActive .path "/jobs/view" }}aria-current="page" {{ end }}href="/jobs/view">View</a>
+                            <a class="menu-item {{ if isActive $currentPath "/jobs/create" }}active{{ end }}" {{ if isActive $currentPath "/jobs/create" }}aria-current="page" {{ end }}href="/jobs/create">Create</a>
+                            <a class="menu-item {{ if isActive $currentPath "/jobs/upload" }}active{{ end }}" {{ if isActive $currentPath "/jobs/upload" }}aria-current="page" {{ end }}href="/jobs/upload">Upload</a>
+                            <a class="menu-item {{ if isActive $currentPath "/jobs/view" }}active{{ end }}" {{ if isActive $currentPath "/jobs/view" }}aria-current="page" {{ end }}href="/jobs/view">View</a>
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ if or (isActive .path "/crashes/view") (hasPrefix "/crash/" .path) }}active{{ end }}" {{ if isActive .path "/crashes/view" }}aria-current="page" {{ end }}href="/crashes/view">Crashes</a>
+                        <a class="nav-link {{ if or (isActive $currentPath "/crashes/view") (hasPrefix "/crash/" $currentPath) }}active{{ end }}" {{ if isActive $currentPath "/crashes/view" }}aria-current="page" {{ end }}href="/crashes/view">Crashes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ if isActive .path "/settings" }}active{{ end }}" {{ if isActive .path "/settings" }}aria-current="page" {{ end }}href="/settings">Settings</a>
+                        <a class="nav-link {{ if isActive $currentPath "/settings" }}active{{ end }}" {{ if isActive $currentPath "/settings" }}aria-current="page" {{ end }}href="/settings">Settings</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ if isActive .path "/user/edit" }}active{{ end }}" {{ if isActive .path "/user/edit" }}aria-current="page" {{ end }}href="/user/edit">Profile</a>
+                        <a class="nav-link {{ if isActive $currentPath "/user/edit" }}active{{ end }}" {{ if isActive $currentPath "/user/edit" }}aria-current="page" {{ end }}href="/user/edit">Profile</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/user/logout" aria-label="Sign out" title="Sign out">
@@ -63,7 +64,7 @@
         </div>
     </nav>
     <main role="main" class="container">
-    {{if .title}}{{$parentlabel := ""}}{{$parenthref := ""}}{{if or (isActive .path "/agents/create") (hasPrefix "/agent/" .path)}}{{$parentlabel = "Agents"}}{{$parenthref = "/agents/view"}}{{else if or (isActive .path "/jobs/create") (isActive .path "/jobs/upload") (hasPrefix "/job/" .path)}}{{$parentlabel = "Jobs"}}{{$parenthref = "/jobs/view"}}{{else if hasPrefix "/crash/" .path}}{{$parentlabel = "Crashes"}}{{$parenthref = "/crashes/view"}}{{end}}{{if $parenthref}}
+    {{if .title}}{{$parentlabel := ""}}{{$parenthref := ""}}{{if or (isActive $currentPath "/agents/create") (hasPrefix "/agent/" $currentPath)}}{{$parentlabel = "Agents"}}{{$parenthref = "/agents/view"}}{{else if or (isActive $currentPath "/jobs/create") (isActive $currentPath "/jobs/upload") (hasPrefix "/job/" $currentPath)}}{{$parentlabel = "Jobs"}}{{$parenthref = "/jobs/view"}}{{else if hasPrefix "/crash/" $currentPath}}{{$parentlabel = "Crashes"}}{{$parenthref = "/crashes/view"}}{{end}}{{if $parenthref}}
     <nav class="page-breadcrumbs" aria-label="Breadcrumb">
         <ol>
             <li><a class="page-breadcrumb-parent" href="{{$parenthref}}">{{$parentlabel}}</a></li>
@@ -71,17 +72,17 @@
         </ol>
     </nav>
     {{end}}{{end}}
-    {{if .title}}{{if or (isActive .path "/agents/view") (isActive .path "/jobs/view") (isActive .path "/crashes/view")}}
+    {{if .title}}{{if or (isActive $currentPath "/agents/view") (isActive $currentPath "/jobs/view") (isActive $currentPath "/crashes/view")}}
     <div class="page-heading">
         <div class="page-heading-text">
             <h1>{{.title}}</h1>
-            <p class="page-heading-subtitle">{{if isActive .path "/agents/view"}}Fuzzing machines running the WinAFL Pet agent. Enabled and Disabled are configuration settings; use Check connection to test reachability.{{else if isActive .path "/jobs/view"}}Configure fuzzing jobs across your agents and monitor their instances.{{else}}Collected findings for review. Verification and risk labels do not confirm exploitability.{{end}}</p>
+            <p class="page-heading-subtitle">{{if isActive $currentPath "/agents/view"}}Fuzzing machines running the WinAFL Pet agent. Enabled and Disabled are configuration settings; use Check connection to test reachability.{{else if isActive $currentPath "/jobs/view"}}Configure fuzzing jobs across your agents and monitor their instances.{{else}}Collected findings for review. Verification and risk labels do not confirm exploitability.{{end}}</p>
         </div>
-        {{if isActive .path "/agents/view"}}
+        {{if isActive $currentPath "/agents/view"}}
         <div class="page-heading-actions">
             <a class="btn theme-primary" href="/agents/create">New agent</a>
         </div>
-        {{else if isActive .path "/jobs/view"}}
+        {{else if isActive $currentPath "/jobs/view"}}
         <div class="page-heading-actions">
             <a class="btn btn-outline theme-secondary" href="/jobs/upload">Import jobs</a>
             <a class="btn theme-primary" href="/jobs/create">New job</a>

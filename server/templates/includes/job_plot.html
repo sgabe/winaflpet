@@ -1,4 +1,9 @@
 {{define "content"}}
+<div class="plot-toolbar">
+  <a href="/jobs/view" id="plot-back-link">Back to jobs</a>
+  <button type="button" id="plot-refresh" class="btn btn-outline theme-secondary">Refresh plot data</button>
+</div>
+<p id="plot-refresh-status" class="plot-refresh-status" role="status" aria-live="polite" hidden></p>
 <div id="plots">
 {{range .plots}}
   <figure class="plot-figure">

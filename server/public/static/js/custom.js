@@ -160,14 +160,7 @@ $(function () {
         $(".alert").toggleClass("alert-empty");
     });
 
-    if ($("#plots").length) {
-        setInterval(function() {
-            $.post(window.location.href, function(data) {});
-        }, 1000*30);
-        setInterval(function() {
-            location.reload();
-        }, 1000*100);
-    }
+    initPlotRefresh();
 
     $("form.create").submit(function(e) {
         e.preventDefault();
@@ -819,6 +812,87 @@ function initFileSummaries() {
 }
 
 $(initFileSummaries);
+
+function initPlotRefresh() {
+    var plots = document.getElementById("plots");
+    if (!plots || plots.dataset.plotRefreshBound) return;
+    plots.dataset.plotRefreshBound = "1";
+
+    var button = document.getElementById("plot-refresh");
+    var status = document.getElementById("plot-refresh-status");
+    var back = document.getElementById("plot-back-link");
+    var busy = false;
+    var outdated = " Displayed plots may be out of date.";
+
+    if (back && /^\/job\/[^/]+\/plot$/.test(window.location.pathname)) {
+        back.setAttribute("href", window.location.pathname.replace(/\/plot$/, "/view"));
+        back.textContent = "Back to run";
+    }
+
+    var show = function(text, state) {
+        if (!status) return;
+        status.textContent = text;
+        status.classList.toggle("is-error", state === "error");
+        status.classList.toggle("is-info", state === "info");
+        status.hidden = false;
+    };
+
+    var refresh = function(manual) {
+        if (busy) return;
+        busy = true;
+        if (manual && status) {
+            status.hidden = true;
+            status.textContent = "";
+        }
+        if (button) {
+            button.disabled = true;
+            button.textContent = "Refreshing…";
+            button.setAttribute("aria-busy", "true");
+        }
+        $.ajax({
+            url: window.location.href,
+            method: "POST"
+        }).done(function(data) {
+            var json = data !== null && typeof data === "object" && typeof data.alert === "string";
+            if (json && data.context === "success") {
+                show("New plot data is available. This page will reload automatically.", "");
+                if (manual) location.reload();
+            } else if (json && (data.context === "info" || data.context === "danger")) {
+                show(data.alert + outdated, data.context === "info" ? "info" : "error");
+            } else {
+                show("The server returned an unexpected response while refreshing plot data." + outdated, "error");
+            }
+        }).fail(function(jqXHR) {
+            var json = jqXHR && jqXHR.responseJSON;
+            if (json && typeof json.alert === "string") {
+                show(json.alert + outdated, "error");
+            } else if (jqXHR && jqXHR.status === 401) {
+                show("You are not logged in. Please log in and try again." + outdated, "error");
+            } else {
+                show("Unable to refresh plot data. Check your connection and try again." + outdated, "error");
+            }
+        }).always(function() {
+            busy = false;
+            if (button) {
+                button.disabled = false;
+                button.textContent = "Refresh plot data";
+                button.removeAttribute("aria-busy");
+            }
+        });
+    };
+
+    if (button) {
+        button.addEventListener("click", function() {
+            refresh(true);
+        });
+    }
+    setInterval(function() {
+        refresh(false);
+    }, 1000*30);
+    setInterval(function() {
+        location.reload();
+    }, 1000*100);
+}
 
 $(function () {
     var cards = document.getElementById("cards");

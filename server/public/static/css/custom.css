@@ -1838,6 +1838,53 @@ footer .version:before {
   color: #9a3412;
 }
 
+.plot-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.plot-toolbar a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #c2410c;
+}
+
+.plot-toolbar a:hover {
+  color: #9a3412;
+}
+
+.plot-toolbar .btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.plot-refresh-status {
+  margin: 0 0 1rem;
+  padding: .5rem .75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: #f8fafc;
+  color: #334155;
+  font-size: .875rem;
+  overflow-wrap: anywhere;
+}
+
+.plot-refresh-status.is-error {
+  border-color: #fca5a5;
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.plot-refresh-status.is-info {
+  border-color: #cbd5e1;
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
 .job-stats-toolbar {
   display: flex;
   flex-wrap: wrap;
