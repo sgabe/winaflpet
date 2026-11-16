@@ -996,6 +996,32 @@ function initPlotRefresh() {
         back.textContent = "Back to run";
     }
 
+    Array.prototype.forEach.call(plots.querySelectorAll(".plot-figure img"), function(image) {
+        var figure = image.closest(".plot-figure");
+        var message = document.createElement("p");
+        message.className = "plot-refresh-status is-error plot-image-error";
+        message.setAttribute("role", "status");
+        message.hidden = true;
+        var caption = figure.querySelector("figcaption");
+        figure.insertBefore(message, caption && caption.parentNode === figure ? caption : null);
+        var failed = function() {
+            image.hidden = true;
+            message.hidden = false;
+            message.textContent = "This plot image couldn't be loaded. Use Open image to view it directly.";
+        };
+        var loaded = function() {
+            message.hidden = true;
+            message.textContent = "";
+            image.hidden = false;
+        };
+        image.addEventListener("error", failed);
+        image.addEventListener("load", loaded);
+        if (image.complete) {
+            if (image.naturalWidth > 0) loaded();
+            else failed();
+        }
+    });
+
     var show = function(text, state) {
         if (!status) return;
         status.textContent = text;

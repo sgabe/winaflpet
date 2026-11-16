@@ -153,7 +153,14 @@
     </div>
 
   {{else}}
-    <p class="job-stats-empty">No fuzzer statistics are available for this job yet.</p>
+    <section class="empty-state" aria-labelledby="job-stats-empty-title">
+      <h2 id="job-stats-empty-title">No statistics received</h2>
+      <p>Fuzzer statistics aren't available for this view. Check the agent connection and the job status from Jobs.</p>
+      <div class="empty-state-actions">
+        <a href="/jobs/view" class="btn btn-outline theme-secondary">Back to jobs</a>
+        {{ with .path }}<a href="{{ . }}" class="btn btn-outline theme-secondary">Try again</a>{{ end }}
+      </div>
+    </section>
   {{end}}
   </div>
 </div>

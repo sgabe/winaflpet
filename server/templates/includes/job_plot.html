@@ -11,7 +11,10 @@
     <figcaption><a href="{{.}}" target="_blank" rel="noopener">Open image</a></figcaption>
   </figure>
 {{else}}
-  <p class="job-stats-empty">No plot images are available yet.</p>
+  <section class="empty-state" aria-labelledby="plot-empty-title">
+    <h2 id="plot-empty-title">No plot images yet</h2>
+    <p>Plot images appear once the instance has written plot data. Use Refresh plot data above to fetch it from the agent.</p>
+  </section>
 {{end}}
 </div>
 {{end}}

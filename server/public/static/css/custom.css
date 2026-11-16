@@ -2109,6 +2109,11 @@ footer .version:before {
   height: auto;
 }
 
+#plots .plot-figure img[hidden],
+#plots .plot-image-error[hidden] {
+  display: none !important;
+}
+
 #plots .plot-figure figcaption {
   margin-top: .5rem;
   font-size: .875rem;
