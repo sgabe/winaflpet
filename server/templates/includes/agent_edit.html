@@ -1,4 +1,5 @@
 {{define "content"}}
+<div class="settings-layout"><div class="settings-main">
 <form id="editAgent" class="edit agent settings-panel" method="POST" enctype="multipart/form-data">
 
   <fieldset class="settings-section">
@@ -64,4 +65,27 @@
     </div>
   </div>
 </form>
+</div>
+<aside class="settings-aside" aria-labelledby="agent-edit-aside-heading">
+  <h2 id="agent-edit-aside-heading">Saved connection</h2>
+  <dl>
+    <dt>Name</dt>
+    <dd>{{.agent.Name}}</dd>
+    <dt>Agent #</dt>
+    <dd>{{.agent.ID}}</dd>
+    <dt>Host</dt>
+    <dd>{{.agent.Host}}</dd>
+    <dt>Port</dt>
+    <dd>{{.agent.Port}}</dd>
+    <dt>Configuration</dt>
+    <dd>{{if .agent.Status}}Enabled{{else}}Disabled{{end}}</dd>
+    <dt>Version</dt>
+    <dd>{{if .agent.Version}}{{.agent.Version}}{{else}}Not reported yet{{end}}</dd>
+  </dl>
+  <p class="settings-aside-note">These values reflect the saved settings, not unsaved edits in the form.</p>
+  <p>After saving changes, use Check connection on the Agents page to test the agent.</p>
+  <div class="settings-aside-actions">
+    <a href="/agents/view" class="btn btn-outline theme-secondary">View agents</a>
+  </div>
+</aside></div>
 {{end}}

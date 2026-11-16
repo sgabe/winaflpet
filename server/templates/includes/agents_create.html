@@ -1,4 +1,5 @@
 {{define "content"}}
+<div class="settings-layout"><div class="settings-main">
 <form id="createAgent" class="create agent settings-panel" method="PUT" enctype="multipart/form-data" action="/agents/create">
 
   <fieldset class="settings-section">
@@ -64,4 +65,16 @@
     </div>
   </div>
 </form>
+</div>
+<aside class="settings-aside" aria-labelledby="agent-create-aside-heading">
+  <h2 id="agent-create-aside-heading">Before you connect</h2>
+  <ol>
+    <li>Install and start the agent on the fuzzing machine.</li>
+    <li>Note its host, port and generated authentication key.</li>
+    <li>Create the agent here, then use Check connection on the Agents page.</li>
+  </ol>
+  <div class="settings-aside-actions">
+    <a href="/agents/view" class="btn btn-outline theme-secondary">View agents</a>
+  </div>
+</aside></div>
 {{end}}

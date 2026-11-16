@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keyboard navigation and a single tab stop to the fuzzer instance selector.
 - Plot refresh controls and display refresh status and failures.
 - Filtering by recorded function name to the crashes page.
+- Setup guidance and saved connection context to agent forms.
 
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.
