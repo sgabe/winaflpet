@@ -2028,29 +2028,14 @@ footer .version:before {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  flex: 0 0 auto;
   gap: .5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
-.card-fold-hint {
-  flex: 1;
-  min-width: 0;
-  margin: 0;
-  font-size: .875rem;
-  color: #475569;
-}
-
-@media (max-width: 575.98px) {
-  .card-fold-hint {
-    flex-basis: 100%;
-  }
-}
-
-.card-fold-tools .btn,
-:not(.btn-group) > .card-fold-tools .btn + .btn {
+.card-fold-tools .btn {
   min-width: 44px;
   min-height: 44px;
-  margin-left: 0;
 }
 
 .card-list-toolbar {

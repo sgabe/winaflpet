@@ -572,12 +572,24 @@ function updateCardFoldTools() {
     var tools = document.querySelector(".card-fold-tools");
     var cards = document.getElementById("cards");
     if (!tools || !cards) return;
-    var visible = cardFoldItems(cards).filter(function(item) {
+    var button = tools.querySelector("button");
+    if (!button) return;
+    var panels = cardFoldItems(cards).filter(function(item) {
         return item.visible;
-    }).length;
-    Array.prototype.forEach.call(tools.querySelectorAll("button"), function(button) {
-        button.disabled = visible === 0;
+    }).map(function(item) {
+        return item.panel;
     });
+    if (panels.some(function(panel) { return panel.classList.contains("collapsing"); })) {
+        button.disabled = true;
+        return;
+    }
+    var open = panels.length > 0 && panels.every(function(panel) {
+        return panel.classList.contains("show");
+    });
+    button.disabled = panels.length === 0;
+    button.textContent = open ? "Collapse all" : "Expand all";
+    button.setAttribute("aria-label", open ? "Collapse all shown cards" : "Expand all shown cards");
+    button.setAttribute("aria-pressed", String(open));
 }
 
 $(function () {
@@ -729,34 +741,43 @@ $(function () {
 $(function () {
     var cards = document.getElementById("cards");
     if (!cards || !cards.parentNode || document.querySelector(".card-fold-tools")) return;
+    if (!filterCardsToolbar || filterCardsToolbar.parentNode !== cards.parentNode) return;
     if (!cardFoldItems(cards).length) return;
 
     var tools = document.createElement("div");
     tools.className = "card-fold-tools";
 
-    var hint = document.createElement("p");
-    hint.className = "card-fold-hint";
-    hint.textContent = "Cards start collapsed. Open one for details and actions.";
-    tools.appendChild(hint);
-
-    [["Expand all", true], ["Collapse all", false]].forEach(function(action) {
-        var button = document.createElement("button");
-        button.type = "button";
-        button.className = "btn btn-outline theme-secondary";
-        button.textContent = action[0];
-        button.setAttribute("aria-controls", "cards");
-        button.addEventListener("click", function() {
-            cardFoldItems(cards).forEach(function(item) {
-                if (!item.visible) return;
-                var instance = Collapse.getOrCreateInstance(item.panel, { toggle: false });
-                if (action[1]) instance.show();
-                else instance.hide();
-            });
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn btn-outline theme-secondary";
+    button.textContent = "Expand all";
+    button.setAttribute("aria-controls", "cards");
+    button.setAttribute("aria-pressed", "false");
+    button.addEventListener("click", function() {
+        var items = cardFoldItems(cards).filter(function(item) {
+            return item.visible;
         });
-        tools.appendChild(button);
+        if (!items.length || items.some(function(item) { return item.panel.classList.contains("collapsing"); })) {
+            updateCardFoldTools();
+            return;
+        }
+        var open = items.every(function(item) {
+            return item.panel.classList.contains("show");
+        });
+        items.forEach(function(item) {
+            var instance = Collapse.getOrCreateInstance(item.panel, { toggle: false });
+            if (open) instance.hide();
+            else instance.show();
+        });
+        updateCardFoldTools();
+    });
+    tools.appendChild(button);
+
+    ["shown.bs.collapse", "hidden.bs.collapse"].forEach(function(name) {
+        cards.addEventListener(name, updateCardFoldTools);
     });
 
-    cards.parentNode.insertBefore(tools, cards);
+    filterCardsToolbar.appendChild(tools);
     updateCardFoldTools();
 });
 
