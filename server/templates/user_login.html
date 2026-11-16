@@ -16,10 +16,15 @@
             </div>
             <img class="mb-4" src="/static/svg/carrot-solid.svg" alt="" width="72" height="72">
             <h1 class="h3 mb-3 font-weight-normal">WinAFL Pet</h1>
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+            <p class="login-subtitle">Sign in to manage your fuzzing jobs.</p>
+            <div class="login-field">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Username" autocomplete="username" required autofocus>
+            </div>
+            <div class="login-field">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
+            </div>
             <button class="btn theme-primary" type="submit">Sign in</button>
             <p class="mt-5 mb-3 text-muted">&copy; 2026 Gabor Seljan</p>
         </form>

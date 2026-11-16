@@ -1,79 +1,74 @@
 {{define "content"}}
-<form id="editUser" method="POST" enctype="multipart/form-data" action="/user/edit">
+<div class="settings-layout"><div class="settings-main">
+<form id="editUser" class="settings-panel" method="POST" enctype="multipart/form-data" action="/user/edit">
 
-  <fieldset class="row mb-3">
-  <legend>General information</legend>
-    <div class="row ms-0">
+  <fieldset class="settings-section">
+    <legend>General information</legend>
+    <p class="settings-description text-muted">Your name and the email address used for crash alerts.</p>
+    <div class="settings-fields">
 
-      <div class="md:col">
-        <label for="firstname" class="md:col col-form-label">First name</label>
-        <div class="md:col">
-          <input type="text" class="form-control" name="firstname" id="firstname" value="{{.user.FirstName}}">
-        </div>
+      <div class="settings-field settings-field-half">
+        <label for="firstname" class="form-label">First name</label>
+        <input type="text" class="form-control" name="firstname" id="firstname" value="{{.user.FirstName}}">
       </div>
 
-      <div class="md:col">
-        <label for="lastname" class="md:col col-form-label">Last name</label>
-        <div class="md:col">
-          <input type="text" class="form-control" name="lastname" id="lastname" value="{{.user.LastName}}">
-        </div>
+      <div class="settings-field settings-field-half">
+        <label for="lastname" class="form-label">Last name</label>
+        <input type="text" class="form-control" name="lastname" id="lastname" value="{{.user.LastName}}">
       </div>
 
-    </div>
-
-    <div class="row ms-0">
-
-      <div class="md:col">
-        <label for="username" class="md:col col-form-label">Username</label>
-        <div class="md:col">
-          <input type="text" class="form-control" name="username" id="username" placeholder="{{.user.UserName}}" disabled>
-        </div>
+      <div class="settings-field settings-field-half">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" name="username" id="username" placeholder="{{.user.UserName}}" disabled>
       </div>
 
-      <div class="md:col">
-        <label for="email" class="md:col col-form-label">Email address</label>
-        <div class="md:col">
-          <input type="text" class="form-control" name="email" id="email" placeholder="{{.user.Email}}">
-        </div>
+      <div class="settings-field settings-field-half">
+        <label for="email" class="form-label">Email address</label>
+        <input type="text" class="form-control" name="email" id="email" placeholder="{{.user.Email}}">
       </div>
 
     </div>
+  </fieldset>
 
+  <fieldset class="settings-section">
+    <legend>Password</legend>
+    <p class="settings-description text-muted">Change the password used to sign in.</p>
+    <div class="settings-fields">
+
+      <div class="settings-field">
+        <label for="password" class="form-label">Current password</label>
+        <input type="password" class="form-control" name="password" id="password">
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="newPassword" class="form-label">New password</label>
+        <input type="password" class="form-control" name="newPassword" id="newPassword">
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="newPasswordConfirmation" class="form-label">New password confirmation</label>
+        <input type="password" class="form-control" name="newPasswordConfirmation" id="newPasswordConfirmation">
+      </div>
+
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <div class="form-actions-buttons">
+      <a href="/" class="btn">Cancel</a>
+      <button type="submit" class="btn theme-primary">Save changes</button>
+    </div>
   </div>
-  </fieldset>
-
-  <fieldset class="row mb-3">
-  <legend>Password</legend>
-
-    <div class="row ms-0">
-      <div class="md:col">
-        <label for="password" class="md:col col-form-label">Current password</label>
-        <div class="md:col">
-          <input type="password" class="form-control" name="password" id="password">
-        </div>
-      </div>
-    </div>
-
-    <div class="row ms-0">
-      <div class="md:col">
-        <label for="newPassword" class="md:col col-form-label">New password</label>
-        <div class="md:col">
-          <input type="password" class="form-control" name="newPassword" id="newPassword">
-        </div>
-      </div>
-    </div>
-
-    <div class="row ms-0">
-      <div class="md:col">
-        <label for="newPasswordConfirmation" class="md:col col-form-label">New password confirmation</label>
-        <div class="md:col">
-          <input type="password" class="form-control" name="newPasswordConfirmation" id="newPasswordConfirmation">
-        </div>
-      </div>
-    </div>
-
-  </fieldset>
-
-  <button type="submit" class="btn theme-primary">Submit</button>
 </form>
+</div>
+<aside class="settings-aside" aria-labelledby="profile-aside-heading">
+  <h2 id="profile-aside-heading">Signed in</h2>
+  <dl>
+    <dt>Username</dt>
+    <dd>{{.user.UserName}}</dd>
+    <dt>Alert email</dt>
+    <dd>{{if .user.Email}}{{.user.Email}}{{else}}Not set{{end}}</dd>
+  </dl>
+  <p class="settings-aside-note">These are your saved account details.</p>
+</aside></div>
 {{end}}

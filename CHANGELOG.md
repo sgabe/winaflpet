@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Onboarding guidance and refresh account pages.
+
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.
 - Redesign shared layouts and styles for Bootstrap 6 and jQuery 4.

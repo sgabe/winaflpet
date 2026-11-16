@@ -1,25 +1,30 @@
 {{define "content"}}
-<form method="POST" action="/settings">
-  <fieldset class="mb-4">
+<div class="settings-layout"><div class="settings-main">
+<form class="settings-panel" method="POST" action="/settings">
+
+  <fieldset class="settings-section">
     <legend>Email alerts</legend>
-    <div class="row mb-3">
-      <div class="md:col-6">
+    <p class="settings-description text-muted">SMTP server used to send crash alert emails.</p>
+    <div class="settings-fields">
+
+      <div class="settings-field settings-field-half">
         <label for="smtp_host" class="form-label">SMTP host</label>
         <input type="text" class="form-control" id="smtp_host" name="smtp_host" value="{{.settings.Host}}" placeholder="smtp.example.com" required>
       </div>
-      <div class="md:col-6">
+
+      <div class="settings-field settings-field-half">
         <label for="smtp_port" class="form-label">SMTP port</label>
         <input type="number" class="form-control" id="smtp_port" name="smtp_port" min="1" max="65535" value="{{.settings.Port}}" required>
         <small class="form-text text-muted">Usually 587 for STARTTLS. Implicit TLS on port 465 is not supported.</small>
       </div>
-    </div>
-    <div class="row mb-3">
-      <div class="md:col-6">
+
+      <div class="settings-field settings-field-half">
         <label for="smtp_username" class="form-label">SMTP username</label>
         <input type="text" class="form-control" id="smtp_username" name="smtp_username" value="{{.settings.Username}}" autocomplete="off" required>
         <small class="form-text text-muted">Also used as the sender address.</small>
       </div>
-      <div class="md:col-6">
+
+      <div class="settings-field settings-field-half">
         <label for="smtp_password" class="form-label">SMTP password</label>
         <input type="password" class="form-control" id="smtp_password" name="smtp_password" autocomplete="new-password" aria-describedby="password_help">
         <small id="password_help" class="form-text text-muted">Leave blank to keep the current password.</small>
@@ -28,14 +33,43 @@
           <label class="form-check-label" for="clear_password">Clear saved password</label>
         </div>
       </div>
+
     </div>
-    <div class="mb-3">
-      <label for="alert_interval" class="form-label">Alert interval (minutes)</label>
-      <input type="number" class="form-control" id="alert_interval" name="alert_interval" min="1" max="10080" value="{{.settings.Interval}}" required>
-      <small class="form-text text-muted">Check for new crashes every 1–10080 minutes. Email is sent only when new crashes are found.</small>
-    </div>
-    <p class="text-muted">Enable alerts from a job card. Messages are sent to the email address in your profile. Active alerts pick up saved changes at their next scheduled check.</p>
   </fieldset>
-  <button type="submit" class="btn theme-primary">Save</button>
+
+  <fieldset class="settings-section">
+    <legend>Alert scheduling</legend>
+    <p class="settings-description text-muted">Enable alerts from a job card. Messages are sent to the email address in your profile. Active alerts pick up saved changes at their next scheduled check.</p>
+    <div class="settings-fields">
+
+      <div class="settings-field settings-field-half">
+        <label for="alert_interval" class="form-label">Alert interval (minutes)</label>
+        <input type="number" class="form-control" id="alert_interval" name="alert_interval" min="1" max="10080" value="{{.settings.Interval}}" required>
+        <small class="form-text text-muted">Check for new crashes every 1–10080 minutes. Email is sent only when new crashes are found.</small>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <div class="form-actions-buttons">
+      <a href="/" class="btn">Cancel</a>
+      <button type="submit" class="btn theme-primary">Save changes</button>
+    </div>
+  </div>
 </form>
+</div>
+<aside class="settings-aside" aria-labelledby="settings-aside-heading">
+  <h2 id="settings-aside-heading">How alerts work</h2>
+  <ol>
+    <li>Enable an email alert from a running job card.</li>
+    <li>WinAFL Pet checks the job for new crashes at the configured interval.</li>
+    <li>New findings are sent to the email address in your profile.</li>
+  </ol>
+  <p>Active alerts pick up saved changes at their next scheduled check.</p>
+  <div class="settings-aside-actions">
+    <a href="/jobs/view" class="btn btn-outline theme-secondary">View jobs</a>
+    <a href="/user/edit" class="btn btn-outline theme-secondary">Edit profile</a>
+  </div>
+</aside></div>
 {{end}}
