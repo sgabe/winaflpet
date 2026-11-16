@@ -5,58 +5,66 @@
 <form id="editCrash" method="POST" enctype="multipart/form-data">
 
   <fieldset class="settings-section">
-    <legend>Identification</legend>
-    <p class="settings-description text-muted">Identifiers recorded for the crash.</p>
+    <legend>Analysis</legend>
+    <p class="settings-description text-muted">Shown in the crash list. Impact and verification come from BugId and are not edited in this form.</p>
     <div class="settings-fields">
 
-      <div class="settings-field settings-field-half">
-        <label for="fuzzerID" class="form-label">Fuzzer ID</label>
-        <input type="text" class="form-control" name="fuzzerID" id="fuzzerID" aria-describedby="fuzzerIDHelp" value="{{.crash.FuzzerID}}">
-        <small id="fuzzerIDHelp" class="form-text text-muted">Fuzzer ID</small>
+      <div class="settings-field">
+        <label for="label" class="form-label">Label</label>
+        <input type="text" class="form-control" name="label" id="label" aria-describedby="labelHelp" value="{{.crash.Label}}">
+        <small id="labelHelp" class="form-text text-muted">Your own name for this crash</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="bugID" class="form-label">Bug ID</label>
-        <input type="text" class="form-control" name="bugID" id="bugID" aria-describedby="bugIDHelp" value="{{.crash.BugID}}">
-        <small id="bugIDHelp" class="form-text text-muted">Bug ID</small>
+        <input type="text" class="form-control" name="bugID" id="bugID" aria-describedby="bugIDHelp" value="{{.crash.BugID}}" spellcheck="false">
+        <small id="bugIDHelp" class="form-text text-muted">BugId identifier. Its access type informs the heuristic risk.</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="mod" class="form-label">Module</label>
-        <input type="text" class="form-control" name="mod" id="mod" aria-describedby="modHelp" value="{{.crash.Module}}">
-        <small id="modHelp" class="form-text text-muted">Module</small>
+        <input type="text" class="form-control" name="mod" id="mod" aria-describedby="modHelp" value="{{.crash.Module}}" spellcheck="false">
+        <small id="modHelp" class="form-text text-muted">Module where the crash occurred</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="func" class="form-label">Function</label>
-        <input type="text" class="form-control" name="func" id="func" aria-describedby="funcHelp" value="{{.crash.Function}}">
-        <small id="funcHelp" class="form-text text-muted">Function</small>
+        <input type="text" class="form-control" name="func" id="func" aria-describedby="funcHelp" value="{{.crash.Function}}" spellcheck="false">
+        <small id="funcHelp" class="form-text text-muted">Function where the crash occurred</small>
       </div>
 
     </div>
   </fieldset>
 
   <fieldset class="settings-section">
-    <legend>Details</legend>
-    <p class="settings-description text-muted">Label, description and arguments of the crash.</p>
+    <legend>Source</legend>
+    <p class="settings-description text-muted">Where the crashing input came from.</p>
     <div class="settings-fields">
 
-      <div class="settings-field">
-        <label for="label" class="form-label">Label</label>
-        <input type="text" class="form-control" name="label" id="label" aria-describedby="labelHelp" value="{{.crash.Label}}">
-        <small id="labelHelp" class="form-text text-muted">Label</small>
-      </div>
-
-      <div class="settings-field">
-        <label for="desc" class="form-label">Description</label>
-        <textarea class="form-control" name="desc" id="desc" rows="2">{{.crash.Description}}</textarea>
-        <small id="descHelp" class="form-text text-muted">Description</small>
+      <div class="settings-field settings-field-half">
+        <label for="fuzzerID" class="form-label">Fuzzer ID</label>
+        <input type="text" class="form-control" name="fuzzerID" id="fuzzerID" aria-describedby="fuzzerIDHelp" value="{{.crash.FuzzerID}}" spellcheck="false">
+        <small id="fuzzerIDHelp" class="form-text text-muted">Fuzzer instance that found the crash</small>
       </div>
 
       <div class="settings-field">
         <label for="args" class="form-label">Args</label>
-        <input type="text" class="form-control" name="args" id="args" aria-describedby="argsHelp" value="{{.crash.Args}}">
-        <small id="argsHelp" class="form-text text-muted">Args</small>
+        <input type="text" class="form-control" name="args" id="args" aria-describedby="argsHelp" value="{{.crash.Args}}" spellcheck="false">
+        <small id="argsHelp" class="form-text text-muted">Path of the crashing input on the agent</small>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset class="settings-section">
+    <legend>Notes</legend>
+    <p class="settings-description text-muted">Free text shown in the crash details.</p>
+    <div class="settings-fields">
+
+      <div class="settings-field">
+        <label for="desc" class="form-label">Description</label>
+        <textarea class="form-control" name="desc" id="desc" rows="2" aria-describedby="descHelp">{{.crash.Description}}</textarea>
+        <small id="descHelp" class="form-text text-muted">Free-text notes about this crash</small>
       </div>
 
     </div>

@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace navigation menus with direct links, add account menu and skip-to-content link.
 - Group settings into SMTP server and sender sections and add a validation summary.
 - Move search from the navigation bar into the agent, job and crash list toolbars.
+- Group crash-edit fields into Analysis, Source and Notes sections with field-specific guidance.
 
 ## [2.1.0] - 2026-09-12
 ### Added
