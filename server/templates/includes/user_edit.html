@@ -9,22 +9,24 @@
 
       <div class="settings-field settings-field-half">
         <label for="firstname" class="form-label">First name</label>
-        <input type="text" class="form-control" name="firstname" id="firstname" value="{{.user.FirstName}}">
+        <input type="text" class="form-control" name="firstname" id="firstname" value="{{.user.FirstName}}" autocomplete="given-name">
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="lastname" class="form-label">Last name</label>
-        <input type="text" class="form-control" name="lastname" id="lastname" value="{{.user.LastName}}">
+        <input type="text" class="form-control" name="lastname" id="lastname" value="{{.user.LastName}}" autocomplete="family-name">
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="username" class="form-label">Username</label>
-        <input type="text" class="form-control" name="username" id="username" placeholder="{{.user.UserName}}" disabled>
+        <input type="text" class="form-control" name="username" id="username" value="{{.user.UserName}}" disabled aria-describedby="username_help">
+        <small id="username_help" class="form-text text-muted">Usernames can't be changed.</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="email" class="form-label">Email address</label>
-        <input type="text" class="form-control" name="email" id="email" placeholder="{{.user.Email}}">
+        <input type="text" class="form-control" name="email" id="email" value="{{.user.Email}}" autocomplete="email" aria-describedby="email_help">
+        <small id="email_help" class="form-text text-muted">Used for crash alerts.</small>
       </div>
 
     </div>
@@ -32,22 +34,25 @@
 
   <fieldset class="settings-section">
     <legend>Password</legend>
-    <p class="settings-description text-muted">Change the password used to sign in.</p>
+    <p class="settings-description text-muted">Enter your current password to save any change on this page. To keep your current password, leave both new password fields blank.</p>
     <div class="settings-fields">
 
       <div class="settings-field">
         <label for="password" class="form-label">Current password</label>
-        <input type="password" class="form-control" name="password" id="password">
+        <input type="password" class="form-control" name="password" id="password" autocomplete="current-password" aria-describedby="password_help">
+        <small id="password_help" class="form-text text-muted">Required to save any profile change, including name and email.</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="newPassword" class="form-label">New password</label>
-        <input type="password" class="form-control" name="newPassword" id="newPassword">
+        <input type="password" class="form-control" name="newPassword" id="newPassword" autocomplete="new-password" aria-describedby="new_password_help">
+        <small id="new_password_help" class="form-text text-muted">Leave both new password fields blank to keep your current password.</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="newPasswordConfirmation" class="form-label">New password confirmation</label>
-        <input type="password" class="form-control" name="newPasswordConfirmation" id="newPasswordConfirmation">
+        <input type="password" class="form-control" name="newPasswordConfirmation" id="newPasswordConfirmation" autocomplete="new-password" aria-describedby="new_password_confirmation_help">
+        <small id="new_password_confirmation_help" class="form-text text-muted">Enter the new password again.</small>
       </div>
 
     </div>
