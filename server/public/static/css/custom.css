@@ -36,10 +36,14 @@
   .navbar.fixed-top {
     position: relative;
   }
-  .navbar .navbar-collapse,
-  .navbar .form-inline {
+  .navbar .navbar-collapse {
     flex: 1 1 100%;
     width: 100%;
+  }
+  .navbar .form-inline {
+    flex: 1 1 10rem;
+    min-width: 0;
+    margin-top: 0;
   }
   .navbar form.form-inline .form-control {
     max-width: none;
@@ -97,6 +101,15 @@
   }
 }
 
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .navbar .form-inline {
+    flex: 1 1 100%;
+  }
+  .navbar form.form-inline .form-control {
+    max-width: none;
+  }
+}
+
 @media (min-width: 1200px) {
   .container {
     max-width: 1240px;
@@ -124,6 +137,29 @@ main {
   width: 100%;
   padding-top: 1.5rem;
   padding-bottom: 2rem;
+  scroll-margin-top: 8rem;
+}
+
+main:focus {
+  outline: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -4rem;
+  left: .75rem;
+  z-index: 1040;
+  padding: .5rem .75rem;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #9a3412;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: .5rem;
+  outline: 2px solid #c2410c;
+  outline-offset: 2px;
 }
 
 main h1 {
@@ -355,6 +391,33 @@ body.login main {
 .navbar .menu .menu-item.active {
   background-color: #c2410c;
   color: #fff;
+}
+
+.navbar-account {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.navbar-account > .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  white-space: nowrap;
+}
+
+.navbar-account .navbar-account-caret {
+  font-size: .75em;
+}
+
+.navbar-account .menu {
+  min-width: 10rem;
+  max-width: calc(100vw - 1rem);
+}
+
+.navbar-account .menu-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
 }
 
 .navbar .form-inline .form-control {

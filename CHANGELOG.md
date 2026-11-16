@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve import, seed-upload and crash-edit guidance and context.
 - Merge card expand and collapse actions into one button beside the list filters.
 - Refine the home onboarding layout and add a preparation checklist.
+- Replace navigation menus with direct links, add account menu and skip-to-content link.
 
 ## [2.1.0] - 2026-09-12
 ### Added

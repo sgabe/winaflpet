@@ -11,6 +11,7 @@
 </head>
 <body>
     {{$currentPath := default "" .path}}
+    <a class="skip-link" href="#main">Skip to content</a>
     <nav class="navbar md:navbar-expand navbar-dark bg-dark fixed-top" aria-label="Main navigation">
         <div class="container">
             <a class="navbar-brand" href="/">
@@ -28,19 +29,10 @@
                         <a class="nav-link {{ if isActive $currentPath "/" }}active{{ end }}" {{ if isActive $currentPath "/" }}aria-current="page" {{ end }}href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="nav-link {{ if or (hasPrefix "/agents/" $currentPath) (hasPrefix "/agent/" $currentPath) }}active{{ end }}" id="dropdown01" data-bs-toggle="menu" aria-expanded="false">Agents</button>
-                        <div class="menu" aria-labelledby="dropdown01">
-                            <a class="menu-item {{ if isActive $currentPath "/agents/create" }}active{{ end }}" {{ if isActive $currentPath "/agents/create" }}aria-current="page" {{ end }}href="/agents/create">Create</a>
-                            <a class="menu-item {{ if isActive $currentPath "/agents/view" }}active{{ end }}" {{ if isActive $currentPath "/agents/view" }}aria-current="page" {{ end }}href="/agents/view">View</a>
-                        </div>
+                        <a class="nav-link {{ if or (hasPrefix "/agents/" $currentPath) (hasPrefix "/agent/" $currentPath) }}active{{ end }}" {{ if isActive $currentPath "/agents/view" }}aria-current="page" {{ end }}href="/agents/view">Agents</a>
                     </li>
                     <li class="nav-item">
-                        <button type="button" class="nav-link {{ if or (hasPrefix "/jobs/" $currentPath) (hasPrefix "/job/" $currentPath) }}active{{ end }}" id="dropdown02" data-bs-toggle="menu" aria-expanded="false">Jobs</button>
-                        <div class="menu" aria-labelledby="dropdown02">
-                            <a class="menu-item {{ if isActive $currentPath "/jobs/create" }}active{{ end }}" {{ if isActive $currentPath "/jobs/create" }}aria-current="page" {{ end }}href="/jobs/create">Create</a>
-                            <a class="menu-item {{ if isActive $currentPath "/jobs/upload" }}active{{ end }}" {{ if isActive $currentPath "/jobs/upload" }}aria-current="page" {{ end }}href="/jobs/upload">Upload</a>
-                            <a class="menu-item {{ if isActive $currentPath "/jobs/view" }}active{{ end }}" {{ if isActive $currentPath "/jobs/view" }}aria-current="page" {{ end }}href="/jobs/view">View</a>
-                        </div>
+                        <a class="nav-link {{ if or (hasPrefix "/jobs/" $currentPath) (hasPrefix "/job/" $currentPath) }}active{{ end }}" {{ if isActive $currentPath "/jobs/view" }}aria-current="page" {{ end }}href="/jobs/view">Jobs</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ if or (isActive $currentPath "/crashes/view") (hasPrefix "/crash/" $currentPath) }}active{{ end }}" {{ if isActive $currentPath "/crashes/view" }}aria-current="page" {{ end }}href="/crashes/view">Crashes</a>
@@ -48,22 +40,31 @@
                     <li class="nav-item">
                         <a class="nav-link {{ if isActive $currentPath "/settings" }}active{{ end }}" {{ if isActive $currentPath "/settings" }}aria-current="page" {{ end }}href="/settings">Settings</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ if isActive $currentPath "/user/edit" }}active{{ end }}" {{ if isActive $currentPath "/user/edit" }}aria-current="page" {{ end }}href="/user/edit">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/user/logout" aria-label="Sign out" title="Sign out">
-                            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
-                        </a>
-                    </li>
                 </ul>
+            </div>
+            <div class="navbar-account">
+                <button type="button" class="nav-link {{ if isActive $currentPath "/user/edit" }}active{{ end }}" id="account-menu" data-bs-toggle="menu" aria-expanded="false">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    Account
+                    <i class="fas fa-chevron-down navbar-account-caret" aria-hidden="true"></i>
+                </button>
+                <div class="menu" aria-labelledby="account-menu">
+                    <a class="menu-item {{ if isActive $currentPath "/user/edit" }}active{{ end }}" {{ if isActive $currentPath "/user/edit" }}aria-current="page" {{ end }}href="/user/edit">
+                        <i class="fas fa-user" aria-hidden="true"></i>
+                        Profile
+                    </a>
+                    <a class="menu-item" href="/user/logout">
+                        <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                        Sign out
+                    </a>
+                </div>
             </div>
             <form class="form-inline ml-auto" role="search">
                 <input type="search" class="form-control" placeholder="Search" aria-label="Search" id="search">
             </form>
         </div>
     </nav>
-    <main role="main" class="container">
+    <main id="main" role="main" class="container" tabindex="-1">
     {{if .title}}{{$parentlabel := ""}}{{$parenthref := ""}}{{if or (isActive $currentPath "/agents/create") (hasPrefix "/agent/" $currentPath)}}{{$parentlabel = "Agents"}}{{$parenthref = "/agents/view"}}{{else if or (isActive $currentPath "/jobs/create") (isActive $currentPath "/jobs/upload") (hasPrefix "/job/" $currentPath)}}{{$parentlabel = "Jobs"}}{{$parenthref = "/jobs/view"}}{{else if hasPrefix "/crash/" $currentPath}}{{$parentlabel = "Crashes"}}{{$parenthref = "/crashes/view"}}{{end}}{{if $parenthref}}
     <nav class="page-breadcrumbs" aria-label="Breadcrumb">
         <ol>
