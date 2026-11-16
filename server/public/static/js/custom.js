@@ -239,6 +239,7 @@ var filterCardsToolbar = null;
 var filterCardsAgent = "all";
 var filterCardsJob = "all";
 var filterCardsRisk = "all";
+var filterCardsFunction = "all";
 var filterCardsSummary = null;
 
 function cardListAgent(column) {
@@ -258,6 +259,19 @@ function cardListRisk(column) {
     if (!crash || crash.classList.contains("unverified")) return "na";
     var risk = crash.getAttribute("data-risk");
     return ["high", "medium", "low", "none", "na"].indexOf(risk) >= 0 ? risk : "na";
+}
+
+function cardListFunction(column) {
+    var crash = column.querySelector(".card.crash");
+    var name = crash ? crash.getAttribute("data-function") : "";
+    return name ? String(name) : "";
+}
+
+function cardListFunctionMatch(column, selected) {
+    if (selected === "all") return true;
+    var name = cardListFunction(column);
+    if (selected === "missing") return name === "";
+    return name !== "" && selected === "fn:" + name;
 }
 
 function cardListSelect(definition) {
@@ -345,7 +359,7 @@ var filterCards = function(initial) {
 
     var visible = 0;
     columns.forEach(function(column) {
-        var match = (filterCardsConfig === "all" || cardListConfig(column) === filterCardsConfig) && (filterCardsAgent === "all" || cardListAgent(column) === filterCardsAgent) && (filterCardsJob === "all" || cardListJob(column) === filterCardsJob) && (filterCardsRisk === "all" || cardListRisk(column) === filterCardsRisk) && (!query || Array.prototype.some.call(
+        var match = (filterCardsConfig === "all" || cardListConfig(column) === filterCardsConfig) && (filterCardsAgent === "all" || cardListAgent(column) === filterCardsAgent) && (filterCardsJob === "all" || cardListJob(column) === filterCardsJob) && (filterCardsRisk === "all" || cardListRisk(column) === filterCardsRisk) && cardListFunctionMatch(column, filterCardsFunction) && (!query || Array.prototype.some.call(
             column.querySelectorAll(".card-header, .card-body"),
             function(part) {
                 return String(part.textContent).toLowerCase().indexOf(query) !== -1;
@@ -364,13 +378,13 @@ var filterCards = function(initial) {
         cards.parentNode.insertBefore(filterCardsEmpty, cards.nextSibling);
     }
     if (filterCardsEmpty) {
-        filterCardsEmpty.hidden = !((query || filterCardsConfig !== "all" || filterCardsAgent !== "all" || filterCardsJob !== "all" || filterCardsRisk !== "all") && columns.length && visible === 0);
+        filterCardsEmpty.hidden = !((query || filterCardsConfig !== "all" || filterCardsAgent !== "all" || filterCardsJob !== "all" || filterCardsRisk !== "all" || filterCardsFunction !== "all") && columns.length && visible === 0);
     }
 
     updateCardFoldTools();
     updateCardListToolbar();
 
-    if (initial && !query && filterCardsConfig === "all" && filterCardsAgent === "all" && filterCardsJob === "all" && filterCardsRisk === "all") return;
+    if (initial && !query && filterCardsConfig === "all" && filterCardsAgent === "all" && filterCardsJob === "all" && filterCardsRisk === "all" && filterCardsFunction === "all") return;
     if ($.fn.masonry) $(cards).masonry();
 }
 
@@ -693,6 +707,35 @@ $(function () {
             ],
             change: function(value) {
                 filterCardsRisk = value;
+                filterCards();
+            }
+        }));
+    }
+
+    if (columns.some(function(column) { return column.querySelector(".card.crash"); })) {
+        var functionNames = [];
+        var functionMissing = false;
+        columns.forEach(function(column) {
+            if (!column.querySelector(".card.crash")) return;
+            var name = cardListFunction(column);
+            if (!name) functionMissing = true;
+            else if (functionNames.indexOf(name) < 0) functionNames.push(name);
+        });
+        functionNames.sort(function(a, b) {
+            return a < b ? -1 : a > b ? 1 : 0;
+        });
+        var functionItems = functionNames.map(function(name) {
+            return { id: "fn:" + name, label: name };
+        });
+        if (functionMissing) functionItems.push({ id: "missing", label: "No recorded function" });
+        toolbar.appendChild(cardListSelect({
+            prefix: "card-list-function-select",
+            className: "card-list-function",
+            label: "Function",
+            allLabel: "All functions",
+            items: functionItems,
+            change: function(value) {
+                filterCardsFunction = value;
                 filterCards();
             }
         }));

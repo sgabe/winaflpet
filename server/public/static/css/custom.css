@@ -2132,7 +2132,8 @@ footer .version:before {
 
 .card-list-agent,
 .card-list-job,
-.card-list-risk {
+.card-list-risk,
+.card-list-function {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -2143,13 +2144,15 @@ footer .version:before {
 
 .card-list-agent .form-label,
 .card-list-job .form-label,
-.card-list-risk .form-label {
+.card-list-risk .form-label,
+.card-list-function .form-label {
   margin: 0;
 }
 
 .card-list-agent .form-select,
 .card-list-job .form-select,
-.card-list-risk .form-select {
+.card-list-risk .form-select,
+.card-list-function .form-select {
   box-sizing: border-box;
   min-width: 0;
   max-width: 100%;
@@ -2159,12 +2162,14 @@ footer .version:before {
 @media (max-width: 575.98px) {
   .card-list-agent,
   .card-list-job,
-  .card-list-risk {
+  .card-list-risk,
+  .card-list-function {
     flex: 1 1 100%;
   }
   .card-list-agent .form-select,
   .card-list-job .form-select,
-  .card-list-risk .form-select {
+  .card-list-risk .form-select,
+  .card-list-function .form-select {
     flex: 1 1 12rem;
   }
 }
