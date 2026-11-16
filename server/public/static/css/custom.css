@@ -2156,6 +2156,20 @@ footer .version:before {
   margin-bottom: 1rem;
 }
 
+.card-list-clear {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.card-list-empty {
+  margin-bottom: 1rem;
+}
+
+.card-list-clear[hidden],
+.card-list-empty[hidden] {
+  display: none !important;
+}
+
 .card-list-count {
   min-width: 0;
   font-weight: 600;

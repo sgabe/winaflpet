@@ -345,6 +345,28 @@ function updateCardListToolbar() {
     filterCardsToolbar.buttons.forEach(function(button) {
         button.setAttribute("aria-pressed", String(button.filterValue === filterCardsConfig));
     });
+    filterCardsToolbar.clear.hidden = !cardListFiltered();
+}
+
+function cardListFiltered() {
+    var search = document.getElementById("search");
+    return !!(search && String(search.value).trim()) || [filterCardsConfig, filterCardsAgent, filterCardsJob, filterCardsRisk, filterCardsFunction].some(function(value) {
+        return value !== "all";
+    });
+}
+
+function clearCardFilters() {
+    var search = document.getElementById("search");
+    if (search) search.value = "";
+    filterCardsConfig = filterCardsAgent = filterCardsJob = filterCardsRisk = filterCardsFunction = "all";
+    if (filterCardsToolbar) {
+        filterCardsToolbar.querySelectorAll("select").forEach(function(select) {
+            select.value = "all";
+        });
+    }
+    var target = search && search.getClientRects().length ? search : filterCardsToolbar && filterCardsToolbar.querySelector("button, select");
+    if (target) target.focus();
+    filterCards();
 }
 
 var filterCards = function(initial) {
@@ -370,21 +392,36 @@ var filterCards = function(initial) {
     });
 
     if (columns.length && !filterCardsEmpty && cards.parentNode) {
-        filterCardsEmpty = document.createElement("p");
-        filterCardsEmpty.className = "job-stats-empty";
-        filterCardsEmpty.setAttribute("role", "status");
+        var noun = cards.querySelector(".card.agent") ? "agents" : cards.querySelector(".card.job") ? "jobs" : cards.querySelector(".card.crash") ? "crashes" : "cards";
+        filterCardsEmpty = document.createElement("div");
+        filterCardsEmpty.className = "empty-state card-list-empty";
         filterCardsEmpty.hidden = true;
-        filterCardsEmpty.textContent = "No matching cards. Try different filters or search.";
+        var heading = document.createElement("h2");
+        heading.textContent = "No matching " + noun;
+        var text = document.createElement("p");
+        text.textContent = "No " + noun + " on this page match the current search and filters.";
+        var actions = document.createElement("div");
+        actions.className = "empty-state-actions";
+        var clear = document.createElement("button");
+        clear.type = "button";
+        clear.className = "btn btn-outline theme-secondary";
+        clear.textContent = "Clear filters";
+        clear.addEventListener("click", clearCardFilters);
+        actions.appendChild(clear);
+        filterCardsEmpty.appendChild(heading);
+        filterCardsEmpty.appendChild(text);
+        filterCardsEmpty.appendChild(actions);
         cards.parentNode.insertBefore(filterCardsEmpty, cards.nextSibling);
     }
+    var filtered = cardListFiltered();
     if (filterCardsEmpty) {
-        filterCardsEmpty.hidden = !((query || filterCardsConfig !== "all" || filterCardsAgent !== "all" || filterCardsJob !== "all" || filterCardsRisk !== "all" || filterCardsFunction !== "all") && columns.length && visible === 0);
+        filterCardsEmpty.hidden = !(filtered && columns.length && visible === 0);
     }
 
     updateCardFoldTools();
     updateCardListToolbar();
 
-    if (initial && !query && filterCardsConfig === "all" && filterCardsAgent === "all" && filterCardsJob === "all" && filterCardsRisk === "all" && filterCardsFunction === "all") return;
+    if (initial && !filtered) return;
     if ($.fn.masonry) $(cards).masonry();
 }
 
@@ -744,8 +781,17 @@ $(function () {
         }));
     }
 
+    var clear = document.createElement("button");
+    clear.type = "button";
+    clear.className = "btn btn-outline theme-secondary card-list-clear";
+    clear.textContent = "Clear filters";
+    clear.hidden = true;
+    clear.addEventListener("click", clearCardFilters);
+    toolbar.appendChild(clear);
+
     toolbar.count = count;
     toolbar.buttons = buttons;
+    toolbar.clear = clear;
     filterCardsToolbar = toolbar;
     var anchor = document.querySelector(".card-fold-tools");
     if (!anchor || anchor.parentNode !== cards.parentNode) anchor = cards;

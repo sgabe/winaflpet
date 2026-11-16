@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Filtering by recorded function name to the crashes page.
 - Setup guidance and saved connection context to agent forms.
 - Responsive section sidebar to job configuration forms.
+- Clear filters actions and page-specific no-match messages to agent, job and crash lists.
 
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.
