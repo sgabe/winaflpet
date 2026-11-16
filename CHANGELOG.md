@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redesign agent and crash cards and add list filters.
 - Improve import, seed-upload and crash-edit guidance and context.
 - Merge card expand and collapse actions into one button beside the list filters.
+- Refine the home onboarding layout and add a preparation checklist.
 
 ## [2.1.0] - 2026-09-12
 ### Added

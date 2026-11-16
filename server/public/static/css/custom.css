@@ -1468,78 +1468,113 @@ div:has(> .card.stat) {
   }
 }
 
-.home-welcome {
+.home-layout {
   display: grid;
-  gap: 1.25rem;
-  padding: 1.75rem;
-  border-top: 4px solid #c2410c;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.home-welcome,
+.home-section {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
-  background-color: #1e293b;
-  color: #fff;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, .25);
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .08);
+  color: #334155;
+  overflow-wrap: anywhere;
+}
+
+.home-welcome {
+  border-top: 4px solid #c2410c;
 }
 
 .home-welcome h1 {
   margin: 0 0 .5rem;
-  color: #fff;
+  color: #0f172a;
 }
 
-.home-welcome p {
+.home-welcome > p {
   max-width: 48rem;
   margin: 0;
-  color: rgba(255, 255, 255, .82);
+  color: #475569;
+}
+
+.home-sidebar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  min-width: 0;
 }
 
 .home-shortcuts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: .75rem;
+  margin-top: 1.5rem;
 }
 
 .home-shortcut {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: .25rem;
   min-width: 0;
+  min-height: 44px;
   padding: .875rem 1rem;
-  border: 1px solid rgba(255, 255, 255, .15);
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, .06);
-  color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .08);
+  color: #475569;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 .home-shortcut:hover {
-  border-color: #fb923c;
-  background-color: rgba(255, 255, 255, .1);
-  color: #fff;
+  border-color: #c2410c;
+  color: #334155;
+}
+
+.home-shortcut:hover .home-shortcut-title {
+  color: #9a3412;
+  text-decoration: underline;
 }
 
 .home-shortcut:focus-visible {
-  outline-color: #fdba74;
+  outline: 2px solid #c2410c;
+  outline-offset: 2px;
 }
 
 .home-shortcut-title {
   font-weight: 600;
-  color: #fdba74;
+  color: #c2410c;
 }
 
 .home-shortcut-text {
   font-size: .875rem;
-  color: rgba(255, 255, 255, .75);
+  color: #475569;
 }
 
+.home-welcome h2,
 .home-section h2 {
-  margin: 2rem 0 1rem;
+  margin: 1.5rem 0 1rem;
   font-size: 1.25rem;
   font-weight: 600;
   color: #0f172a;
 }
 
+.home-section h2 {
+  margin-top: 0;
+  font-size: 1.125rem;
+}
+
 .home-steps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1549,19 +1584,27 @@ div:has(> .card.stat) {
 .home-step {
   position: relative;
   min-width: 0;
-  padding: 1rem 1rem 1rem 3.5rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .08);
+  padding: 1rem 0 1rem 2.75rem;
   counter-increment: home-step;
+}
+
+.home-step + .home-step {
+  border-top: 1px solid #e2e8f0;
+}
+
+.home-step:first-child {
+  padding-top: 0;
+}
+
+.home-step:last-child {
+  padding-bottom: 0;
 }
 
 .home-step::before {
   content: counter(home-step);
   position: absolute;
   top: 1rem;
-  left: 1rem;
+  left: 0;
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
@@ -1595,22 +1638,49 @@ div:has(> .card.stat) {
   color: #334155;
 }
 
+.home-step:first-child::before {
+  top: 0;
+}
+
+.home-checklist,
 .home-resources {
   margin: 0;
   padding: 0;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background-color: #fff;
   list-style: none;
 }
 
-.home-resources li {
-  padding: .875rem 1rem;
-  color: #334155;
+.home-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: .625rem;
+  min-width: 0;
 }
 
+.home-checklist li + li,
 .home-resources li + li {
-  border-top: 1px solid #e2e8f0;
+  margin-top: .75rem;
+}
+
+.home-check-icon {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background-color: #ffedd5;
+  color: #9a3412;
+  font-size: .75rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+.home-check-icon::before {
+  content: "\2713";
+}
+
+.home-resources li {
+  min-width: 0;
+  color: #334155;
 }
 
 .home-resources a {
@@ -1622,15 +1692,19 @@ div:has(> .card.stat) {
   color: #9a3412;
 }
 
+@media (min-width: 1200px) {
+  .home-layout {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+}
+
 @media (max-width: 767.98px) {
-  .home-welcome {
+  .home-welcome,
+  .home-section {
     padding: 1.25rem;
   }
   .home-shortcuts {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .home-shortcut {
-    min-height: 44px;
   }
 }
 
