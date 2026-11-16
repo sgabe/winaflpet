@@ -1016,3 +1016,41 @@ $(function () {
         if (filterCardsConfig !== "all" || (search && search.value && String(search.value).trim())) filterCards();
     });
 });
+
+$(function () {
+    var dialog = document.getElementById("job-config-dialog");
+    if (!dialog || typeof dialog.showModal !== "function") return;
+    var title = document.getElementById("job-config-title");
+    var body = dialog.querySelector(".job-config-body");
+    var close = dialog.querySelector(".job-config-close");
+    var trigger = null;
+
+    document.querySelectorAll(".card.job .job-config").forEach(function(button) {
+        button.addEventListener("click", function() {
+            var card = button.closest(".card.job");
+            var template = card ? card.querySelector("template.job-config-template") : null;
+            if (!template || dialog.open) return;
+            title.textContent = template.getAttribute("data-name") || "";
+            body.textContent = "";
+            body.appendChild(template.content.cloneNode(true));
+            body.scrollTop = 0;
+            trigger = button;
+            dialog.showModal();
+            close.focus();
+        });
+    });
+
+    close.addEventListener("click", function() {
+        dialog.close();
+    });
+
+    dialog.addEventListener("click", function(e) {
+        if (e.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener("close", function() {
+        var target = trigger;
+        trigger = null;
+        if (target && target.isConnected && target.getClientRects().length) target.focus();
+    });
+});

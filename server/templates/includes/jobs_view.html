@@ -63,6 +63,7 @@
               </svg>
               <span>View run</span>
             </a>
+            <button type="button" class="btn btn-outline theme-secondary job-config" aria-haspopup="dialog" aria-controls="job-config-dialog" aria-label="Configuration: {{.Name}}">Configuration</button>
             <div class="card-actions-more">
               <button type="button" class="btn btn-outline theme-secondary" id="job-actions-{{.ID}}" data-bs-toggle="menu" data-bs-placement="bottom-end" aria-expanded="false" aria-label="More actions for {{.Name}}">More</button>
               <div class="menu" aria-labelledby="job-actions-{{.ID}}">
@@ -115,9 +116,74 @@
           </div>
         </div>
         </div>
+        <template class="job-config-template" data-name="{{.Name}}">
+          <h3>General</h3>
+          <dl class="card-details">
+            <div class="card-detail card-detail-wide"><dt>Agent</dt><dd>{{or $agent.Name "—"}} (#{{.AgentID}})</dd></div>
+            <div class="card-detail"><dt>CPU cores</dt><dd>{{.Cores}}</dd></div>
+            <div class="card-detail"><dt>Banner</dt><dd>{{or .Banner "—"}}</dd></div>
+            <div class="card-detail card-detail-wide"><dt>Description</dt><dd>{{or .Desc "—"}}</dd></div>
+          </dl>
+          <h3>Target</h3>
+          <dl class="card-details">
+            {{if ne .TargetOffset "0"}}
+            <div class="card-detail"><dt>Target offset</dt><dd class="job-config-code">{{or .TargetOffset "—"}}</dd></div>
+            {{else}}
+            <div class="card-detail"><dt>Target method</dt><dd class="job-config-code">{{or .TargetMethod "—"}}</dd></div>
+            {{end}}
+            <div class="card-detail"><dt>Target module</dt><dd class="job-config-code">{{or .TargetModule "—"}}</dd></div>
+            <div class="card-detail"><dt>Architecture</dt><dd>{{or .TargetArch "—"}}</dd></div>
+            <div class="card-detail"><dt>Argument count</dt><dd>{{.TargetNArgs}}</dd></div>
+            <div class="card-detail card-detail-wide"><dt>Command line</dt><dd class="job-config-code">{{or .TargetApp "—"}}</dd></div>
+          </dl>
+          <h3>Instrumentation</h3>
+          <dl class="card-details">
+            <div class="card-detail"><dt>Mode</dt><dd>{{or .InstMode "—"}}</dd></div>
+            <div class="card-detail"><dt>Coverage type</dt><dd>{{or .CoverageType "—"}}</dd></div>
+            <div class="card-detail card-detail-wide"><dt>Coverage module(s)</dt><dd class="job-config-code">{{or .CoverageModule "—"}}</dd></div>
+            <div class="card-detail"><dt>Iterations</dt><dd>{{.FuzzIter}}</dd></div>
+            <div class="card-detail"><dt>Delivery</dt><dd>{{if eq .DelivMode "sm"}}Shared memory{{else if eq .DelivMode ""}}File{{else}}{{.DelivMode}}{{end}}</dd></div>
+          </dl>
+          <h3>Input and output</h3>
+          <dl class="card-details">
+            <div class="card-detail card-detail-wide"><dt>Input</dt><dd class="job-config-code">{{or .Input "—"}}</dd></div>
+            <div class="card-detail card-detail-wide"><dt>Output</dt><dd class="job-config-code">{{or .Output "—"}}</dd></div>
+            <div class="card-detail"><dt>Timeout</dt><dd>{{.Timeout}}</dd></div>
+            <div class="card-detail"><dt>Memory limit</dt><dd>{{or .MemoryLimit "—"}}</dd></div>
+          </dl>
+          <h3>Enabled options</h3>
+          {{if or (eq .DirtyMode 1) (eq .DumbMode 1) (eq .CrashMode 1) (eq .PersistCache 1) (eq .ExpertMode 1) (eq .VariableMode 1) (eq .SequentialMode 1) (eq .BugBucket 1) (eq .NoAffinity 1) (eq .SkipCrashes 1) (eq .ShuffleQueue 1) (eq .Autoresume 1)}}
+          <ul class="job-config-options">
+            {{if eq .DirtyMode 1}}<li>Quick &amp; dirty mode</li>{{end}}
+            {{if eq .DumbMode 1}}<li>Without instrumentation</li>{{end}}
+            {{if eq .CrashMode 1}}<li>Crash exploration mode</li>{{end}}
+            {{if eq .PersistCache 1}}<li>Persist DynamoRIO cache</li>{{end}}
+            {{if eq .ExpertMode 1}}<li>Expert mode</li>{{end}}
+            {{if eq .VariableMode 1}}<li>Variable mode</li>{{end}}
+            {{if eq .SequentialMode 1}}<li>Sequential mode</li>{{end}}
+            {{if eq .BugBucket 1}}<li>Bug bucket</li>{{end}}
+            {{if eq .NoAffinity 1}}<li>No affinity</li>{{end}}
+            {{if eq .SkipCrashes 1}}<li>Skip crashes</li>{{end}}
+            {{if eq .ShuffleQueue 1}}<li>Shuffle queue</li>{{end}}
+            {{if eq .Autoresume 1}}<li>Autoresume</li>{{end}}
+          </ul>
+          {{else}}
+          <p class="job-config-none">—</p>
+          {{end}}
+        </template>
       </div>
     </div>
     {{end}}
   </div>
+  <dialog id="job-config-dialog" class="job-config-dialog" aria-labelledby="job-config-title" aria-describedby="job-config-note">
+    <div class="job-config-header">
+      <h2 id="job-config-title"></h2>
+      <p id="job-config-note" class="job-config-note">Saved configuration stored on this server. These are settings, not live status from the agent.</p>
+    </div>
+    <div class="job-config-body" role="region" aria-label="Saved settings" tabindex="0"></div>
+    <div class="job-config-footer">
+      <button type="button" class="btn btn-outline theme-secondary job-config-close">Close</button>
+    </div>
+  </dialog>
   {{end}}
 {{end}}

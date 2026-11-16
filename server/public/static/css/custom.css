@@ -905,6 +905,120 @@ div:has(> .card.stat) {
   overflow-wrap: anywhere;
 }
 
+.job-config-dialog {
+  box-sizing: border-box;
+  width: min(40rem, calc(100vw - 2rem));
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #1f2937;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .15);
+  overflow: hidden;
+}
+
+.job-config-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.job-config-dialog::backdrop {
+  background-color: rgba(15, 23, 42, .45);
+}
+
+.job-config-header,
+.job-config-body,
+.job-config-footer {
+  padding: 1rem 1.25rem;
+}
+
+.job-config-header {
+  flex: 0 0 auto;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.job-config-header h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #0f172a;
+  overflow-wrap: anywhere;
+}
+
+.job-config-note {
+  margin: .25rem 0 0;
+  font-size: .875rem;
+  color: #475569;
+}
+
+.job-config-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.job-config-body:focus-visible {
+  outline: 2px solid #c2410c;
+  outline-offset: -2px;
+}
+
+.job-config-body h3 {
+  margin: 0 0 .5rem;
+  font-size: .875rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.job-config-body h3:not(:first-child) {
+  margin-top: 1.25rem;
+}
+
+.job-config-body .job-config-code {
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: .8125rem;
+  white-space: pre-wrap;
+}
+
+.job-config-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.job-config-options li {
+  padding: .125rem .5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background-color: #f8fafc;
+  color: #334155;
+  font-size: .8125rem;
+  overflow-wrap: anywhere;
+}
+
+.job-config-none {
+  margin: 0;
+  font-size: .875rem;
+}
+
+.job-config-footer {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #e2e8f0;
+}
+
+.job-config-footer .btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+
 .card.crash .card-text {
   overflow-wrap: anywhere;
 }
