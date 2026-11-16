@@ -980,6 +980,122 @@ function initFileSummaries() {
 
 $(initFileSummaries);
 
+function initValidationSummaries() {
+    Array.prototype.forEach.call(document.querySelectorAll("form[data-validation-summary]"), function(form) {
+        if (form.dataset.validationSummaryBound) return;
+        form.dataset.validationSummaryBound = "1";
+
+        var summary = document.createElement("div");
+        summary.className = "form-notice form-validation-summary";
+        summary.setAttribute("role", "alert");
+        summary.tabIndex = -1;
+        summary.hidden = true;
+        form.insertBefore(summary, form.firstElementChild);
+
+        var owned = [];
+        var attempted = false;
+        var queued = false;
+        var signature = "";
+
+        var fieldLabel = function(control) {
+            var label = control.labels && control.labels.length ? control.labels[0].textContent : "";
+            return String(label).replace(/\s+/g, " ").trim() || control.name || control.id || "Field";
+        };
+
+        var release = function(entry) {
+            if (entry.previous === null) entry.control.removeAttribute("aria-invalid");
+            else entry.control.setAttribute("aria-invalid", entry.previous);
+        };
+
+        var mark = function(controls) {
+            owned = owned.filter(function(entry) {
+                if (controls.indexOf(entry.control) >= 0) return true;
+                release(entry);
+                return false;
+            });
+            controls.forEach(function(control) {
+                var known = owned.some(function(entry) { return entry.control === control; });
+                if (!known && control.getAttribute("aria-invalid") !== "true") {
+                    owned.push({ control: control, previous: control.getAttribute("aria-invalid") });
+                }
+                if (owned.some(function(entry) { return entry.control === control; })) control.setAttribute("aria-invalid", "true");
+            });
+        };
+
+        var render = function() {
+            var controls = Array.prototype.filter.call(form.elements, function(control) {
+                return control.willValidate && !control.validity.valid;
+            });
+            mark(controls);
+            var items = controls.map(function(control) {
+                return { control: control, label: fieldLabel(control), message: String(control.validationMessage || "") };
+            });
+            var next = items.map(function(item) {
+                return Array.prototype.indexOf.call(form.elements, item.control) + "\u0000" + item.label + "\u0000" + item.message;
+            }).join("\u0001");
+            if (next === signature) return items.length;
+            signature = next;
+            summary.textContent = "";
+            if (!items.length) {
+                summary.hidden = true;
+                return 0;
+            }
+            var heading = document.createElement("h2");
+            heading.className = "form-validation-heading";
+            heading.textContent = items.length === 1 ? "1 field needs attention" : items.length + " fields need attention";
+            var list = document.createElement("ul");
+            list.className = "form-validation-list";
+            items.forEach(function(item) {
+                var entry = document.createElement("li");
+                var link = document.createElement("button");
+                link.type = "button";
+                link.className = "form-validation-link";
+                link.textContent = item.message ? item.label + ": " + item.message : item.label;
+                link.addEventListener("click", function() {
+                    if (!item.control.isConnected) return;
+                    item.control.scrollIntoView({ block: "center" });
+                    item.control.focus({ preventScroll: true });
+                });
+                entry.appendChild(link);
+                list.appendChild(entry);
+            });
+            summary.appendChild(heading);
+            summary.appendChild(list);
+            summary.hidden = false;
+            return items.length;
+        };
+
+        var clear = function() {
+            attempted = false;
+            owned.forEach(release);
+            owned = [];
+            signature = "";
+            summary.textContent = "";
+            summary.hidden = true;
+        };
+
+        form.addEventListener("invalid", function(e) {
+            e.preventDefault();
+            attempted = true;
+            if (queued) return;
+            queued = true;
+            setTimeout(function() {
+                queued = false;
+                if (render()) summary.focus();
+            }, 0);
+        }, true);
+
+        var update = function() {
+            if (attempted) render();
+        };
+        form.addEventListener("input", update);
+        form.addEventListener("change", update);
+        form.addEventListener("submit", clear);
+    });
+}
+
+$(initValidationSummaries);
+
 function initPlotRefresh() {
     var plots = document.getElementById("plots");
     if (!plots || plots.dataset.plotRefreshBound) return;

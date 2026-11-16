@@ -1615,6 +1615,72 @@ div:has(> .card.stat) {
   color: #78350f;
 }
 
+.form-validation-summary {
+  margin: 1.5rem 0 0;
+  border-color: #fca5a5;
+  border-left-color: #b91c1c;
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.form-validation-summary[hidden] {
+  display: none !important;
+}
+
+.form-validation-summary:focus {
+  outline: 2px solid #b91c1c;
+  outline-offset: 2px;
+}
+
+.form-validation-heading {
+  margin: 0 0 .25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #991b1b;
+}
+
+.form-validation-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.form-validation-link {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 0 .25rem;
+  border: 0;
+  background: transparent;
+  color: #991b1b;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.form-validation-link:hover {
+  color: #7f1d1d;
+}
+
+.form-validation-link:focus-visible {
+  outline: 2px solid #b91c1c;
+  outline-offset: 2px;
+}
+
+form[data-validation-summary] .form-control[aria-invalid="true"] {
+  border-color: #b91c1c;
+}
+
+form[data-validation-summary] .form-control[aria-invalid="true"]:focus {
+  border-color: #b91c1c;
+  box-shadow: 0 0 0 .2rem rgba(185, 28, 28, .25);
+}
+
 .settings-aside-actions {
   display: flex;
   flex-wrap: wrap;
