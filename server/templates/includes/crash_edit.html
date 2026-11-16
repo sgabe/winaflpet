@@ -1,4 +1,6 @@
 {{define "content"}}
+<div class="settings-layout">
+<div class="settings-main">
 <div class="settings-panel">
 <form id="editCrash" method="POST" enctype="multipart/form-data">
 
@@ -67,5 +69,27 @@
     </div>
   </div>
 </form>
+</div>
+</div>
+<aside class="settings-aside" aria-labelledby="crashEditAsideTitle">
+  <h2 id="crashEditAsideTitle">Crash #{{.crash.ID}}</h2>
+  <dl>
+    <dt>Job</dt>
+    <dd>{{.crash.GetJob.Name}} (#{{.crash.JobID}})</dd>
+    <dt>Verification</dt>
+    <dd>{{if not .crash.Verified}}Unverified{{else if not .crash.Function}}Unavailable{{else}}Verified{{end}}</dd>
+    <dt>Impact</dt>
+    <dd>{{if .crash.Impact}}{{.crash.Impact}}{{else}}&mdash;{{end}}</dd>
+    <dt>Risk</dt>
+    <dd>{{if .crash.Verified}}{{if eq .crash.GetRisk "high"}}High{{else if eq .crash.GetRisk "medium"}}Medium{{else if eq .crash.GetRisk "low"}}Low{{else if eq .crash.GetRisk "none"}}None{{else}}Not assessed{{end}}{{else}}Not assessed{{end}}</dd>
+  </dl>
+  <p class="settings-aside-note">Risk is a heuristic from the Bug ID access type and does not confirm exploitability.</p>
+  <div class="settings-aside-actions">
+    <a href="/crash/{{.crash.GUID}}/download" class="btn btn-outline theme-secondary action download" data-type="binary" data-method="POST">Download sample</a>
+    {{- if .crash.Verified}}
+    <a href="/crash/{{.crash.GUID}}/report" class="btn btn-outline theme-secondary crash-report" data-method="POST">Report</a>
+    {{- end}}
+  </div>
+</aside>
 </div>
 {{end}}

@@ -1385,6 +1385,26 @@ div:has(> .card.stat) {
   margin-bottom: 0;
 }
 
+.form-notice {
+  margin: 0;
+  padding: .5rem .75rem;
+  border: 1px solid #e2e8f0;
+  border-left-width: 4px;
+  border-radius: 6px;
+  background-color: #f8fafc;
+  color: #334155;
+  font-size: .875rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.form-notice.is-warning {
+  border-color: #fcd34d;
+  border-left-color: #d97706;
+  background-color: #fffbeb;
+  color: #78350f;
+}
+
 .settings-aside-actions {
   display: flex;
   flex-wrap: wrap;

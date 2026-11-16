@@ -1,4 +1,6 @@
 {{define "content"}}
+<div class="settings-layout">
+<div class="settings-main">
 <div class="settings-panel">
 <form id="uploadJob" class="upload job" method="POST" enctype="multipart/form-data" action="/jobs/upload">
 
@@ -12,6 +14,10 @@
         <input type="file" name="job" id="jobFile" class="form-control">
       </div>
 
+      <div class="settings-field">
+        <p class="form-notice is-warning">Check the agent and paths after importing. The configuration keeps its original agent ID; paths refer to that agent machine. Review the job with Edit before starting.</p>
+      </div>
+
     </div>
   </fieldset>
 
@@ -22,5 +28,15 @@
     </div>
   </div>
 </form>
+</div>
+</div>
+<aside class="settings-aside" aria-labelledby="jobsUploadAsideTitle">
+  <h2 id="jobsUploadAsideTitle">About export files</h2>
+  <p>Export a configuration from More on an idle Job card.</p>
+  <p>The JSON contains the job configuration, including the agent ID and paths. Input files, crash samples and statistics are not included.</p>
+  <div class="settings-aside-actions">
+    <a href="/jobs/view" class="btn btn-outline theme-secondary">View jobs</a>
+  </div>
+</aside>
 </div>
 {{end}}
