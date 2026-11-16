@@ -3,23 +3,23 @@
   <fieldset class="mb-4">
     <legend>Email alerts</legend>
     <div class="row mb-3">
-      <div class="col-md-6">
+      <div class="md:col-6">
         <label for="smtp_host" class="form-label">SMTP host</label>
         <input type="text" class="form-control" id="smtp_host" name="smtp_host" value="{{.settings.Host}}" placeholder="smtp.example.com" required>
       </div>
-      <div class="col-md-6">
+      <div class="md:col-6">
         <label for="smtp_port" class="form-label">SMTP port</label>
         <input type="number" class="form-control" id="smtp_port" name="smtp_port" min="1" max="65535" value="{{.settings.Port}}" required>
         <small class="form-text text-muted">Usually 587 for STARTTLS. Implicit TLS on port 465 is not supported.</small>
       </div>
     </div>
     <div class="row mb-3">
-      <div class="col-md-6">
+      <div class="md:col-6">
         <label for="smtp_username" class="form-label">SMTP username</label>
         <input type="text" class="form-control" id="smtp_username" name="smtp_username" value="{{.settings.Username}}" autocomplete="off" required>
         <small class="form-text text-muted">Also used as the sender address.</small>
       </div>
-      <div class="col-md-6">
+      <div class="md:col-6">
         <label for="smtp_password" class="form-label">SMTP password</label>
         <input type="password" class="form-control" id="smtp_password" name="smtp_password" autocomplete="new-password" aria-describedby="password_help">
         <small id="password_help" class="form-text text-muted">Leave blank to keep the current password.</small>
@@ -36,6 +36,6 @@
     </div>
     <p class="text-muted">Enable alerts from a job card. Messages are sent to the email address in your profile. Active alerts pick up saved changes at their next scheduled check.</p>
   </fieldset>
-  <button type="submit" class="btn btn-primary">Save</button>
+  <button type="submit" class="btn theme-primary">Save</button>
 </form>
 {{end}}

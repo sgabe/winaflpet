@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.
+- Redesign shared layouts and styles for Bootstrap 6 and jQuery 4.
 
 ## [2.1.0] - 2026-09-12
 ### Added

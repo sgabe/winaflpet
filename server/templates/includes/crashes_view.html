@@ -34,7 +34,7 @@
 {{end}}
 
 {{define "verifyCrash"}}
-<a href="/crash/{{.}}/verify" class="btn btn-outline-secondary action verify" data-method="POST">
+<a href="/crash/{{.}}/verify" class="btn btn-outline theme-secondary action verify" data-method="POST">
   <svg class="bi" width="20" height="20" fill="currentColor" color="orangered" viewBox="0 0 20 20">
     <use xlink:href="/static/svg/bootstrap-icons.svg#check-square-fill"/>
   </svg>
@@ -42,7 +42,7 @@
 {{end}}
 
 {{define "deleteCrash"}}
-<a href="/crash/{{.}}" class="btn btn-outline-secondary action delete" data-method="DELETE">
+<a href="/crash/{{.}}" class="btn btn-outline theme-secondary action delete" data-method="DELETE">
   <svg class="bi" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20">
     <use xlink:href="/static/svg/bootstrap-icons.svg#x-square-fill"/>
   </svg>
@@ -50,7 +50,7 @@
 {{end}}
 
 {{define "downloadCrash"}}
-<a href="/crash/{{.}}/download" class="btn btn-outline-secondary action download" data-type="binary" data-method="POST">
+<a href="/crash/{{.}}/download" class="btn btn-outline theme-secondary action download" data-type="binary" data-method="POST">
   <svg class="bi" width="20" height="20" fill="currentColor" color="#0074D9" viewBox="0 0 20 20">
     <use xlink:href="/static/svg/bootstrap-icons.svg#arrow-down-square-fill"/>
   </svg>
@@ -58,7 +58,7 @@
 {{end}}
 
 {{define "editCrash"}}
-<a href="/crash/{{.}}/edit" class="btn btn-outline-secondary action edit">
+<a href="/crash/{{.}}/edit" class="btn btn-outline theme-secondary action edit">
   <svg class="bi" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20">
     <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
   </svg>
@@ -84,7 +84,7 @@
   <div id="cards" class="row row-cols-3">
 
   {{range .crashes}}
-  <div class="col col-sm-6 col-lg-4 mb-3">
+  <div class="col sm:col-6 lg:col-4 mb-3">
     <div class="card crash {{if not .Verified }}unverified{{end}}{{if and .Verified (not .Function) }}unavailable{{end}}">
       <div class="card-header">
         <small class="id {{ .GetRisk }} rounded-top-3 rounded-end-0">{{ .ID }}</small>
@@ -155,7 +155,7 @@
 {{end}}
 
 {{define "reportCrash"}}
-<a href="/crash/{{.}}/report" class="btn btn-outline-secondary crash-report" title="Report" aria-label="Report" data-method="POST">
+<a href="/crash/{{.}}/report" class="btn btn-outline theme-secondary crash-report" title="Report" aria-label="Report" data-method="POST">
   <svg class="bi" width="20" height="20" fill="currentColor" color="purple" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#file-earmark-text"/>
   </svg>

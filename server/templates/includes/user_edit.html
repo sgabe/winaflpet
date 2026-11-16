@@ -5,16 +5,16 @@
   <legend>General information</legend>
     <div class="row ms-0">
 
-      <div class="col-md">
-        <label for="firstname" class="col-md col-form-label">First name</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="firstname" class="md:col col-form-label">First name</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="firstname" id="firstname" value="{{.user.FirstName}}">
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="lastname" class="col-md col-form-label">Last name</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="lastname" class="md:col col-form-label">Last name</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="lastname" id="lastname" value="{{.user.LastName}}">
         </div>
       </div>
@@ -23,16 +23,16 @@
 
     <div class="row ms-0">
 
-      <div class="col-md">
-        <label for="username" class="col-md col-form-label">Username</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="username" class="md:col col-form-label">Username</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="username" id="username" placeholder="{{.user.UserName}}" disabled>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="email" class="col-md col-form-label">Email address</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="email" class="md:col col-form-label">Email address</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="email" id="email" placeholder="{{.user.Email}}">
         </div>
       </div>
@@ -46,27 +46,27 @@
   <legend>Password</legend>
 
     <div class="row ms-0">
-      <div class="col-md">
-        <label for="password" class="col-md col-form-label">Current password</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="password" class="md:col col-form-label">Current password</label>
+        <div class="md:col">
           <input type="password" class="form-control" name="password" id="password">
         </div>
       </div>
     </div>
 
     <div class="row ms-0">
-      <div class="col-md">
-        <label for="newPassword" class="col-md col-form-label">New password</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="newPassword" class="md:col col-form-label">New password</label>
+        <div class="md:col">
           <input type="password" class="form-control" name="newPassword" id="newPassword">
         </div>
       </div>
     </div>
 
     <div class="row ms-0">
-      <div class="col-md">
-        <label for="newPasswordConfirmation" class="col-md col-form-label">New password confirmation</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="newPasswordConfirmation" class="md:col col-form-label">New password confirmation</label>
+        <div class="md:col">
           <input type="password" class="form-control" name="newPasswordConfirmation" id="newPasswordConfirmation">
         </div>
       </div>
@@ -74,6 +74,6 @@
 
   </fieldset>
 
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn theme-primary">Submit</button>
 </form>
 {{end}}

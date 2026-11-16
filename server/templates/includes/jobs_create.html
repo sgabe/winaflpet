@@ -5,10 +5,10 @@
   <legend>General settings</legend>
 
     <div class="row ms-0">
-      <div class="col-md">
-        <label for="agent" class="col-md col-form-label">Agent</label>
-        <div class="col-md">
-          <select class="form-select" id="aid" name="aid" required>
+      <div class="md:col">
+        <label for="agent" class="md:col col-form-label">Agent</label>
+        <div class="md:col">
+          <select class="form-control" id="aid" name="aid" required>
             {{if not .agents}}
             <option value="1">Default</option>
             {{else}}
@@ -21,10 +21,10 @@
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="cores" class="col-md col-form-label">CPU cores</label>
-        <div class="col-md">
-          <select class="form-select" id="cores" name="cores">
+      <div class="md:col">
+        <label for="cores" class="md:col col-form-label">CPU cores</label>
+        <div class="md:col">
+          <select class="form-control" id="cores" name="cores">
           {{range seq 40}}
             <option>{{.}}</option>
           {{end}}
@@ -33,17 +33,17 @@
         </div>
       </div>
 
-      <div class="col-md">
-          <label for="name" class="col-md col-form-label">Name</label>
-          <div class="col-md">
+      <div class="md:col">
+          <label for="name" class="md:col col-form-label">Name</label>
+          <div class="md:col">
             <input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp" placeholder="Enter name">
             <small id="nameHelp" class="form-text text-muted">Short name of the new job</small>
           </div>
       </div>
 
-      <div class="col-md">
-        <label for="banner" class="col-md col-form-label">Banner</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="banner" class="md:col col-form-label">Banner</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="banner" id="banner" aria-describedby="bannerHelp" placeholder="Enter banner">
           <small id="bannerHelp" class="form-text text-muted">Short text banner to show on the screen</small>
         </div>
@@ -51,9 +51,9 @@
     </div>
 
     <div class="row ms-0">
-      <div class="col-md">
-        <label for="desc" class="col-md col-form-label">Description</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="desc" class="md:col col-form-label">Description</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="desc" id="desc" aria-describedby="descHelp" placeholder="Enter short description">
           <small id="descHelp" class="form-text text-muted">Short description of the job</small>
         </div>
@@ -66,33 +66,33 @@
     <legend>Tool locations</legend>
     <div class="row ms-0">
 
-      <div class="col-md">
-        <label for="aflDir" class="col-md col-form-label">AFL directory</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="aflDir" class="md:col col-form-label">AFL directory</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="afl_dir" id="aflDir" aria-describedby="aflDirHelp" placeholder="Enter AFL directory">
           <small id="aflDirHelp" class="form-text text-muted">AFL directory on the remote machine</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="drioDir" class="col-md col-form-label">DynamorIO directory</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="drioDir" class="md:col col-form-label">DynamorIO directory</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="drio_dir" id="drioDir" aria-describedby="drioDirHelp" placeholder="Enter DynamorIO directory">
           <small id="drioDirHelp" class="form-text text-muted">DynamorIO directory on the remote machine</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="pyDir" class="col-md col-form-label">Python directory</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="pyDir" class="md:col col-form-label">Python directory</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="py_dir" id="pyDir" aria-describedby="pyDirHelp" placeholder="Enter Python directory">
           <small id="pyDirHelp" class="form-text text-muted">Python directory on the remote machine</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="bugidDir" class="col-md col-form-label">BugId directory</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="bugidDir" class="md:col col-form-label">BugId directory</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="bugid_dir" id="bugidDir" aria-describedby="bugidDirHelp" placeholder="Enter BugId directory">
           <small id="bugidDirHelp" class="form-text text-muted">BugId directory on the remote machine</small>
         </div>
@@ -105,26 +105,26 @@
     <legend>Basic parameters</legend>
     <div class="row ms-0">
 
-      <div class="col-md">
-        <label for="input" class="col-md col-form-label">Input</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="input" class="md:col col-form-label">Input</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="input" id="input" aria-describedby="inputHelp" placeholder="Enter input directory">
           <small id="inputHelp" class="form-text text-muted">Input directory with test cases</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="output" class="col-md col-form-label">Output</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="output" class="md:col col-form-label">Output</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="output" id="output" aria-describedby="outputHelp" placeholder="Enter output directory">
           <small id="outputHelp" class="form-text text-muted">Output directory for findings</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="delivMode" class="col-md col-form-label">Delivery</label>
-        <div class="col-md">
-          <select class="form-select" name="deliv_mode" id="delivMode">
+      <div class="md:col">
+        <label for="delivMode" class="md:col col-form-label">Delivery</label>
+        <div class="md:col">
+          <select class="form-control" name="deliv_mode" id="delivMode">
             <option value="">File</option>
             <option value="sm">Shared memory</option>
           </select>
@@ -132,9 +132,9 @@
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="timeout" class="col-md col-form-label">Timeout</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="timeout" class="md:col col-form-label">Timeout</label>
+        <div class="md:col">
           <input type="number" class="form-control" name="timeout" id="timeout" aria-describedby="timeoutHelp" placeholder="100000" required>
           <small id="timeoutHelp" class="form-number">Timeout for each run</small>
         </div>
@@ -144,33 +144,33 @@
 
     <div class="row ms-0">
 
-      <div class="col-md">
-        <label for="attachLib" class="col-md col-form-label">Attach library</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="attachLib" class="md:col col-form-label">Attach library</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="attach_lib" id="attachLib" aria-describedby="attachLibHelp" placeholder="Enter module to watch">
           <small id="attachLibHelp" class="form-text text-muted">Library identifying a unique process to attach to</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="customLib" class="col-md col-form-label">Custom library</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="customLib" class="md:col col-form-label">Custom library</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="custom_lib" id="customLib" aria-describedby="customLibHelp" placeholder="Enter path to custom module">
           <small id="customLibHelp" class="form-text text-muted">Path to user-defined library for custom test cases processing</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="extrasDir" class="col-md col-form-label">Extras directory</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="extrasDir" class="md:col col-form-label">Extras directory</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="extras_dir" id="extrasDir" aria-describedby="extrasDirHelp" placeholder="Enter extras directory">
           <small id="extrasDirHelp" class="form-text text-muted">Optional fuzzer dictionary</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="memoryLimit" class="col-md col-form-label">Memory limit</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="memoryLimit" class="md:col col-form-label">Memory limit</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="memory_limit" id="memoryLimit" aria-describedby="memoryLimitHelp" placeholder="0">
           <small id="memoryLimitHelp" class="form-text text-muted">Memory limit for the target process</small>
         </div>
@@ -181,38 +181,38 @@
     <div class="row ms-0">
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="dirty_mode" id="dirtyMode" value="1">
-            <label class="form-check-label" for="dirtyMode">Quick & dirty mode</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="dirty_mode" id="dirtyMode" value="1">
           </div>
+          <label for="dirtyMode">Quick & dirty mode</label>
         </div>
       </div>
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="dumb_mode" id="dumbMode" value="1">
-            <label class="form-check-label" for="dumbMode">Without instrumentation</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="dumb_mode" id="dumbMode" value="1">
           </div>
+          <label for="dumbMode">Without instrumentation</label>
         </div>
       </div>
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="crash_mode" id="crashMode" value="1">
-            <label class="form-check-label" for="crashMode">Crash exploration mode</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="crash_mode" id="crashMode" value="1">
           </div>
+          <label for="crashMode">Crash exploration mode</label>
         </div>
       </div>
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="persist_cache" id="persistCache" value="1">
-            <label class="form-check-label" for="persistCache">Persist DynamoRIO cache</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="persist_cache" id="persistCache" value="1">
           </div>
+          <label for="persistCache">Persist DynamoRIO cache</label>
         </div>
       </div>
 
@@ -221,38 +221,38 @@
     <div class="row ms-0">
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="expert_mode" id="expertMode" value="1">
-            <label class="form-check-label" for="expertMode">Expert mode</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="expert_mode" id="expertMode" value="1">
           </div>
+          <label for="expertMode">Expert mode</label>
         </div>
       </div>
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="variable_mode" id="variableMode" value="1">
-            <label class="form-check-label" for="variableMode">Variable mode</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="variable_mode" id="variableMode" value="1">
           </div>
+          <label for="variableMode">Variable mode</label>
         </div>
       </div>
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="sequential_mode" id="sequentialMode" value="1">
-            <label class="form-check-label" for="sequentialMode">Sequential mode</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="sequential_mode" id="sequentialMode" value="1">
           </div>
+          <label for="sequentialMode">Sequential mode</label>
         </div>
       </div>
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="bug_bucket" id="bugBucket" value="1">
-            <label class="form-check-label" for="bugBucket">Bug bucket</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="bug_bucket" id="bugBucket" value="1">
           </div>
+          <label for="bugBucket">Bug bucket</label>
         </div>
       </div>
 
@@ -265,38 +265,38 @@
     <div class="row ms-0">
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="no_affinity" id="noAffinity" value="1">
-            <label class="form-check-label" for="noAffinity">No affinity</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="no_affinity" id="noAffinity" value="1">
           </div>
+          <label for="noAffinity">No affinity</label>
         </div>
       </div>
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="skip_crashes" id="skipCrashes" value="1">
-            <label class="form-check-label" for="skipCrashes">Skip crashes</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="skip_crashes" id="skipCrashes" value="1">
           </div>
+          <label for="skipCrashes">Skip crashes</label>
         </div>
       </div>
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="shuffle_queue" id="shuffleQueue" value="1">
-            <label class="form-check-label" for="shuffleQueue">Shuffle queue</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="shuffle_queue" id="shuffleQueue" value="1">
           </div>
+          <label for="shuffleQueue">Shuffle queue</label>
         </div>
       </div>
 
       <div class="col-3">
-        <div class="form-check form-switch">
-          <div class="col">
-            <input class="form-check-input" type="checkbox" name="autoresume" id="autoresume" value="1">
-            <label class="form-check-label" for="autoresume">Autoresume</label>
+        <div class="form-field">
+          <div class="switch">
+            <input type="checkbox" name="autoresume" id="autoresume" value="1">
           </div>
+          <label for="autoresume">Autoresume</label>
         </div>
       </div>
 
@@ -304,17 +304,17 @@
 
     <div class="row ms-0">
 
-      <div class="col-md">
-        <label for="postLib" class="col-md col-form-label">Postprocessor library name</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="postLib" class="md:col col-form-label">Postprocessor library name</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="post_lib" id="postLib" aria-describedby="postLibHelp" placeholder="Enter postprocessor name">
           <small id="postLibHelp" class="form-text text-muted">Name (or full path) of the postprocessor library to load</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="postLibArgs" class="col-md col-form-label">Postprocessor library arguments</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="postLibArgs" class="md:col col-form-label">Postprocessor library arguments</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="post_lib_args" id="postLibArgs" aria-describedby="postLibArgsHelp" placeholder="Enter postprocessor arguments">
           <small id="postLibArgsHelp" class="form-text text-muted">Custom arguments (space-separated) for the postprocessor library</small>
         </div>
@@ -329,10 +329,10 @@
 
     <div class="row ms-0">
 
-      <div class="col-md">
-        <label for="instMode" class="col-md col-form-label">Instrumentation mode</label>
-        <div class="col-md">
-          <select class="form-select" name="inst_mode" id="instMode">
+      <div class="md:col">
+        <label for="instMode" class="md:col col-form-label">Instrumentation mode</label>
+        <div class="md:col">
+          <select class="form-control" name="inst_mode" id="instMode">
             <option value="DynamoRIO">DynamoRIO</option>
             <option value="TinyInst">TinyInst</option>
           </select>
@@ -340,18 +340,18 @@
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="coverageModule" class="col-md col-form-label">Coverage module(s)</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="coverageModule" class="md:col col-form-label">Coverage module(s)</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="cov_module" id="coverageModule" aria-describedby="coverageModuleHelp" placeholder="Enter coverage module(s)">
           <small id="coverageModuleHelp" class="form-text text-muted">Module(s) to collect coverage for</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="coverageType" class="col-md col-form-label">Coverage type</label>
-        <div class="col-md">
-          <select class="form-select" name="cov_type" id="coverageType">
+      <div class="md:col">
+        <label for="coverageType" class="md:col col-form-label">Coverage type</label>
+        <div class="md:col">
+          <select class="form-control" name="cov_type" id="coverageType">
             <option value="bb">Basic block</option>
             <option value="edge">Edge</option>
           </select>
@@ -359,9 +359,9 @@
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="fuzzIter" class="col-md col-form-label">Fuzz iterations</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="fuzzIter" class="md:col col-form-label">Fuzz iterations</label>
+        <div class="md:col">
           <input type="number" class="form-control" name="fuzz_iter" id="fuzzIter" aria-describedby="fuzzIterHelp" placeholder="5000" required>
           <small id="fuzzIterHelp" class="form-number">Fuzzing iterations to perform</small>
         </div>
@@ -369,33 +369,33 @@
     </div>
 
     <div class="row ms-0">
-      <div class="col-md">
-        <label for="targetModule" class="col-md col-form-label">Target module</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="targetModule" class="md:col col-form-label">Target module</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="target_module" id="targetModule" aria-describedby="targetModuleHelp" placeholder="Enter target module">
           <small id="targetModuleHelp" class="form-text text-muted">Module with target function to fuzz</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="targetMethod" class="col-md col-form-label">Target method</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="targetMethod" class="md:col col-form-label">Target method</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="target_method" id="targetMethod" aria-describedby="targetMethodHelp" placeholder="Enter target method">
           <small id="targetMethodHelp" class="form-text text-muted">Name of the method to fuzz</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="targetOffset" class="col-md col-form-label">Target offset</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="targetOffset" class="md:col col-form-label">Target offset</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="target_offset" id="targetOffset" aria-describedby="targetOffsetHelp" placeholder="Enter target offset">
           <small id="targetOffsetHelp" class="form-text text-muted">Offset to target function</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="targetNArgs" class="col-md col-form-label">Target argument count</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="targetNArgs" class="md:col col-form-label">Target argument count</label>
+        <div class="md:col">
           <input type="number" class="form-control" name="target_nargs" id="targetNArgs" aria-describedby="targetNArgsHelp" placeholder="1" required>
           <small id="targetNAargsHelp" class="form-number">Number of arguments the fuzzed method takes</small>
         </div>
@@ -408,18 +408,18 @@
     <legend>Target application</legend>
 
     <div class="row ms-0">
-      <div class="col-md-9">
-        <label for="targetApp" class="col-md col-form-label">Target application command line</label>
-        <div class="col-md">
+      <div class="md:col-9">
+        <label for="targetApp" class="md:col col-form-label">Target application command line</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="target_app" id="targetApp" aria-describedby="targetAppHelp" placeholder="Enter application">
           <small id="targetAppHelp" class="form-text text-muted">Target application or harness to execute for fuzzing (e.g. harness.exe)</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="targetArch" class="col-md col-form-label">Architecture</label>
-        <div class="col-md">
-          <select class="form-select" name="target_arch" id="targetArch">
+      <div class="md:col">
+        <label for="targetArch" class="md:col col-form-label">Architecture</label>
+        <div class="md:col">
+          <select class="form-control" name="target_arch" id="targetArch">
             <option>x86</option>
             <option>x64</option>
           </select>
@@ -431,6 +431,6 @@
 
   <input type="hidden" id="inst_mode" name="inst_mode" value="DynamorIO">
 
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn theme-primary">Submit</button>
 </form>
 {{end}}

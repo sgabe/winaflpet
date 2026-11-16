@@ -5,26 +5,28 @@
   <legend>General settings</legend>
     <div class="row ms-0">
 
-      <div class="col-md">
-        <label for="name" class="col-md col-form-label">Name</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="name" class="md:col col-form-label">Name</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp" value="{{.agent.Name}}">
           <small id="nameHelp" class="form-text text-muted">Short name of the new job</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="desc" class="col-md col-form-label">Description</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="desc" class="md:col col-form-label">Description</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="desc" id="desc" aria-describedby="descHelp" value="{{.agent.Description}}">
           <small id="descHelp" class="form-text text-muted">Short description of the job</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="status" class="col-md col-form-label">Status</label>
-        <div class="col-md form-check form-switch">
-          <input type="checkbox" class="form-check-input" name="status" id="status" aria-describedby="statusHelp" value="1" {{ if eq .agent.Status 1}}checked{{end}}>
+      <div class="md:col">
+        <label for="status" class="md:col col-form-label">Status</label>
+        <div class="md:col form-field">
+          <div class="switch">
+            <input type="checkbox" name="status" id="status" aria-describedby="statusHelp" value="1" {{ if eq .agent.Status 1}}checked{{end}}>
+          </div>
           <small id="statusHelp" class="form-text text-muted">Active</small>
         </div>
       </div>
@@ -36,25 +38,25 @@
   <legend>Agent settings</legend>
     <div class="row ms-0">
 
-      <div class="col-md">
-        <label for="host" class="col-md col-form-label">Host</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="host" class="md:col col-form-label">Host</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="host" id="host" aria-describedby="hostHelp" value="{{.agent.Host}}">
           <small id="hostHelp" class="form-text text-muted">Host name or IP address of the remote machine</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="port" class="col-md col-form-label">Port</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="port" class="md:col col-form-label">Port</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="host" id="host" aria-describedby="portHelp" value="{{.agent.Port}}">
           <small id="portHelp" class="form-text text-muted">Port number of the agent on the remote machine</small>
         </div>
       </div>
 
-      <div class="col-md">
-        <label for="key" class="col-md col-form-label">Key</label>
-        <div class="col-md">
+      <div class="md:col">
+        <label for="key" class="md:col col-form-label">Key</label>
+        <div class="md:col">
           <input type="text" class="form-control" name="key" id="key" aria-describedby="keyHelp" value="{{.agent.Key}}">
           <small id="keyHelp" class="form-text text-muted">Authentication key for API requests</small>
         </div>
@@ -63,6 +65,6 @@
     </div>
   </fieldset>
 
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn theme-primary">Submit</button>
 </form>
 {{end}}

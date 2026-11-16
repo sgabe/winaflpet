@@ -40,13 +40,13 @@
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Total number of function calls attempted.">Total execs:</span>
-                  <span class="badge text-bg-primary rounded-pill">{{ formatNumber .ExecsDone }}</span></li>
+                  <span class="badge theme-primary rounded-pill">{{ formatNumber .ExecsDone }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Number of function calls attempted since last recorded crash.">Execs since crash:</span>
-                  <span class="badge text-bg-primary rounded-pill">{{ formatNumber .ExecsSinceCrash }}</span></li>
+                  <span class="badge theme-primary rounded-pill">{{ formatNumber .ExecsSinceCrash }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Current number of execs per second.">Exec speed:</span>
-                  <span class="badge text-bg-{{if lt .ExecsPerSec 20.0}}danger{{else if lt .ExecsPerSec 100.0}}warning{{else}}success{{end}} rounded-pill">{{ .ExecsPerSec }}/sec</span></li>
+                  <span class="badge theme-{{if lt .ExecsPerSec 20.0}}danger{{else if lt .ExecsPerSec 100.0}}warning{{else}}success{{end}} rounded-pill">{{ .ExecsPerSec }}/sec</span></li>
               </ul>
             </div>
           </div>
@@ -57,19 +57,19 @@
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Count of queue passes done.">Cycles done:</span>
-                  <span class="badge text-bg-primary rounded-pill">{{ .CyclesDone }}</span></li>
+                  <span class="badge theme-primary rounded-pill">{{ .CyclesDone }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Number of test cases discovered.">Total paths:</span>
-                  <span class="badge text-bg-primary rounded-pill">{{ .PathsTotal }}</span></li>
+                  <span class="badge theme-primary rounded-pill">{{ .PathsTotal }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Number of unique crashes recorded.">Unique crashes:</span>
-                  <span class="badge text-bg-{{if ne .UniqueCrashes 0}}danger{{else}}secondary{{end}} rounded-pill">{{ .UniqueCrashes }}</span></li>
+                  <span class="badge theme-{{if ne .UniqueCrashes 0}}danger{{else}}secondary{{end}} rounded-pill">{{ .UniqueCrashes }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Number of unique hangs encountered.">Unique hangs:</span>
-                  <span class="badge text-bg-{{if ne .UniqueHangs 0}}warning{{else}}secondary{{end}} rounded-pill">{{ .UniqueHangs }}</span></li>
+                  <span class="badge theme-{{if ne .UniqueHangs 0}}warning{{else}}secondary{{end}} rounded-pill">{{ .UniqueHangs }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Bitmap coverage observed by the instrumentation.">Bitmap coverage:</span>
-                  <span class="badge text-bg-success">{{ .BitmapCvg }}</span></li>
+                  <span class="badge theme-success">{{ .BitmapCvg }}</span></li>
               </ul>
             </div>
           </div>
@@ -80,27 +80,27 @@
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Path depth reached through the guided fuzzing process.">Levels:</span>
-                  <span class="badge text-bg-primary rounded-pill">{{ .MaxDepth }}</span>
+                  <span class="badge theme-primary rounded-pill">{{ .MaxDepth }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Inputs that have not gone through any fuzzing yet.">Pending:</span>
-                  <span class="badge text-bg-primary rounded-pill">{{ .PendingTotal }}</span>
+                  <span class="badge theme-primary rounded-pill">{{ .PendingTotal }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Inputs that the fuzzer really wants to get to in this queue cycle.">Pend fav:</span>
-                  <span class="badge text-bg-primary rounded-pill">{{ .PendingFavs }}</span>
+                  <span class="badge theme-primary rounded-pill">{{ .PendingFavs }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="New paths found during this fuzzing section.">Own finds:</span>
-                  <span class="badge text-bg-primary rounded-pill">{{ .PathsFound }}</span>
+                  <span class="badge theme-primary rounded-pill">{{ .PathsFound }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Paths imported from other fuzzer instances when doing parallelized fuzzing.">Imported:</span>
-                  <span class="badge text-bg-primary rounded-pill">{{ .PathsImported }}</span>
+                  <span class="badge theme-primary rounded-pill">{{ .PathsImported }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Consistency of observed traces.">Stability:</span>
-                  <span class="badge text-bg-primary badge-success">{{ .Stability }}</span>
+                  <span class="badge theme-primary badge-success">{{ .Stability }}</span>
                 </li>
               </ul>
             </div>
@@ -110,12 +110,12 @@
       </div>
       <div class="card-footer">
         <div class="btn-group">
-        <a href="/job/{{.GetJob.GUID}}/check?fid={{.GetFID}}" class="btn btn-outline-secondary action check" data-method="POST">
+        <a href="/job/{{.GetJob.GUID}}/check?fid={{.GetFID}}" class="btn btn-outline theme-secondary action check" data-method="POST">
           <svg class="bi" width="20px" height="20px" fill="currentColor" color="grey">
             <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
           </svg>
         </a>
-        <a href="/job/{{.GetJob.GUID}}/plot?fid={{.GetFID}}" class="btn btn-outline-secondary action plot" data-method="POST">
+        <a href="/job/{{.GetJob.GUID}}/plot?fid={{.GetFID}}" class="btn btn-outline theme-secondary action plot" data-method="POST">
           <svg class="bi" width="20px" height="20px" fill="currentColor" color="green">
             <use xlink:href="/static/svg/bootstrap-icons.svg#bar-chart-fill"/>
           </svg>

@@ -1,3 +1,5 @@
+import { Tooltip } from './bootstrap.bundle.min.js';
+
 $(function () {
 
     $(document).ajaxStart(function(){
@@ -8,12 +10,16 @@ $(function () {
         $("#wait").attr("style", "display: none !important");
     });
 
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
+    document.querySelectorAll('[data-toggle="tooltip"]').forEach(function (element) {
+        Tooltip.getOrCreateInstance(element);
+    });
 
-    $('.truncate').succinct({
-        size: 120
+    $('.truncate').each(function() {
+        var text = $(this).text();
+        if (text.length > 120) {
+            var truncated = text.trim().substring(0, 120).split(' ').slice(0, -1).join(' ');
+            $(this).text(truncated.replace(/[!-\/:-@\[-`{-~]$/, '') + '...');
+        }
     });
 
     setInterval(function(){
@@ -38,7 +44,7 @@ $(function () {
     }
 
     var showAlert = function(context, alert) {
-        $(".alert").removeClass("alert-empty alert-danger alert-info").addClass("alert-" + context);
+        $(".alert").removeClass("alert-empty theme-danger theme-info").addClass("theme-" + context);
         $(".alert .message").html(alert);
         $("html, body").animate({ scrollTop: 0 }, "fast");
     }
@@ -59,14 +65,14 @@ $(function () {
         if (button.hasClass("disabled")) return;
         button.addClass("disabled");
         var report = button.hasClass("crash-report");
-        if (report) $("#alert").removeClass("alert-empty alert-danger alert-success").addClass("alert-info").find(".message").text("Generating HTML report...");
+        if (report) $("#alert").removeClass("alert-empty theme-danger theme-success").addClass("theme-info").find(".message").text("Generating HTML report...");
         try {
             var response = await fetch(button.attr("href"), {method: button.attr("data-method") || "GET"});
             var type = response.headers.get("Content-Type") || "";
             if (type.includes("application/json")) {
                 var status = await response.json();
-                $("#alert").removeClass("alert-empty alert-danger alert-info alert-success")
-                    .addClass(response.ok ? "alert-info" : "alert-danger").find(".message")
+                $("#alert").removeClass("alert-empty theme-danger theme-info theme-success")
+                    .addClass(response.ok ? "theme-info" : "theme-danger").find(".message")
                     .text(status.alert || status.error || "Download failed.");
             } else {
                 if (!response.ok || !type.includes(report ? "text/html" : "application/zip") || (report && !response.headers.get("Content-Disposition"))) throw new Error("Unable to download the file. Check your connection and login.");
@@ -78,11 +84,11 @@ $(function () {
                 document.body.appendChild(link);
                 link.click();
                 link.remove();
-                if (report) $("#alert").removeClass("alert-info alert-danger").addClass("alert-success").find(".message").text("HTML report downloaded.");
+                if (report) $("#alert").removeClass("theme-info theme-danger").addClass("theme-success").find(".message").text("HTML report downloaded.");
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
             }
         } catch (error) {
-            $("#alert").removeClass("alert-empty alert-info alert-success").addClass("alert-danger").find(".message").text(error.message);
+            $("#alert").removeClass("alert-empty theme-info theme-success").addClass("theme-danger").find(".message").text(error.message);
         } finally { button.removeClass("disabled"); }
     });
 
@@ -151,14 +157,6 @@ $(function () {
         $(".alert").toggleClass("alert-empty");
     });
 
-    $("#accordion .collapse").on('hide.bs.collapse', function (e) {
-        $("#"+e.target.id).parent().animate({"padding-top": 0, "padding-bottom": 0});
-    })
-
-    $("#accordion .collapse").on('show.bs.collapse', function (e) {
-        $("#"+e.target.id).parent().animate({"padding": "1.25rem"})
-    })
-
     if ($("#plots").length) {
         setInterval(function() {
             $.post(window.location.href, function(data) {});
@@ -187,11 +185,17 @@ $(function () {
         }
     });
 
-    $('#cards').masonry({
-        itemSelector: '.col'
-    }).on('shown.bs.collapse hidden.bs.collapse', function() {
-        $('#cards').masonry();
-    });
+    var cards = document.getElementById("cards");
+    if (cards && $.fn.masonry) {
+        $(cards).masonry({
+            itemSelector: '.col'
+        });
+        ["shown.bs.collapse", "hidden.bs.collapse"].forEach(function(name) {
+            cards.addEventListener(name, function() {
+                $(cards).masonry();
+            });
+        });
+    }
 
 });
 
@@ -226,16 +230,19 @@ $.ajaxTransport("+binary", function(options, originalOptions, jqXHR) {
     }
 });
 
-jQuery.expr[':'].contains = function(a, i, m) {
-    return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-};
+jQuery.expr.pseudos.contains = jQuery.expr.createPseudo(function(text) {
+    var query = String(text).toUpperCase();
+    return function(element) {
+        return jQuery(element).text().toUpperCase().indexOf(query) !== -1;
+    };
+});
 
 var filterCards = function() {
     $('#cards').find('.col').removeClass('d-none');
     var filter = $("#search").val();
     if (filter) {
         $('#cards').find('.card .card-body:not(:contains("'+filter+'"))').parent().parent().parent().addClass('d-none');
-        $('#cards').masonry();
+        if ($.fn.masonry) $('#cards').masonry();
     }
 }
 

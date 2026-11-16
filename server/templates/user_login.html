@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -11,7 +11,7 @@
 <body class="login text-center">
     <main role="main" class="container">
         <form id="login" method="POST" action="/user/login" class="form-signin">
-            <div class="alert alert-{{if .context}}{{.context}}{{else}}empty{{end}}" role="alert">
+            <div class="alert {{if .context}}{{if eq .context "empty"}}alert-empty{{else}}theme-{{.context}}{{end}}{{else}}alert-empty{{end}}" role="alert">
                 <div class="message">{{.alert}}</div>
             </div>
             <img class="mb-4" src="/static/svg/carrot-solid.svg" alt="" width="72" height="72">
@@ -20,13 +20,12 @@
             <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
             <label for="password" class="sr-only">Password</label>
             <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-            <button class="btn btn-primary" type="submit">Sign in</button>
+            <button class="btn theme-primary" type="submit">Sign in</button>
             <p class="mt-5 mb-3 text-muted">&copy; 2026 Gabor Seljan</p>
         </form>
     </main>
     <script src="/static/js/jquery.min.js" type="text/javascript" charset="utf8"></script>
-    <script src="/static/js/bootstrap.bundle.min.js" type="text/javascript" charset="utf8"></script>
-    <script src="/static/js/bootstrap.min.js" type="text/javascript" charset="utf8"></script>
-    <script src="/static/js/custom.js" type="text/javascript" charset="utf8"></script>
+    <script src="/static/js/bootstrap.bundle.min.js" type="module" charset="utf8"></script>
+    <script src="/static/js/custom.js" type="module" charset="utf8"></script>
 </body>
 </html>

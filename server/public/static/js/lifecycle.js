@@ -10,8 +10,8 @@ $(function () {
             command.text(message);
             // Explicit action results use the existing page alert. Background
             // polling details remain inside the expandable job body.
-            $("#alert").removeClass("alert-empty alert-danger alert-info alert-success")
-                .addClass("alert-" + context).find(".message").text(message);
+            $("#alert").removeClass("alert-empty theme-danger theme-info theme-success")
+                .addClass("theme-" + context).find(".message").text(message);
         }
         function active(s) { return ["queued", "starting", "bootstrapping", "running", "stopping", "stop_failed"].indexOf(s) >= 0; }
         function controls(anyActive, anyRunning) {

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -7,10 +7,10 @@
     <link rel="stylesheet" type="text/css" href="/static/css/fontawesome-all.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/custom.css">
     <title>{{if .title}}{{.title}}{{else}}Home{{end}} | WinAFL Pet</title>
-    <script defer src="/static/js/bootstrap.bundle.min.js" type="text/javascript" charset="utf8"></script>
+    <script defer src="/static/js/bootstrap.bundle.min.js" type="module" charset="utf8"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <nav class="navbar md:navbar-expand navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
                 <i class="fas fa-carrot d-inline-block"></i>
@@ -22,24 +22,24 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav mr-auto">
+                <ul class="nav navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link {{ if isActive .path "/" }}active{{ end }}" aria-current="{{ isActive .path "/"}}" href="/">Home</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Agents</a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdown01">
-                            <li><a class="dropdown-item {{ if isActive .path "/agents/create" }}active{{ end }}" aria-current="{{ isActive .path "/agents/create"}}" href="/agents/create">Create</a></li>
-                            <li><a class="dropdown-item {{ if isActive .path "/agents/view" }}active{{ end }}" aria-current="{{ isActive .path "/agents/view"}}" href="/agents/view">View</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" id="dropdown01" data-bs-toggle="menu" aria-expanded="false">Agents</button>
+                        <div class="menu" aria-labelledby="dropdown01">
+                            <a class="menu-item {{ if isActive .path "/agents/create" }}active{{ end }}" aria-current="{{ isActive .path "/agents/create"}}" href="/agents/create">Create</a>
+                            <a class="menu-item {{ if isActive .path "/agents/view" }}active{{ end }}" aria-current="{{ isActive .path "/agents/view"}}" href="/agents/view">View</a>
+                        </div>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdown02" data-bs-toggle="dropdown" aria-current="" aria-expanded="false">Jobs</a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdown02">
-                            <li><a class="dropdown-item {{ if isActive .path "/jobs/create" }}active{{ end }}" aria-current="{{ isActive .path "/jobs/create"}}" href="/jobs/create">Create</a></li>
-                            <li><a class="dropdown-item {{ if isActive .path "/jobs/upload" }}active{{ end }}" aria-current="{{ isActive .path "/jobs/upload"}}" href="/jobs/upload">Upload</a></li>
-                            <li><a class="dropdown-item {{ if isActive .path "/jobs/view" }}active{{ end }}" aria-current="{{ isActive .path "/jobs/view"}}" href="/jobs/view">View</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <button type="button" class="nav-link" id="dropdown02" data-bs-toggle="menu" aria-expanded="false">Jobs</button>
+                        <div class="menu" aria-labelledby="dropdown02">
+                            <a class="menu-item {{ if isActive .path "/jobs/create" }}active{{ end }}" aria-current="{{ isActive .path "/jobs/create"}}" href="/jobs/create">Create</a>
+                            <a class="menu-item {{ if isActive .path "/jobs/upload" }}active{{ end }}" aria-current="{{ isActive .path "/jobs/upload"}}" href="/jobs/upload">Upload</a>
+                            <a class="menu-item {{ if isActive .path "/jobs/view" }}active{{ end }}" aria-current="{{ isActive .path "/jobs/view"}}" href="/jobs/view">View</a>
+                        </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {{ if isActive .path "/crashes/view" }}active{{ end }}" aria-current="{{ isActive .path "/crashes/view"}}" href="/crashes/view">Crashes</a>
@@ -64,7 +64,7 @@
     </nav>
     <main role="main" class="container">
     {{if .title}}<h1>{{.title}}</h1>{{end}}
-    <div id="alert" class="alert alert-{{if .context}}{{.context}}{{else}}empty{{end}} alert-dismissible fade show" role="alert">
+    <div id="alert" class="alert {{if .context}}{{if eq .context "empty"}}alert-empty{{else}}theme-{{.context}}{{end}}{{else}}alert-empty{{end}} alert-dismissible fade show" role="alert">
         <div class="message">{{.alert}}</div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
             <span aria-hidden="true" class="visually-hidden">&times;</span>
@@ -86,7 +86,7 @@
     <script src="/static/js/jquery.min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/jquery-succinct-min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/masonry.pkgd.min.js" type="text/javascript" charset="utf8"></script>
-    <script src="/static/js/custom.js" type="text/javascript" charset="utf8"></script>
+    <script src="/static/js/custom.js" type="module" charset="utf8"></script>
     <script src="/static/js/lifecycle.js"></script>
 </body>
 </html>
