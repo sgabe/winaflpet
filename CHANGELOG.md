@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
+- Submit the port from the agent edit form so saving keeps the configured port.
 
 ## [2.1.0] - 2026-09-12
 ### Added

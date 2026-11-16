@@ -29,14 +29,14 @@
 
       <div class="settings-field settings-field-half">
         <label for="host" class="form-label">Host</label>
-        <input type="text" class="form-control" name="host" id="host" aria-describedby="hostHelp" placeholder="Enter hostname or IP address">
-        <small id="hostHelp" class="form-text text-muted">Host name or IP address of the remote machine</small>
+        <input type="text" class="form-control" name="host" id="host" aria-describedby="hostHelp" placeholder="Enter hostname or IP address" spellcheck="false" autocapitalize="none">
+        <small id="hostHelp" class="form-text text-muted">Host name or IP address of the fuzzing machine</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="port" class="form-label">Port</label>
-        <input type="text" class="form-control" name="port" id="port" aria-describedby="portHelp" placeholder="Enter port number">
-        <small id="portHelp" class="form-text text-muted">Port number of the agent on the remote machine</small>
+        <input type="text" class="form-control" name="port" id="port" aria-describedby="portHelp" placeholder="Enter port number" inputmode="numeric">
+        <small id="portHelp" class="form-text text-muted">Must match the port configured on the running agent</small>
       </div>
 
       <div class="settings-field">
@@ -45,7 +45,7 @@
           <input type="password" class="form-control" name="key" id="key" aria-describedby="keyHelp" placeholder="Enter API key" autocomplete="off" spellcheck="false">
           <button type="button" class="btn btn-outline theme-secondary" data-secret-toggle="key" aria-controls="key" aria-pressed="false" aria-label="Show API key">Show</button>
         </div>
-        <small id="keyHelp" class="form-text text-muted">Authentication key for API requests</small>
+        <small id="keyHelp" class="form-text text-muted">Must match the authentication key of that agent</small>
       </div>
 
     </div>
