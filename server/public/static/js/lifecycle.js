@@ -24,6 +24,17 @@ $(function () {
             // while no instance is active, and hidden as soon as a run starts.
             card.find(".edit,.delete,.upload,.export").toggleClass("d-none", anyActive).toggleClass("disabled", blocked).prop("disabled", blocked);
         }
+        function listStatus(snapshot, stale) {
+            var list = !stale && snapshot && Array.isArray(snapshot.instances) ? snapshot.instances : [];
+            if (!list.length) return "unknown";
+            for (var n = 0; n < list.length; n++) {
+                if (!list[n] || typeof list[n].status !== "string") return "unknown";
+            }
+            var has = function (names) { return list.some(function (i) { return names.indexOf(i.status) >= 0; }); };
+            if (has(["running"])) return "running";
+            if (has(["queued", "starting", "bootstrapping"])) return "starting";
+            return list.every(function (i) { return i.status === "stopped"; }) ? "stopped" : "unknown";
+        }
         function summarize(snapshot, stale) {
             var text = "Status unknown", detail = "Running instances have not been observed yet.";
             var source = stale ? lastSnapshot : (snapshot && Array.isArray(snapshot.instances) ? snapshot : null);
@@ -38,6 +49,12 @@ $(function () {
                 }
             }
             running.text(text).attr("title", detail).toggleClass("is-stale", !!stale && !!source);
+            var listState = listStatus(snapshot, stale);
+            if (card.attr("data-list-status") !== listState) {
+                card.attr("data-list-status", listState);
+                card.find(".job-state").text({running: "Running", starting: "Starting", stopped: "Stopped"}[listState] || "Status unknown").attr("data-state", listState);
+                card[0].dispatchEvent(new CustomEvent("job-list-status-change", {bubbles: true, detail: {status: listState}}));
+            }
         }
         function render(snapshot, stale) {
             startUnconfirmed = !!stale;
