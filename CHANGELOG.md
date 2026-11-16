@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redesign navigation and shared card-list controls.
 - Redesign configuration forms and add section navigation.
 - Redesign job cards and add status summaries and filters.
+- Redesign instance statistics and plot layouts.
 
 ## [2.1.0] - 2026-09-12
 ### Added

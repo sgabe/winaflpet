@@ -1,18 +1,43 @@
 {{ define "content" }}
-<div id="content" class="stats">
+{{ if .stats }}
+{{ $first := index .stats 0 }}
+{{ $job := $first.GetJob }}
+<dl class="job-overview" aria-label="Job configuration">
+  <div class="job-overview-item">
+    <dt>Agent</dt>
+    <dd><a href="/agents/view">Agent #{{ $job.AgentID }}</a></dd>
+  </div>
+  <div class="job-overview-item">
+    <dt>Configured instances</dt>
+    <dd>{{ $job.Cores }}</dd>
+  </div>
+  <div class="job-overview-item">
+    <dt>Target</dt>
+    <dd>{{if ne $job.TargetOffset "0"}}{{ $job.TargetOffset }}{{else}}{{ $job.TargetMethod }}{{end}} in {{ $job.TargetModule }} ({{ $job.TargetArch }})</dd>
+  </div>
+  <div class="job-overview-item">
+    <dt>Instrumentation</dt>
+    <dd>{{ $job.InstMode }} · {{ $job.CoverageType }} for {{ $job.CoverageModule }}</dd>
+  </div>
+</dl>
+{{ end }}
+<div id="content" class="stats job-stats">
   <div id="accordion" class="accordion">
-  {{ range .stats }}
-    <div class="card fuzzer accordion-item">
+  {{ range $i, $s := .stats }}
+    <div class="card fuzzer accordion-item" id="job-instance-{{ $i }}">
 
-      <div class="card-header" id="heading-{{ .FuzzerProcessID }}">
-        <h5 data-bs-toggle="collapse" data-bs-target="#collapse-{{ .FuzzerProcessID }}" aria-controls="collapse-{{ .FuzzerProcessID }}">
-          <i class="fas fa-chevron-down float-end"></i>
-          {{ .AFLBanner }} @ {{ .FuzzerProcessID }}
+      <div class="card-header" id="heading-{{ $i }}">
+        <h5>
+          <button type="button" class="job-instance-toggle" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $i }}" aria-expanded="true" aria-controls="collapse-{{ $i }}">
+            <span class="job-instance-name">{{ .AFLBanner }} @ {{ .FuzzerProcessID }}</span>
+            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+          </button>
         </h5>
       </div>
 
-      <div class="card-body">
-        <div id="collapse-{{ .FuzzerProcessID }}" class="stat accordion-collapse collapse show row row-cols-4">
+      <div id="collapse-{{ $i }}" class="stat accordion-collapse collapse show" role="region" aria-labelledby="heading-{{ $i }}">
+        <div class="card-body">
+          <div class="job-stat-grid">
 
           <div class="card stat">
             <h5 class="card-header">Process timing</h5>
@@ -106,24 +131,29 @@
             </div>
           </div>
 
+          </div>
         </div>
       </div>
       <div class="card-footer">
-        <div class="btn-group">
+        <div class="card-actions">
         <a href="/job/{{.GetJob.GUID}}/check?fid={{.GetFID}}" class="btn btn-outline theme-secondary action check" data-method="POST">
-          <svg class="bi" width="20px" height="20px" fill="currentColor" color="grey">
+          <svg class="bi" width="20px" height="20px" fill="currentColor" color="grey" aria-hidden="true">
             <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
           </svg>
+          <span>Check instance</span>
         </a>
         <a href="/job/{{.GetJob.GUID}}/plot?fid={{.GetFID}}" class="btn btn-outline theme-secondary action plot" data-method="POST">
-          <svg class="bi" width="20px" height="20px" fill="currentColor" color="green">
+          <svg class="bi" width="20px" height="20px" fill="currentColor" color="green" aria-hidden="true">
             <use xlink:href="/static/svg/bootstrap-icons.svg#bar-chart-fill"/>
           </svg>
+          <span>Plots</span>
         </a>
         </div>
       </div>
     </div>
 
+  {{else}}
+    <p class="job-stats-empty">No fuzzer statistics are available for this job yet.</p>
   {{end}}
   </div>
 </div>

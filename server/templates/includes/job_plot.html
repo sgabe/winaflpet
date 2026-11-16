@@ -1,7 +1,12 @@
 {{define "content"}}
 <div id="plots">
 {{range .plots}}
-  <img src="{{.}}" class="plot img-fluid">
+  <figure class="plot-figure">
+    <img src="{{.}}" class="plot img-fluid" alt="Generated fuzzing plot image">
+    <figcaption><a href="{{.}}" target="_blank" rel="noopener">Open image</a></figcaption>
+  </figure>
+{{else}}
+  <p class="job-stats-empty">No plot images are available yet.</p>
 {{end}}
 </div>
 {{end}}

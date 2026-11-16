@@ -367,6 +367,104 @@ $('#search').on('input', function() {
 })
 
 $(function () {
+    var stats = document.querySelector("#content.job-stats");
+    if (!stats) return;
+
+    ["shown.bs.collapse", "hidden.bs.collapse"].forEach(function(name) {
+        stats.addEventListener(name, function(e) {
+            var trigger = stats.querySelector('[aria-controls="' + e.target.id + '"]');
+            if (trigger) trigger.setAttribute("aria-expanded", String(e.target.classList.contains("show")));
+        });
+    });
+
+    var panels = Array.prototype.slice.call(stats.querySelectorAll(".card.fuzzer"));
+    var toolbar = null;
+
+    if (panels.length) {
+        var definitions = [];
+        panels.forEach(function(panel) {
+            panel.querySelectorAll('[data-toggle="tooltip"][title], [data-toggle="tooltip"][data-bs-original-title]').forEach(function(label) {
+                var item = label.closest("li.list-group-item");
+                if (!item || !panel.contains(item)) return;
+                var text = (label.getAttribute("title") || label.getAttribute("data-bs-original-title") || "").replace(/\s+/g, " ").trim();
+                if (!text || label.jobStatDefinition) return;
+                var definition = document.createElement("span");
+                definition.className = "job-stat-definition";
+                definition.hidden = true;
+                definition.textContent = text;
+                label.jobStatDefinition = definition;
+                item.appendChild(definition);
+                definitions.push(definition);
+            });
+        });
+
+        toolbar = document.createElement("div");
+        toolbar.className = "job-stats-toolbar";
+        var toolbarLabel = document.createElement("span");
+        toolbarLabel.className = "job-stats-toolbar-label";
+        toolbarLabel.textContent = "Fuzzer instances (" + panels.length + ")";
+        var toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "btn btn-outline theme-secondary job-definitions-toggle";
+        toggle.setAttribute("aria-pressed", "false");
+        toggle.textContent = "Show definitions";
+        toggle.addEventListener("click", function() {
+            var show = toggle.getAttribute("aria-pressed") !== "true";
+            toggle.setAttribute("aria-pressed", String(show));
+            toggle.textContent = show ? "Hide definitions" : "Show definitions";
+            definitions.forEach(function(definition) {
+                definition.hidden = !show;
+            });
+        });
+        toolbar.appendChild(toolbarLabel);
+        toolbar.appendChild(toggle);
+
+        var accordion = stats.querySelector(".accordion");
+        var anchor = accordion && accordion.parentNode ? accordion : panels[0];
+        anchor.parentNode.insertBefore(toolbar, anchor);
+    }
+
+    if (panels.length < 2) return;
+
+    var picker = document.createElement("div");
+    picker.className = "job-instance-picker";
+    picker.setAttribute("role", "group");
+    picker.setAttribute("aria-label", "Fuzzer instances");
+
+    var select = function(index) {
+        panels.forEach(function(panel, i) {
+            panel.hidden = i !== index;
+            buttons[i].setAttribute("aria-pressed", String(i === index));
+        });
+    };
+
+    var buttons = panels.map(function(panel, index) {
+        if (!panel.id) panel.id = "job-instance-" + index;
+        var name = panel.querySelector(".job-instance-name");
+        var label = (name ? name.textContent : "").replace(/\s+/g, " ").trim();
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "job-instance-tile";
+        button.textContent = String(index + 1);
+        button.title = label;
+        button.setAttribute("aria-label", "Instance " + (index + 1) + ": " + label);
+        button.setAttribute("aria-controls", panel.id);
+        button.addEventListener("click", function() {
+            select(index);
+        });
+        picker.appendChild(button);
+        return button;
+    });
+
+    if (toolbar && toolbar.parentNode) {
+        toolbar.parentNode.insertBefore(picker, toolbar.nextSibling);
+    } else {
+        stats.insertBefore(picker, stats.firstChild);
+    }
+    select(0);
+});
+
+$(function () {
     var forms = Array.prototype.slice.call(document.querySelectorAll("form.settings-panel"));
 
     forms.forEach(function(form, formIndex) {
