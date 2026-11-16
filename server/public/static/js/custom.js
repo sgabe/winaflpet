@@ -458,6 +458,7 @@ $(function () {
         panels.forEach(function(panel, i) {
             panel.hidden = i !== index;
             buttons[i].setAttribute("aria-pressed", String(i === index));
+            buttons[i].tabIndex = i === index ? 0 : -1;
         });
     };
 
@@ -474,6 +475,18 @@ $(function () {
         button.setAttribute("aria-controls", panel.id);
         button.addEventListener("click", function() {
             select(index);
+        });
+        button.addEventListener("keydown", function(e) {
+            if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+            var target;
+            if (e.key === "ArrowRight") target = (index + 1) % panels.length;
+            else if (e.key === "ArrowLeft") target = (index + panels.length - 1) % panels.length;
+            else if (e.key === "Home") target = 0;
+            else if (e.key === "End") target = panels.length - 1;
+            else return;
+            e.preventDefault();
+            select(target);
+            buttons[target].focus();
         });
         picker.appendChild(button);
         return button;

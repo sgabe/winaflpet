@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Onboarding guidance and refresh account pages.
 - Selected file names and sizes on import and seed-upload forms.
+- Keyboard navigation and a single tab stop to the fuzzer instance selector.
 
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.
