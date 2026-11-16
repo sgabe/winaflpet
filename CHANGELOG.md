@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Responsive section sidebar to job configuration forms.
 - Clear filters actions and page-specific no-match messages to agent, job and crash lists.
 - Read-only saved configuration dialog to job cards.
+- Confirmation dialogs before deleting agents, jobs, crash records or all crashes.
 
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.

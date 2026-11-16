@@ -110,6 +110,18 @@
         <p class="float-end text-muted text-right version"><small>{{ getVersion }}</small></p>
       </div>
     </footer>
+    <dialog id="confirm" class="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+        <div class="confirm-dialog-header">
+            <h2 id="confirm-title"></h2>
+        </div>
+        <div class="confirm-dialog-body">
+            <p id="confirm-message"></p>
+        </div>
+        <div class="confirm-dialog-footer">
+            <button type="button" class="btn btn-outline theme-secondary confirm-cancel">Cancel</button>
+            <button type="button" class="btn theme-danger confirm-ok">Delete</button>
+        </div>
+    </dialog>
     <script src="/static/js/jquery.min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/jquery-succinct-min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/masonry.pkgd.min.js" type="text/javascript" charset="utf8"></script>

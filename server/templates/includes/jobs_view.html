@@ -105,7 +105,7 @@
                   </svg>
                   <span>Edit</span>
                 </a>
-                <a href="/job/{{.GUID}}" class="menu-item action delete" data-method="DELETE">
+                <a href="/job/{{.GUID}}" class="menu-item action delete" data-method="DELETE" data-confirm-title="Delete job?" data-confirm-message="Delete job “{{.Name}}” (#{{.ID}}) from WinAFL Pet? This can't be undone.">
                   <svg class="bi bi-trash-fill" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20" aria-hidden="true">
                     <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
                   </svg>

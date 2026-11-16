@@ -43,7 +43,7 @@
 {{end}}
 
 {{define "deleteCrash"}}
-<a href="/crash/{{.}}" class="btn btn-outline theme-secondary action delete" data-method="DELETE">
+<a href="/crash/{{.GUID}}" class="btn btn-outline theme-secondary action delete" data-method="DELETE" data-confirm-title="Delete crash?" data-confirm-message="Delete crash record #{{.ID}} from WinAFL Pet? This can't be undone.">
   <svg class="bi" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#x-square-fill"/>
   </svg>
@@ -83,7 +83,7 @@
   <div class="crash-toolbar">
   <ul class="nav nav-pills">
     <li class="nav-item">
-      <a href="/crashes" class="nav-link action delete" data-method="DELETE">
+      <a href="/crashes" class="nav-link action delete" data-method="DELETE" data-confirm-title="Delete all crashes?" data-confirm-message="Delete all crash records from WinAFL Pet, including those on other pages? This can't be undone.">
         <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red" aria-hidden="true">
           <use xlink:href="/static/svg/bootstrap-icons.svg#eraser-fill"/>
         </svg>
@@ -152,7 +152,7 @@
         </div>
         <div class="card-footer">
           <div class="card-actions">
-            {{template "deleteCrash" .GUID}}
+            {{template "deleteCrash" .}}
             {{template "editCrash" .GUID}}
             {{template "downloadCrash" .GUID}}
             {{template "reportCrash" .GUID}}
@@ -162,7 +162,7 @@
         {{template "crashContext" .}}
         <div class="card-footer">
           <div class="card-actions">
-            {{template "deleteCrash" .GUID}}
+            {{template "deleteCrash" .}}
             {{template "downloadCrash" .GUID}}
             {{template "reportCrash" .GUID}}
           </div>
@@ -172,7 +172,7 @@
         {{template "crashContext" .}}
         <div class="card-footer">
           <div class="card-actions">
-            {{template "deleteCrash" .GUID}}
+            {{template "deleteCrash" .}}
             {{template "downloadCrash" .GUID}}
             {{template "verifyCrash" .GUID}}
           </div>

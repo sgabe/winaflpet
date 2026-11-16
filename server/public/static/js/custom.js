@@ -95,7 +95,57 @@ $(function () {
         } finally { button.removeClass("disabled"); }
     });
 
-    $("a.action").click(function(e) {
+    var confirmDialog = document.getElementById("confirm");
+    var confirmModal = !!(confirmDialog && typeof confirmDialog.showModal === "function");
+    var confirmResolve = null;
+    var confirmResult = false;
+    var confirmTrigger = null;
+
+    if (confirmModal) {
+        confirmDialog.querySelector(".confirm-ok").addEventListener("click", function() {
+            confirmResult = true;
+            confirmDialog.close();
+        });
+
+        confirmDialog.querySelector(".confirm-cancel").addEventListener("click", function() {
+            confirmDialog.close();
+        });
+
+        confirmDialog.addEventListener("click", function(e) {
+            if (e.target === confirmDialog) confirmDialog.close();
+        });
+
+        confirmDialog.addEventListener("close", function() {
+            var resolve = confirmResolve;
+            var target = confirmTrigger;
+            confirmResolve = null;
+            confirmTrigger = null;
+            if (target && target.isConnected && !target.getClientRects().length) {
+                var more = target.closest(".card-actions-more");
+                target = more ? more.querySelector('[data-bs-toggle="menu"]') : null;
+            }
+            if (target && target.isConnected && target.getClientRects().length) target.focus();
+            if (resolve) resolve(confirmResult);
+        });
+    }
+
+    var confirmAction = function(link) {
+        var title = link.getAttribute("data-confirm-title") || "Delete?";
+        var message = link.getAttribute("data-confirm-message") || title;
+        if (!confirmModal) return Promise.resolve(window.confirm(message));
+        if (confirmResolve || confirmDialog.open) return Promise.resolve(false);
+        return new Promise(function(resolve) {
+            confirmResolve = resolve;
+            confirmResult = false;
+            confirmTrigger = link;
+            document.getElementById("confirm-title").textContent = title;
+            document.getElementById("confirm-message").textContent = message;
+            confirmDialog.showModal();
+            confirmDialog.querySelector(".confirm-cancel").focus();
+        });
+    }
+
+    $("a.action").click(async function(e) {
         var isCustom = $(this).attr("data-method");
         var isDisabled = $(this).is("a.disabled");
 
@@ -104,6 +154,10 @@ $(function () {
         }
 
         if (isCustom && !isDisabled) {
+            if (String(isCustom).toUpperCase() === "DELETE") {
+                if (!(await confirmAction(this))) return;
+                if (!this.isConnected || $(this).is("a.disabled")) return;
+            }
             $.ajax({
                 url: $(this).attr('href'),
                 method: $(this).attr("data-method"),

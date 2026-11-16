@@ -905,7 +905,21 @@ div:has(> .card.stat) {
   overflow-wrap: anywhere;
 }
 
-.job-config-dialog {
+.btn.theme-danger {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+  color: #fff;
+}
+
+.btn.theme-danger:hover,
+.btn.theme-danger:active {
+  background-color: #991b1b;
+  border-color: #991b1b;
+  color: #fff;
+}
+
+.job-config-dialog,
+.confirm-dialog {
   box-sizing: border-box;
   width: min(40rem, calc(100vw - 2rem));
   max-width: calc(100vw - 2rem);
@@ -920,27 +934,38 @@ div:has(> .card.stat) {
   overflow: hidden;
 }
 
-.job-config-dialog[open] {
+.confirm-dialog {
+  width: min(28rem, calc(100vw - 2rem));
+}
+
+.job-config-dialog[open],
+.confirm-dialog[open] {
   display: flex;
   flex-direction: column;
 }
 
-.job-config-dialog::backdrop {
+.job-config-dialog::backdrop,
+.confirm-dialog::backdrop {
   background-color: rgba(15, 23, 42, .45);
 }
 
 .job-config-header,
 .job-config-body,
-.job-config-footer {
+.job-config-footer,
+.confirm-dialog-header,
+.confirm-dialog-body,
+.confirm-dialog-footer {
   padding: 1rem 1.25rem;
 }
 
-.job-config-header {
+.job-config-header,
+.confirm-dialog-header {
   flex: 0 0 auto;
   border-bottom: 1px solid #e2e8f0;
 }
 
-.job-config-header h2 {
+.job-config-header h2,
+.confirm-dialog-header h2 {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
@@ -954,11 +979,17 @@ div:has(> .card.stat) {
   color: #475569;
 }
 
-.job-config-body {
+.job-config-body,
+.confirm-dialog-body {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+.confirm-dialog-body p {
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .job-config-body:focus-visible {
@@ -1007,14 +1038,16 @@ div:has(> .card.stat) {
   font-size: .875rem;
 }
 
-.job-config-footer {
+.job-config-footer,
+.confirm-dialog-footer {
   flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
   border-top: 1px solid #e2e8f0;
 }
 
-.job-config-footer .btn {
+.job-config-footer .btn,
+.confirm-dialog-footer .btn {
   min-width: 44px;
   min-height: 44px;
 }
