@@ -15,8 +15,9 @@
 
       <div class="settings-field">
         <label for="inputZip" class="form-label">Input files (ZIP)</label>
-        <input id="inputZip" name="input" type="file" class="form-control" accept=".zip,application/zip" required aria-describedby="inputHelp">
+        <input id="inputZip" name="input" type="file" class="form-control" accept=".zip,application/zip" required data-file-summary="inputZipSummary" aria-describedby="inputHelp inputZipSummary">
         <small id="inputHelp" class="form-text text-muted">Maximum 256 MiB ZIP, 1 GiB extracted. Input must be an existing directory. Existing files are deleted before extraction; a failed extraction may leave a partial input set.</small>
+        <p id="inputZipSummary" class="file-selection-summary" role="status" hidden></p>
       </div>
 
     </div>

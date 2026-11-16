@@ -2193,3 +2193,14 @@ footer .version:before {
   min-width: 44px;
   min-height: 44px;
 }
+
+.file-selection-summary {
+  padding: .5rem .75rem;
+  margin: .5rem 0 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  font-size: .875rem;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}

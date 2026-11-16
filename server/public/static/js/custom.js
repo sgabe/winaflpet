@@ -772,6 +772,41 @@ function initSecretToggles() {
 
 $(initSecretToggles);
 
+function formatFileSize(bytes) {
+    if (!(bytes >= 1024)) return String(bytes || 0) + " bytes";
+    var units = ["KiB", "MiB", "GiB"];
+    var value = bytes / 1024;
+    var unit = 0;
+    while (value >= 1024 && unit < units.length - 1) {
+        value /= 1024;
+        unit++;
+    }
+    return String(Math.round(value * 10) / 10) + " " + units[unit];
+}
+
+function initFileSummaries() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-file-summary]"), function(input) {
+        if (input.dataset.fileSummaryBound) return;
+        var output = document.getElementById(input.getAttribute("data-file-summary"));
+        if (!output) return;
+        input.dataset.fileSummaryBound = "1";
+        var update = function() {
+            var file = input.files && input.files.length ? input.files[0] : null;
+            if (!file) {
+                output.textContent = "";
+                output.hidden = true;
+                return;
+            }
+            output.textContent = "Selected: " + file.name + " (" + formatFileSize(file.size) + ")";
+            output.hidden = false;
+        };
+        input.addEventListener("change", update);
+        update();
+    });
+}
+
+$(initFileSummaries);
+
 $(function () {
     var cards = document.getElementById("cards");
     if (!cards) return;

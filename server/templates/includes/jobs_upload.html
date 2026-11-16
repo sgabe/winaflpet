@@ -11,7 +11,8 @@
 
       <div class="settings-field">
         <label for="jobFile" class="form-label">Configuration file</label>
-        <input type="file" name="job" id="jobFile" class="form-control">
+        <input type="file" name="job" id="jobFile" class="form-control" data-file-summary="jobFileSummary" aria-describedby="jobFileSummary">
+        <p id="jobFileSummary" class="file-selection-summary" role="status" hidden></p>
       </div>
 
       <div class="settings-field">
