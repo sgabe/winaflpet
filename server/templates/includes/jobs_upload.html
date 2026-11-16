@@ -1,6 +1,26 @@
 {{define "content"}}
+<div class="settings-panel">
 <form id="uploadJob" class="upload job" method="POST" enctype="multipart/form-data" action="/jobs/upload">
-  <input type="file" name="job">
-  <button type="submit" class="btn theme-primary">Submit</button>
+
+  <fieldset class="settings-section">
+    <legend>Job configuration</legend>
+    <p class="settings-description text-muted">Select a job configuration file to upload.</p>
+    <div class="settings-fields">
+
+      <div class="settings-field">
+        <label for="jobFile" class="form-label">Configuration file</label>
+        <input type="file" name="job" id="jobFile" class="form-control">
+      </div>
+
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <div class="form-actions-buttons">
+      <a href="/jobs/view" class="btn">Cancel</a>
+      <button type="submit" class="btn theme-primary">Upload configuration</button>
+    </div>
+  </div>
 </form>
+</div>
 {{end}}

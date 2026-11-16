@@ -1,70 +1,67 @@
 {{define "content"}}
-<form id="createAgent" class="create agent" method="PUT" enctype="multipart/form-data" action="/agents/create">
+<form id="createAgent" class="create agent settings-panel" method="PUT" enctype="multipart/form-data" action="/agents/create">
 
-  <fieldset class="row mb-3">
-  <legend>General settings</legend>
-    <div class="row ms-0">
+  <fieldset class="settings-section">
+    <legend>General settings</legend>
+    <p class="settings-description text-muted">Identify the agent with a name and an optional description.</p>
+    <div class="settings-fields">
 
-      <div class="md:col">
-        <label for="name" class="md:col col-form-label">Name</label>
-        <div class="md:col">
-          <input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp" placeholder="Enter name">
-          <small id="nameHelp" class="form-text text-muted">Short name of the new job</small>
-        </div>
+      <div class="settings-field">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp" placeholder="Enter name">
+        <small id="nameHelp" class="form-text text-muted">Short name of the agent</small>
       </div>
 
-      <div class="md:col">
-        <label for="desc" class="md:col col-form-label">Description</label>
-        <div class="md:col">
-          <input type="text" class="form-control" name="desc" id="desc" aria-describedby="descHelp" placeholder="Enter short description">
-          <small id="descHelp" class="form-text text-muted">Short description of the job</small>
-        </div>
-      </div>
-
-      <div class="md:col">
-        <label for="status" class="md:col col-form-label">Status</label>
-        <div class="md:col form-field">
-          <div class="switch">
-            <input type="checkbox" name="status" id="status" value="1" aria-describedby="statusHelp">
-          </div>
-          <small id="statusHelp" class="form-text text-muted">Activate</small>
-        </div>
+      <div class="settings-field">
+        <label for="desc" class="form-label">Description</label>
+        <textarea class="form-control" name="desc" id="desc" rows="3" aria-describedby="descHelp" placeholder="Enter short description"></textarea>
+        <small id="descHelp" class="form-text text-muted">Short description of the agent</small>
       </div>
 
     </div>
   </fieldset>
 
-  <fieldset class="row mb-3">
-  <legend>Agent settings</legend>
-    <div class="row ms-0">
+  <fieldset class="settings-section">
+    <legend>Connection</legend>
+    <p class="settings-description text-muted">Network address of the agent and the key used to authenticate API requests.</p>
+    <div class="settings-fields">
 
-      <div class="md:col">
-        <label for="host" class="md:col col-form-label">Host</label>
-        <div class="md:col">
-          <input type="text" class="form-control" name="host" id="host" aria-describedby="hostHelp" placeholder="Enter hostname or IP address">
-          <small id="hostHelp" class="form-text text-muted">Host name or IP address of the remote machine</small>
-        </div>
+      <div class="settings-field settings-field-half">
+        <label for="host" class="form-label">Host</label>
+        <input type="text" class="form-control" name="host" id="host" aria-describedby="hostHelp" placeholder="Enter hostname or IP address">
+        <small id="hostHelp" class="form-text text-muted">Host name or IP address of the remote machine</small>
       </div>
 
-      <div class="md:col">
-        <label for="port" class="md:col col-form-label">Port</label>
-        <div class="md:col">
-          <input type="text" class="form-control" name="port" id="port" aria-describedby="portHelp" placeholder="Enter port number">
-          <small id="portHelp" class="form-text text-muted">Port number of the agent on the remote machine</small>
-        </div>
+      <div class="settings-field settings-field-half">
+        <label for="port" class="form-label">Port</label>
+        <input type="text" class="form-control" name="port" id="port" aria-describedby="portHelp" placeholder="Enter port number">
+        <small id="portHelp" class="form-text text-muted">Port number of the agent on the remote machine</small>
       </div>
 
-      <div class="md:col">
-        <label for="key" class="md:col col-form-label">Key</label>
-        <div class="md:col">
-          <input type="text" class="form-control" name="key" id="key" aria-describedby="keyHelp" placeholder="Enter API key">
-          <small id="keyHelp" class="form-text text-muted">Authentication key for API requests</small>
+      <div class="settings-field">
+        <label for="key" class="form-label">Key</label>
+        <div class="secret-field">
+          <input type="password" class="form-control" name="key" id="key" aria-describedby="keyHelp" placeholder="Enter API key" autocomplete="off" spellcheck="false">
+          <button type="button" class="btn btn-outline theme-secondary" data-secret-toggle="key" aria-controls="key" aria-pressed="false" aria-label="Show API key">Show</button>
         </div>
+        <small id="keyHelp" class="form-text text-muted">Authentication key for API requests</small>
       </div>
 
     </div>
   </fieldset>
 
-  <button type="submit" class="btn theme-primary">Submit</button>
+  <div class="form-actions">
+    <div class="form-field">
+      <div class="switch">
+        <input type="checkbox" name="status" id="status" value="1" aria-describedby="statusHelp">
+      </div>
+      <label for="status">Enabled</label>
+      <small id="statusHelp" class="form-text text-muted">Setting, not connection status</small>
+    </div>
+    <div class="form-actions-buttons">
+      <a href="/agents/view" class="btn">Cancel</a>
+      <button type="submit" class="btn theme-primary">Create agent</button>
+    </div>
+  </div>
 </form>
 {{end}}

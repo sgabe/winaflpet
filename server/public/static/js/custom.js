@@ -304,6 +304,56 @@ $('#search').on('input', function() {
     filterCards();
 })
 
+$(function () {
+    var forms = Array.prototype.slice.call(document.querySelectorAll("form.settings-panel"));
+
+    forms.forEach(function(form, formIndex) {
+        var previous = form.previousElementSibling;
+        if (previous && previous.matches("nav.settings-navigation")) return;
+
+        var sections = Array.prototype.filter.call(form.children, function(child) {
+            return child.matches("fieldset.settings-section") && Array.prototype.some.call(child.children, function(part) {
+                return part.tagName === "LEGEND";
+            });
+        });
+        if (sections.length < 4 || !form.parentNode) return;
+
+        var prefix = form.id || "settings-form-" + (formIndex + 1);
+        var nav = document.createElement("nav");
+        nav.className = "settings-navigation";
+        nav.setAttribute("aria-label", "Form sections");
+
+        var label = document.createElement("small");
+        label.className = "settings-navigation-label";
+        label.textContent = "Jump to section";
+        nav.appendChild(label);
+
+        sections.forEach(function(section, sectionIndex) {
+            var legend = Array.prototype.find.call(section.children, function(part) {
+                return part.tagName === "LEGEND";
+            });
+            if (!section.id) {
+                var base = prefix + "-section-" + (sectionIndex + 1);
+                var id = base;
+                var suffix = 2;
+                while (document.getElementById(id)) {
+                    id = base + "-" + suffix;
+                    suffix++;
+                }
+                section.id = id;
+            }
+
+            var link = document.createElement("a");
+            link.className = "settings-navigation-link";
+            link.setAttribute("href", "#" + section.id);
+            link.textContent = String(legend.textContent).replace(/\s+/g, " ").trim() || "Section " + (sectionIndex + 1);
+            nav.appendChild(link);
+        });
+
+        form.parentNode.insertBefore(nav, form);
+    });
+});
+
 function cardFoldItems(cards) {
     var items = [];
     Array.prototype.forEach.call(cards.children, function(column) {
@@ -398,3 +448,21 @@ $(function () {
     cards.parentNode.insertBefore(tools, cards);
     updateCardFoldTools();
 });
+
+function initSecretToggles() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-secret-toggle]"), function(button) {
+        if (button.dataset.secretBound) return;
+        var target = document.getElementById(button.getAttribute("data-secret-toggle"));
+        if (!target || target.tagName !== "INPUT" || (target.type !== "password" && target.type !== "text")) return;
+        button.dataset.secretBound = "1";
+        button.addEventListener("click", function() {
+            var show = target.type === "password";
+            target.type = show ? "text" : "password";
+            button.setAttribute("aria-pressed", String(show));
+            button.textContent = show ? "Hide" : "Show";
+            button.setAttribute("aria-label", show ? "Hide API key" : "Show API key");
+        });
+    });
+}
+
+$(initSecretToggles);
