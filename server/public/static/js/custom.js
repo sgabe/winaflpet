@@ -483,10 +483,6 @@ $(window).on('load', function() {
     filterCards(true);
 })
 
-$('#search').on('input', function() {
-    filterCards();
-})
-
 $(function () {
     var stats = document.querySelector("#content.job-stats");
     if (!stats) return;
@@ -710,6 +706,25 @@ $(function () {
 
     var toolbar = document.createElement("div");
     toolbar.className = "card-list-toolbar";
+    var searchLabel = "Search " + (cards.querySelector(".card.agent") ? "agents" : cards.querySelector(".card.job") ? "jobs" : cards.querySelector(".card.crash") ? "crashes" : "cards");
+    var searchArea = document.createElement("div");
+    searchArea.className = "card-list-search";
+    searchArea.setAttribute("role", "search");
+    var search = document.getElementById("search");
+    if (!search || search.tagName !== "INPUT") search = document.createElement("input");
+    var searchForm = search.closest ? search.closest("form") : null;
+    search.type = "search";
+    search.id = "search";
+    search.className = "form-control";
+    search.setAttribute("autocomplete", "off");
+    search.placeholder = searchLabel;
+    search.setAttribute("aria-label", searchLabel);
+    search.addEventListener("input", function() {
+        filterCards();
+    });
+    searchArea.appendChild(search);
+    if (searchForm && searchForm.closest(".navbar") && !searchForm.elements.length) searchForm.remove();
+    toolbar.appendChild(searchArea);
     var count = document.createElement("span");
     count.className = "card-list-count";
     count.setAttribute("role", "status");

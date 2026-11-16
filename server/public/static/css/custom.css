@@ -2437,6 +2437,25 @@ footer .version:before {
   margin-bottom: 1rem;
 }
 
+.card-list-search {
+  flex: 1 1 14rem;
+  min-width: 0;
+  max-width: 24rem;
+}
+
+.card-list-search .form-control {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+}
+
+@media (max-width: 575.98px) {
+  .card-list-search {
+    flex-basis: 100%;
+    max-width: none;
+  }
+}
+
 .card-list-clear {
   min-width: 44px;
   min-height: 44px;
