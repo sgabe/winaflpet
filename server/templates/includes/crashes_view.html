@@ -5,7 +5,7 @@
 {{$nextPage := add $currentPage 1}}
 {{$firstPage := sub $currentPage 2 }}
 {{$lastPage := add $currentPage 2 }}
-<nav aria-label="...">
+<nav class="crash-pagination" aria-label="Crash pages">
   <ul class="pagination justify-content-center">
     <li class="page-item {{if (lt $previousPage 1)}}disabled{{end}}">
       <a class="page-link" href="/crashes/view?p={{if lt $previousPage 1}}#{{else}}{{$previousPage}}{{end}}" aria-label="Previous">
@@ -35,57 +35,70 @@
 
 {{define "verifyCrash"}}
 <a href="/crash/{{.}}/verify" class="btn btn-outline theme-secondary action verify" data-method="POST">
-  <svg class="bi" width="20" height="20" fill="currentColor" color="orangered" viewBox="0 0 20 20">
+  <svg class="bi" width="20" height="20" fill="currentColor" color="orangered" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#check-square-fill"/>
   </svg>
+  <span>Verify</span>
 </a>
 {{end}}
 
 {{define "deleteCrash"}}
 <a href="/crash/{{.}}" class="btn btn-outline theme-secondary action delete" data-method="DELETE">
-  <svg class="bi" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20">
+  <svg class="bi" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#x-square-fill"/>
   </svg>
+  <span>Delete</span>
 </a>
 {{end}}
 
 {{define "downloadCrash"}}
 <a href="/crash/{{.}}/download" class="btn btn-outline theme-secondary action download" data-type="binary" data-method="POST">
-  <svg class="bi" width="20" height="20" fill="currentColor" color="#0074D9" viewBox="0 0 20 20">
+  <svg class="bi" width="20" height="20" fill="currentColor" color="#0074D9" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#arrow-down-square-fill"/>
   </svg>
+  <span>Download sample</span>
 </a>
 {{end}}
 
 {{define "editCrash"}}
 <a href="/crash/{{.}}/edit" class="btn btn-outline theme-secondary action edit">
-  <svg class="bi" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20">
+  <svg class="bi" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
   </svg>
+  <span>Edit</span>
 </a>
 {{end}}
 
 {{define "content"}}
 {{if not .crashes}}
-  <p>There are no existing crashes in the database.</p>
+  <section class="empty-state" aria-labelledby="empty-crashes-title">
+    <h2 id="empty-crashes-title">No crashes collected</h2>
+    <p>Collected crashes appear here for review.</p>
+    <div class="empty-state-actions">
+      <a href="/jobs/view" class="btn btn-outline theme-secondary">View jobs</a>
+    </div>
+  </section>
 {{else}}
 
+  <div class="crash-toolbar">
   <ul class="nav nav-pills">
     <li class="nav-item">
       <a href="/crashes" class="nav-link action delete" data-method="DELETE">
-        <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red">
+        <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red" aria-hidden="true">
           <use xlink:href="/static/svg/bootstrap-icons.svg#eraser-fill"/>
         </svg>
+        <span>Delete all crashes</span>
       </a>
     </li>
   </ul>
 
   {{template "pagination" .currentPage}}
+  </div>
   <div id="cards" class="row row-cols-3">
 
   {{range .crashes}}
   <div class="col sm:col-6 lg:col-4 mb-3">
-    <div class="card crash {{if not .Verified }}unverified{{end}}{{if and .Verified (not .Function) }}unavailable{{end}}">
+    <div class="card crash {{if not .Verified }}unverified{{end}}{{if and .Verified (not .Function) }}unavailable{{end}}" data-job-id="{{.JobID}}" data-risk="{{if .Verified}}{{.GetRisk}}{{else}}na{{end}}">
       {{$jobName := .GetJob.Name}}
       <div class="card-header card-summary">
         <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
@@ -101,28 +114,44 @@
           {{- else}}<span class="label">Unverified</span>
           {{- end -}}
           </span>
+          {{- if .Verified }}
+            {{- if .Function }}<span class="card-summary-badge is-verified">Verified</span>
+            {{- else}}<span class="card-summary-badge is-unavailable">Unavailable</span>
+            {{- end}}
+          {{- else}}<span class="card-summary-badge is-unverified">Unverified</span>
+          {{- end}}
           <i class="fas fa-chevron-down card-summary-chevron" aria-hidden="true"></i>
           <span class="card-summary-meta">
             <small class="id {{ .GetRisk }}">{{ .ID }}</small>
             <span class="card-summary-label" title="{{ $jobName }}">{{ $jobName }}</span>
           </span>
+          {{- if .Verified }}
+          <span class="card-summary-count crash-risk is-{{ .GetRisk }}" title="Risk is based on the Bug ID access type and does not confirm exploitability.">Risk: {{if eq .GetRisk "high"}}High{{else if eq .GetRisk "medium"}}Medium{{else if eq .GetRisk "low"}}Low{{else if eq .GetRisk "none"}}None{{else}}Not assessed{{end}}</span>
+          {{- else}}
+          <span class="card-summary-count crash-risk is-na" title="Risk is based on the Bug ID access type and does not confirm exploitability.">Risk: Not assessed</span>
+          {{- end}}
         </button>
       </div>
       <div id="collapse-{{ .ID }}" class="collapse collapsed">
         {{if .Verified }}
         {{if .Function }}
         <div class="card-body">
-          <p class="card-text truncate">{{ .Description }}</p>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><h6>Fuzzer ID</h6> <small class="text-body-secondary float-end">{{ .FuzzerID }}</small></li>
-            <li class="list-group-item"><h6>Bug ID</h6> <small class="text-body-secondary float-end">{{ .BugID }}</small></li>
-            <li class="list-group-item"><h6>Module</h6> <small class="text-body-secondary float-end">{{ .Module }}</small></li>
-            <li class="list-group-item"><h6>Function</h6> <small class="text-body-secondary float-end">{{ .Function }}</small></li>
-            <li class="list-group-item"><h6>Impact</h6> <small class="text-body-secondary float-end">{{ .Impact }}</small></li>
-          </ul>
+          <p class="card-text">{{ .Description }}</p>
+          <dl class="card-details">
+            <div class="card-detail"><dt>Fuzzer ID</dt><dd>{{ .FuzzerID }}</dd></div>
+            <div class="card-detail"><dt>Bug ID</dt><dd>{{ .BugID }}</dd></div>
+            <div class="card-detail"><dt>Module</dt><dd>{{ .Module }}</dd></div>
+            <div class="card-detail"><dt>Function</dt><dd>{{ .Function }}</dd></div>
+            <div class="card-detail card-detail-wide"><dt>Impact</dt><dd>{{ .Impact }}</dd></div>
+          </dl>
+          {{- if .Args }}
+          <dl class="card-details">
+            {{template "crashArguments" .}}
+          </dl>
+          {{- end}}
         </div>
         <div class="card-footer">
-          <div class="btn-group">
+          <div class="card-actions">
             {{template "deleteCrash" .GUID}}
             {{template "editCrash" .GUID}}
             {{template "downloadCrash" .GUID}}
@@ -130,8 +159,9 @@
           </div>
         </div>
         {{else}}
+        {{template "crashContext" .}}
         <div class="card-footer">
-          <div class="btn-group">
+          <div class="card-actions">
             {{template "deleteCrash" .GUID}}
             {{template "downloadCrash" .GUID}}
             {{template "reportCrash" .GUID}}
@@ -139,8 +169,9 @@
         </div>
         {{end}}
         {{else}}
+        {{template "crashContext" .}}
         <div class="card-footer">
-          <div class="btn-group">
+          <div class="card-actions">
             {{template "deleteCrash" .GUID}}
             {{template "downloadCrash" .GUID}}
             {{template "verifyCrash" .GUID}}
@@ -156,10 +187,31 @@
 {{end}}
 {{end}}
 
+{{define "crashArguments"}}
+<div class="card-detail card-detail-wide"><dt>Arguments</dt><dd><pre class="crash-arguments">{{ .Args }}</pre></dd></div>
+{{- end}}
+
+{{define "crashContext"}}
+<div class="card-body">
+  <p class="card-text">{{if .Verified}}BugId did not report a function for this crash.{{else}}Not analyzed yet. Verify runs BugId to analyze this crash.{{end}}</p>
+  <dl class="card-details">
+    <div class="card-detail"><dt>Job</dt><dd>{{ .GetJob.Name }}</dd></div>
+    <div class="card-detail"><dt>Fuzzer ID</dt><dd>{{if .FuzzerID}}{{ .FuzzerID }}{{else}}&mdash;{{end}}</dd></div>
+    {{- if .Description }}
+    <div class="card-detail card-detail-wide"><dt>Description</dt><dd>{{ .Description }}</dd></div>
+    {{- end}}
+    {{- if .Args }}
+    {{template "crashArguments" .}}
+    {{- end}}
+  </dl>
+</div>
+{{end}}
+
 {{define "reportCrash"}}
 <a href="/crash/{{.}}/report" class="btn btn-outline theme-secondary crash-report" title="Report" aria-label="Report" data-method="POST">
   <svg class="bi" width="20" height="20" fill="currentColor" color="purple" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#file-earmark-text"/>
   </svg>
+  <span>Report</span>
 </a>
 {{end}}

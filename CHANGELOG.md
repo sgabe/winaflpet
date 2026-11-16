@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Redesign configuration forms and add section navigation.
 - Redesign job cards and add status summaries and filters.
 - Redesign instance statistics and plot layouts.
+- Redesign agent and crash cards and add list filters.
 
 ## [2.1.0] - 2026-09-12
 ### Added

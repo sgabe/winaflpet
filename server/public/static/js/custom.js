@@ -244,12 +244,27 @@ var filterCardsEmpty = null;
 var filterCardsConfig = "all";
 var filterCardsToolbar = null;
 var filterCardsAgent = "all";
+var filterCardsJob = "all";
+var filterCardsRisk = "all";
 var filterCardsSummary = null;
 
 function cardListAgent(column) {
     var job = column.querySelector(".card.job");
     var id = job ? job.getAttribute("data-agent-id") : "";
     return id ? String(id) : "";
+}
+
+function cardListJob(column) {
+    var crash = column.querySelector(".card.crash");
+    var id = crash ? crash.getAttribute("data-job-id") : "";
+    return id ? String(id) : "";
+}
+
+function cardListRisk(column) {
+    var crash = column.querySelector(".card.crash");
+    if (!crash || crash.classList.contains("unverified")) return "na";
+    var risk = crash.getAttribute("data-risk");
+    return ["high", "medium", "low", "none", "na"].indexOf(risk) >= 0 ? risk : "na";
 }
 
 function cardListSelect(definition) {
@@ -279,6 +294,14 @@ function cardListSelect(definition) {
 }
 
 function cardListConfig(column) {
+    if (column.querySelector(".card.agent .card-summary-badge.is-enabled")) return "enabled";
+    if (column.querySelector(".card.agent .card-summary-badge.is-disabled")) return "disabled";
+    var crash = column.querySelector(".card.crash");
+    if (crash) {
+        if (crash.classList.contains("unverified")) return "unverified";
+        if (crash.classList.contains("unavailable")) return "unavailable";
+        return "verified";
+    }
     var job = column.querySelector(".card.job");
     if (job) {
         var status = job.getAttribute("data-list-status");
@@ -329,7 +352,7 @@ var filterCards = function(initial) {
 
     var visible = 0;
     columns.forEach(function(column) {
-        var match = (filterCardsConfig === "all" || cardListConfig(column) === filterCardsConfig) && (filterCardsAgent === "all" || cardListAgent(column) === filterCardsAgent) && (!query || Array.prototype.some.call(
+        var match = (filterCardsConfig === "all" || cardListConfig(column) === filterCardsConfig) && (filterCardsAgent === "all" || cardListAgent(column) === filterCardsAgent) && (filterCardsJob === "all" || cardListJob(column) === filterCardsJob) && (filterCardsRisk === "all" || cardListRisk(column) === filterCardsRisk) && (!query || Array.prototype.some.call(
             column.querySelectorAll(".card-header, .card-body"),
             function(part) {
                 return String(part.textContent).toLowerCase().indexOf(query) !== -1;
@@ -348,13 +371,13 @@ var filterCards = function(initial) {
         cards.parentNode.insertBefore(filterCardsEmpty, cards.nextSibling);
     }
     if (filterCardsEmpty) {
-        filterCardsEmpty.hidden = !((query || filterCardsConfig !== "all" || filterCardsAgent !== "all") && columns.length && visible === 0);
+        filterCardsEmpty.hidden = !((query || filterCardsConfig !== "all" || filterCardsAgent !== "all" || filterCardsJob !== "all" || filterCardsRisk !== "all") && columns.length && visible === 0);
     }
 
     updateCardFoldTools();
     updateCardListToolbar();
 
-    if (initial && !query && filterCardsConfig === "all" && filterCardsAgent === "all") return;
+    if (initial && !query && filterCardsConfig === "all" && filterCardsAgent === "all" && filterCardsJob === "all" && filterCardsRisk === "all") return;
     if ($.fn.masonry) $(cards).masonry();
 }
 
@@ -568,6 +591,8 @@ $(function () {
 
     var buttons = [];
     [
+        [".card.agent", "Agent configuration", [["All", "all"], ["Enabled", "enabled"], ["Disabled", "disabled"]]],
+        [".card.crash", "Crash verification", [["All", "all"], ["Verified", "verified"], ["Unverified", "unverified"], ["Unavailable", "unavailable"]]],
         [".card.job", "Job status", [["All", "all"], ["Running", "running"], ["Starting", "starting"], ["Stopped", "stopped"], ["Unknown", "unknown"]]]
     ].forEach(function(definition) {
         if (!columns.some(function(column) { return column.querySelector(definition[0]); })) return;
@@ -608,6 +633,48 @@ $(function () {
             items: agents,
             change: function(value) {
                 filterCardsAgent = value;
+                filterCards();
+            }
+        }));
+    }
+
+    var crashJobs = [];
+    columns.forEach(function(column) {
+        var id = cardListJob(column);
+        if (!id || crashJobs.some(function(job) { return job.id === id; })) return;
+        var summaryLabel = column.querySelector(".card.crash .card-summary-label");
+        var name = summaryLabel ? String(summaryLabel.textContent).replace(/\s+/g, " ").trim() : "";
+        crashJobs.push({ id: id, label: (name ? name + " " : "") + "(#" + id + ")" });
+    });
+    if (crashJobs.length) {
+        toolbar.appendChild(cardListSelect({
+            prefix: "card-list-job-select",
+            className: "card-list-job",
+            label: "Job",
+            allLabel: "All jobs",
+            items: crashJobs,
+            change: function(value) {
+                filterCardsJob = value;
+                filterCards();
+            }
+        }));
+    }
+
+    if (columns.some(function(column) { return column.querySelector(".card.crash"); })) {
+        toolbar.appendChild(cardListSelect({
+            prefix: "card-list-risk-select",
+            className: "card-list-risk",
+            label: "Crash Risk",
+            allLabel: "All risks",
+            items: [
+                { id: "high", label: "High" },
+                { id: "medium", label: "Medium" },
+                { id: "low", label: "Low" },
+                { id: "none", label: "None" },
+                { id: "na", label: "Not assessed" }
+            ],
+            change: function(value) {
+                filterCardsRisk = value;
                 filterCards();
             }
         }));

@@ -1,6 +1,12 @@
 {{define "content"}}
 {{if not .agents}}
-  <p>There are no existing agents in the database. Click <a href="/agents/create">here</a> to create one!</p>
+  <section class="empty-state" aria-labelledby="empty-agents-title">
+    <h2 id="empty-agents-title">No agents yet</h2>
+    <p>Register a Windows fuzzing machine to get started.</p>
+    <div class="empty-state-actions">
+      <a href="/agents/create" class="btn theme-primary">Add agent</a>
+    </div>
+  </section>
 {{else}}
   <div id="cards" class="row row-cols-3">
     {{range .agents}}
@@ -22,29 +28,32 @@
         <div id="collapse-{{ .ID }}" class="collapse collapsed">
           <div class="card-body">
             <p class="card-text truncate">{{ .Description }}</p>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><h6>Host</h6> <small class="text-body-secondary float-end">{{ .Host }}</small></li>
-              <li class="list-group-item"><h6>Port</h6> <small class="text-body-secondary float-end">{{ .Port }}</small></li>
-              <li class="list-group-item"><h6>Version</h6> <small class="text-body-secondary float-end">{{ .Version }}</small></li>
-            </ul>
+            <dl class="card-details">
+              <div class="card-detail"><dt>Host</dt><dd>{{ .Host }}</dd></div>
+              <div class="card-detail"><dt>Port</dt><dd>{{ .Port }}</dd></div>
+              <div class="card-detail"><dt>Version</dt><dd>{{ .Version }}</dd></div>
+            </dl>
           </div>
 
           <div class="card-footer">
-            <div class="btn-group">
+            <div class="card-actions">
             <a href="/agent/{{.GUID}}/check" class="btn btn-outline theme-secondary action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
-              <svg class="bi" width="20" height="20" fill="currentColor" color="grey" viewBox="0 0 20 20">
+              <svg class="bi" width="20" height="20" fill="currentColor" color="grey" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
               </svg>
+              <span>Check connection</span>
             </a>
             <a href="/agent/{{.GUID}}/edit" class="btn btn-outline theme-secondary action edit">
-              <svg class="bi" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20">
+              <svg class="bi" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
               </svg>
+              <span>Edit</span>
             </a>
             <a href="/agent/{{.GUID}}" class="btn btn-outline theme-secondary action delete" data-method="DELETE">
-              <svg class="bi" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20">
+              <svg class="bi" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
               </svg>
+              <span>Delete</span>
             </a>
             </div>
           </div>
