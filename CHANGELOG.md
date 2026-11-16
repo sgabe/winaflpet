@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Confirmation dialogs before deleting agents, jobs, crash records or all crashes.
 - Recovery guidance for missing job statistics and plot images, and per-image load failure messages.
 - Validation summary with links to invalid fields on the job create and edit forms.
+- File drop areas on the import and input-upload forms.
 
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.

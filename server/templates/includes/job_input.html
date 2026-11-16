@@ -14,9 +14,13 @@
       </div>
 
       <div class="settings-field">
-        <label for="inputZip" class="form-label">Input files (ZIP)</label>
-        <input id="inputZip" name="input" type="file" class="form-control" accept=".zip,application/zip" required data-file-summary="inputZipSummary" aria-describedby="inputHelp inputZipSummary">
+        <div class="file-drop" data-file-drop="inputZip" data-file-drop-status="inputZipDropStatus">
+          <label for="inputZip" class="form-label">Input files (ZIP)</label>
+          <p class="file-drop-hint text-muted">Choose a ZIP file, or drop it here.</p>
+          <input id="inputZip" name="input" type="file" class="form-control" accept=".zip,application/zip" required data-file-summary="inputZipSummary" aria-describedby="inputHelp inputZipSummary">
+        </div>
         <small id="inputHelp" class="form-text text-muted">Maximum 256 MiB ZIP, 1 GiB extracted. Input must be an existing directory. Existing files are deleted before extraction; a failed extraction may leave a partial input set.</small>
+        <p id="inputZipDropStatus" class="form-notice is-warning file-drop-status" role="status" aria-label="Input files drop status" hidden></p>
         <p id="inputZipSummary" class="file-selection-summary" role="status" hidden></p>
       </div>
 

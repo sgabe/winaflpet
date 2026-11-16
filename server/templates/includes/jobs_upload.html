@@ -10,8 +10,12 @@
     <div class="settings-fields">
 
       <div class="settings-field">
-        <label for="jobFile" class="form-label">Configuration file</label>
-        <input type="file" name="job" id="jobFile" class="form-control" data-file-summary="jobFileSummary" aria-describedby="jobFileSummary">
+        <div class="file-drop" data-file-drop="jobFile" data-file-drop-status="jobFileDropStatus">
+          <label for="jobFile" class="form-label">Configuration file</label>
+          <p class="file-drop-hint text-muted">Choose a JSON export file, or drop it here.</p>
+          <input type="file" name="job" id="jobFile" class="form-control" data-file-summary="jobFileSummary" aria-describedby="jobFileSummary">
+        </div>
+        <p id="jobFileDropStatus" class="form-notice is-warning file-drop-status" role="status" aria-label="Configuration file drop status" hidden></p>
         <p id="jobFileSummary" class="file-selection-summary" role="status" hidden></p>
       </div>
 

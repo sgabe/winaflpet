@@ -980,6 +980,106 @@ function initFileSummaries() {
 
 $(initFileSummaries);
 
+function initFileDrops() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-file-drop]"), function(zone) {
+        if (zone.dataset.fileDropBound) return;
+        var input = document.getElementById(zone.getAttribute("data-file-drop"));
+        if (!input || input.tagName !== "INPUT" || input.type !== "file" || !zone.contains(input)) return;
+        var status = document.getElementById(zone.getAttribute("data-file-drop-status") || "");
+        zone.dataset.fileDropBound = "1";
+        var depth = 0;
+
+        var hasFiles = function(e) {
+            var types = e.dataTransfer && e.dataTransfer.types;
+            return !!types && Array.prototype.indexOf.call(types, "Files") >= 0;
+        };
+
+        var show = function(text) {
+            if (!status) return;
+            status.textContent = text;
+            status.hidden = !text;
+        };
+
+        var reset = function() {
+            depth = 0;
+            zone.classList.remove("is-dragover");
+        };
+
+        zone.addEventListener("dragenter", function(e) {
+            if (!hasFiles(e)) return;
+            e.preventDefault();
+            if (input.disabled) {
+                e.dataTransfer.dropEffect = "none";
+                reset();
+                return;
+            }
+            depth++;
+            zone.classList.add("is-dragover");
+        });
+
+        zone.addEventListener("dragover", function(e) {
+            if (!hasFiles(e)) return;
+            e.preventDefault();
+            if (input.disabled) {
+                e.dataTransfer.dropEffect = "none";
+                reset();
+                return;
+            }
+            e.dataTransfer.dropEffect = "copy";
+            zone.classList.add("is-dragover");
+        });
+
+        zone.addEventListener("dragleave", function() {
+            depth = Math.max(0, depth - 1);
+            if (!depth) zone.classList.remove("is-dragover");
+        });
+
+        zone.addEventListener("dragend", reset);
+
+        zone.addEventListener("drop", function(e) {
+            if (!hasFiles(e)) return;
+            e.preventDefault();
+            reset();
+            if (input.disabled) return;
+            var files = e.dataTransfer.files;
+            if (files && files.length > 1) {
+                show("Drop one file at a time. Your current selection was kept.");
+                return;
+            }
+            var fallback = "Couldn't add the dropped file. Choose it with the file field instead; your current selection was kept.";
+            if (!files || files.length !== 1 || typeof Event !== "function") {
+                show(fallback);
+                return;
+            }
+            var previous = input.files;
+            var assigned = false;
+            try {
+                input.files = files;
+                assigned = !!input.files && input.files.length === 1 && input.files[0].name === files[0].name && input.files[0].size === files[0].size;
+            } catch (error) {
+                assigned = false;
+            }
+            if (!assigned) {
+                try {
+                    if (previous && input.files !== previous) input.files = previous;
+                } catch (error) {
+                    assigned = false;
+                }
+                show(fallback);
+                return;
+            }
+            show("");
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+
+        input.addEventListener("change", function() {
+            show("");
+        });
+    });
+}
+
+$(initFileDrops);
+
 function initValidationSummaries() {
     Array.prototype.forEach.call(document.querySelectorAll("form[data-validation-summary]"), function(form) {
         if (form.dataset.validationSummaryBound) return;

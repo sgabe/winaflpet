@@ -2645,3 +2645,41 @@ footer .version:before {
   overflow-wrap: anywhere;
   white-space: normal;
 }
+
+.file-drop {
+  min-width: 0;
+  padding: 1rem;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 10px;
+  background-color: #f8fafc;
+}
+
+.file-drop:focus-within {
+  border-color: #c2410c;
+}
+
+.file-drop.is-dragover {
+  border-style: solid;
+  border-color: #c2410c;
+  background-color: #fff7ed;
+}
+
+.file-drop-hint {
+  margin: 0 0 .5rem;
+  font-size: .875rem;
+  overflow-wrap: anywhere;
+}
+
+.file-drop-status {
+  margin-top: .5rem;
+}
+
+.file-drop-status[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 767.98px) {
+  .file-drop {
+    padding: .75rem;
+  }
+}
