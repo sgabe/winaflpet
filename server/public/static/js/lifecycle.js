@@ -4,6 +4,7 @@ $(function () {
         var startUnconfirmed = true;
         var progress = card.find(".job-progress"), instances = card.find(".instance-progress");
         var command = $("<div class='job-command-status small' role='status'>").insertAfter(progress);
+        var running = card.find(".job-running");
         var lastSnapshot = null, pendingStop = false, epoch = 0, renderedInstances = "", commandUnconfirmed = false;
         function notify(message, context) {
             commandUnconfirmed = context === "danger";
@@ -23,9 +24,25 @@ $(function () {
             // while no instance is active, and hidden as soon as a run starts.
             card.find(".edit,.delete,.upload,.export").toggleClass("d-none", anyActive).toggleClass("disabled", blocked).prop("disabled", blocked);
         }
+        function summarize(snapshot, stale) {
+            var text = "Status unknown", detail = "Running instances have not been observed yet.";
+            var source = stale ? lastSnapshot : (snapshot && Array.isArray(snapshot.instances) ? snapshot : null);
+            if (!stale && !source && lastSnapshot) detail = "Current state is unconfirmed.";
+            if (source && Array.isArray(source.instances)) {
+                var count = source.instances.filter(function (i) { return i.status === "running"; }).length;
+                text = count + "/" + source.instances.length + " running";
+                detail = text;
+                if (stale) {
+                    text = "Last known: " + text;
+                    detail = "Last known state; current state is unconfirmed. " + detail;
+                }
+            }
+            running.text(text).attr("title", detail).toggleClass("is-stale", !!stale && !!source);
+        }
         function render(snapshot, stale) {
             startUnconfirmed = !!stale;
             if (snapshot && snapshot.instances && snapshot.instances.length) lastSnapshot = snapshot;
+            summarize(snapshot, stale);
             if (!lastSnapshot) {
                 // Keep configuration actions reachable if status polling fails.
                 // Their server handlers validate the operation when requested.

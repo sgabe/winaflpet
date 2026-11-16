@@ -86,46 +86,31 @@
   {{range .crashes}}
   <div class="col sm:col-6 lg:col-4 mb-3">
     <div class="card crash {{if not .Verified }}unverified{{end}}{{if and .Verified (not .Function) }}unavailable{{end}}">
-      <div class="card-header">
-        <small class="id {{ .GetRisk }} rounded-top-3 rounded-end-0">{{ .ID }}</small>
-        {{if .Verified }}
-          {{if .Function }}
-          <h6 data-bs-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
-            <i class="fas fa-chevron-down float-end"></i>
-            {{if .Label }}
-              <span class="label">{{ .Label }}</span>
-            {{else if .Function }}
-              <span class="label">{{ .Function }}</span>
-            {{else}}
-              <span class="bugid">{{ .BugID }}</span>
-            {{end}}
-            <small class="text-body-secondary">{{ .GetJob.Name }}</small>
-          </h6>
-          {{else}}
-          <h6 class="d-block">
-            <span class="label">Unavailable</span>
-            <small class="text-body-secondary">{{ .GetJob.Name }}</small>
-          </h6>
-          <div class="btn-group float-end">
-            {{template "deleteCrash" .GUID}}
-            {{template "downloadCrash" .GUID}}
-            {{template "reportCrash" .GUID}}
-          </div>
-          {{end}}
-        {{else}}
-          <h6 class="d-block">
-            <span class="label">Unverified</span>
-            <small class="text-body-secondary">{{ .GetJob.Name }}</small>
-          </h6>
-          <div class="btn-group float-end">
-            {{template "deleteCrash" .GUID}}
-            {{template "downloadCrash" .GUID}}
-            {{template "verifyCrash" .GUID}}
-          </div>
-        {{end}}
+      {{$jobName := .GetJob.Name}}
+      <div class="card-header card-summary">
+        <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
+          <span class="card-summary-title">
+          {{- if .Verified }}
+            {{- if .Function }}
+              {{- if .Label }}<span class="label">{{ .Label }}</span>
+              {{- else if .Function }}<span class="label">{{ .Function }}</span>
+              {{- else}}<span class="bugid">{{ .BugID }}</span>
+              {{- end}}
+            {{- else}}<span class="label">Unavailable</span>
+            {{- end}}
+          {{- else}}<span class="label">Unverified</span>
+          {{- end -}}
+          </span>
+          <i class="fas fa-chevron-down card-summary-chevron" aria-hidden="true"></i>
+          <span class="card-summary-meta">
+            <small class="id {{ .GetRisk }}">{{ .ID }}</small>
+            <span class="card-summary-label" title="{{ $jobName }}">{{ $jobName }}</span>
+          </span>
+        </button>
       </div>
-      {{if .Verified }}
       <div id="collapse-{{ .ID }}" class="collapse collapsed">
+        {{if .Verified }}
+        {{if .Function }}
         <div class="card-body">
           <p class="card-text truncate">{{ .Description }}</p>
           <ul class="list-group list-group-flush">
@@ -144,8 +129,25 @@
             {{template "reportCrash" .GUID}}
           </div>
         </div>
+        {{else}}
+        <div class="card-footer">
+          <div class="btn-group">
+            {{template "deleteCrash" .GUID}}
+            {{template "downloadCrash" .GUID}}
+            {{template "reportCrash" .GUID}}
+          </div>
+        </div>
+        {{end}}
+        {{else}}
+        <div class="card-footer">
+          <div class="btn-group">
+            {{template "deleteCrash" .GUID}}
+            {{template "downloadCrash" .GUID}}
+            {{template "verifyCrash" .GUID}}
+          </div>
+        </div>
+        {{end}}
       </div>
-      {{end}}
     </div>
   </div>
     {{end}}

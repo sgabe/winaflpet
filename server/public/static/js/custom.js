@@ -1,4 +1,4 @@
-import { Tooltip } from './bootstrap.bundle.min.js';
+import { Collapse, Tooltip } from './bootstrap.bundle.min.js';
 
 $(function () {
 
@@ -51,11 +51,14 @@ $(function () {
 
     var toggleActions = function(context) {
         $(context).toggleClass("disabled");
+        var group = $(context).closest(".card.job .card-actions").length
+            ? $(context).closest(".card-actions").find(".action,.job-start,.job-stop,.job-download").not(context)
+            : $(context).siblings();
         if (!$(context).is(".play")) {
-            $(context).siblings().toggleClass("disabled");
+            group.toggleClass("disabled");
         }
         else if ($(context).is(".last")) {
-            $(context).siblings(".disabled").not(".play").toggleClass("disabled");
+            group.filter(".disabled").not(".play").toggleClass("disabled");
         }
     }
 
@@ -237,19 +240,161 @@ jQuery.expr.pseudos.contains = jQuery.expr.createPseudo(function(text) {
     };
 });
 
-var filterCards = function() {
-    $('#cards').find('.col').removeClass('d-none');
-    var filter = $("#search").val();
-    if (filter) {
-        $('#cards').find('.card .card-body:not(:contains("'+filter+'"))').parent().parent().parent().addClass('d-none');
-        if ($.fn.masonry) $('#cards').masonry();
+var filterCardsEmpty = null;
+var filterCardsToolbar = null;
+
+function updateCardListToolbar() {
+    var cards = document.getElementById("cards");
+    if (!filterCardsToolbar || !cards) return;
+    var columns = Array.prototype.filter.call(cards.children, function(child) {
+        return child.classList.contains("col");
+    });
+    var shown = columns.filter(function(column) {
+        return !column.classList.contains("d-none") && !column.hidden;
+    }).length;
+    filterCardsToolbar.count.textContent = "Showing " + shown + " of " + columns.length + " on this page";
+}
+
+var filterCards = function(initial) {
+    var cards = document.getElementById("cards");
+    if (!cards) return;
+
+    var search = document.getElementById("search");
+    var query = (search && search.value ? String(search.value) : "").trim().toLowerCase();
+    var columns = Array.prototype.filter.call(cards.children, function(child) {
+        return child.classList.contains("col");
+    });
+
+    var visible = 0;
+    columns.forEach(function(column) {
+        var match = (!query || Array.prototype.some.call(
+            column.querySelectorAll(".card-header, .card-body"),
+            function(part) {
+                return String(part.textContent).toLowerCase().indexOf(query) !== -1;
+            }
+        ));
+        column.classList.toggle("d-none", !match);
+        if (match) visible++;
+    });
+
+    if (columns.length && !filterCardsEmpty && cards.parentNode) {
+        filterCardsEmpty = document.createElement("p");
+        filterCardsEmpty.className = "job-stats-empty";
+        filterCardsEmpty.setAttribute("role", "status");
+        filterCardsEmpty.hidden = true;
+        filterCardsEmpty.textContent = "No matching cards. Try different filters or search.";
+        cards.parentNode.insertBefore(filterCardsEmpty, cards.nextSibling);
     }
+    if (filterCardsEmpty) {
+        filterCardsEmpty.hidden = !((query) && columns.length && visible === 0);
+    }
+
+    updateCardFoldTools();
+    updateCardListToolbar();
+
+    if (initial && !query) return;
+    if ($.fn.masonry) $(cards).masonry();
 }
 
 $(window).on('load', function() {
+    filterCards(true);
+})
+
+$('#search').on('input', function() {
     filterCards();
 })
 
-$('#search').on('keyup', function() {
-    filterCards();
-})
+function cardFoldItems(cards) {
+    var items = [];
+    Array.prototype.forEach.call(cards.children, function(column) {
+        if (!column.classList.contains("col")) return;
+        var toggle = column.querySelector(".card-summary .card-toggle");
+        if (!toggle) return;
+        var target = toggle.getAttribute("aria-controls") || toggle.getAttribute("data-bs-target") || toggle.getAttribute("data-target") || toggle.getAttribute("href") || "";
+        var id = target.replace(/^#/, "");
+        if (!id) return;
+        var panel = Array.prototype.filter.call(column.querySelectorAll(".collapse"), function(candidate) {
+            return candidate.id === id;
+        })[0];
+        if (!panel) return;
+        for (var parent = panel.parentElement; parent && parent !== column; parent = parent.parentElement) {
+            if (parent.classList.contains("collapse")) return;
+        }
+        items.push({
+            column: column,
+            panel: panel,
+            visible: !column.classList.contains("d-none") && !column.hidden
+        });
+    });
+    return items;
+}
+
+function updateCardFoldTools() {
+    var tools = document.querySelector(".card-fold-tools");
+    var cards = document.getElementById("cards");
+    if (!tools || !cards) return;
+    var visible = cardFoldItems(cards).filter(function(item) {
+        return item.visible;
+    }).length;
+    Array.prototype.forEach.call(tools.querySelectorAll("button"), function(button) {
+        button.disabled = visible === 0;
+    });
+}
+
+$(function () {
+    var cards = document.getElementById("cards");
+    if (!cards || !cards.parentNode || filterCardsToolbar) return;
+    var columns = Array.prototype.filter.call(cards.children, function(child) {
+        return child.classList.contains("col");
+    });
+    if (!columns.length) return;
+
+    var toolbar = document.createElement("div");
+    toolbar.className = "card-list-toolbar";
+    var count = document.createElement("span");
+    count.className = "card-list-count";
+    count.setAttribute("role", "status");
+    toolbar.appendChild(count);
+
+    toolbar.count = count;
+    filterCardsToolbar = toolbar;
+    var anchor = document.querySelector(".card-fold-tools");
+    if (!anchor || anchor.parentNode !== cards.parentNode) anchor = cards;
+    cards.parentNode.insertBefore(toolbar, anchor);
+
+    updateCardListToolbar();
+});
+
+$(function () {
+    var cards = document.getElementById("cards");
+    if (!cards || !cards.parentNode || document.querySelector(".card-fold-tools")) return;
+    if (!cardFoldItems(cards).length) return;
+
+    var tools = document.createElement("div");
+    tools.className = "card-fold-tools";
+
+    var hint = document.createElement("p");
+    hint.className = "card-fold-hint";
+    hint.textContent = "Cards start collapsed. Open one for details and actions.";
+    tools.appendChild(hint);
+
+    [["Expand all", true], ["Collapse all", false]].forEach(function(action) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn btn-outline theme-secondary";
+        button.textContent = action[0];
+        button.setAttribute("aria-controls", "cards");
+        button.addEventListener("click", function() {
+            cardFoldItems(cards).forEach(function(item) {
+                if (!item.visible) return;
+                var instance = Collapse.getOrCreateInstance(item.panel, { toggle: false });
+                if (action[1]) instance.show();
+                else instance.hide();
+            });
+        });
+        tools.appendChild(button);
+    });
+
+    cards.parentNode.insertBefore(tools, cards);
+    updateCardFoldTools();
+});

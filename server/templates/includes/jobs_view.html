@@ -6,12 +6,17 @@
     {{range .jobs}}
     <div class="col sm:col-6 lg:col-4 mb-3">
       <div class="card job" data-guid="{{.GUID}}" data-cores="{{.Cores}}">
-        <div class="card-header">
-          <small class="id rounded-top-3 rounded-end-0 {{if .GetAgent.Status}}on{{else}}off{{end}}">{{ .ID }}</small>
-          <h6 data-bs-toggle="collapse" href="#collapse-{{ .ID }}" aria-controls="collapse-{{ .ID }}" class="d-block collapsed">
-            <i class="fas fa-chevron-down float-end"></i>
-            <span class="name">{{.Name}}</span> @ <span class="host">{{.GetAgent.Name}}</span>
-          </h6>
+        {{$agent := .GetAgent}}
+        <div class="card-header card-summary">
+          <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
+            <span class="card-summary-title name" title="{{.Name}}">{{.Name}}</span>
+            <i class="fas fa-chevron-down card-summary-chevron" aria-hidden="true"></i>
+            <span class="card-summary-meta">
+              <small class="id {{if $agent.Status}}on{{else}}off{{end}}">{{ .ID }}</small>
+              <span class="card-summary-label" title="{{$agent.Name}}">@ <span class="host">{{$agent.Name}}</span></span>
+            </span>
+            <span class="card-summary-count job-running" title="Running instances have not been observed yet.">Status unknown</span>
+          </button>
         </div>
 
         <div id="collapse-{{ .ID }}" class="collapse collapsed">
@@ -33,7 +38,6 @@
               <li class="list-group-item"><h6>Target</h6> <small class="text-body-secondary float-end">{{if ne .TargetOffset "0"}}{{.TargetOffset}}{{else}}{{.TargetMethod}}{{end}} in {{.TargetModule}} ({{.TargetArch}})</small></li>
             </ul>
           </div>
-        </div>
 
         <div class="card-footer">
           <div class="btn-group">
@@ -90,6 +94,7 @@
               </svg>
             </a>
           </div>
+        </div>
         </div>
       </div>
     </div>
