@@ -499,6 +499,15 @@ $(function () {
 
     if (panels.length) {
         var definitions = [];
+        var checkboxes = [];
+        var showDefinitions = function(show) {
+            definitions.forEach(function(definition) {
+                definition.hidden = !show;
+            });
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = show;
+            });
+        };
         panels.forEach(function(panel) {
             panel.querySelectorAll('[data-toggle="tooltip"][title], [data-toggle="tooltip"][data-bs-original-title]').forEach(function(label) {
                 var item = label.closest("li.list-group-item");
@@ -513,6 +522,29 @@ $(function () {
                 item.appendChild(definition);
                 definitions.push(definition);
             });
+
+            var header = panel.querySelector(":scope > .card-header");
+            if (!header) return;
+            var group = document.createElement("div");
+            group.className = "job-instance-actions";
+            var toggle = document.createElement("label");
+            toggle.className = "job-definitions-toggle";
+            var checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.addEventListener("change", function() {
+                showDefinitions(checkbox.checked);
+            });
+            toggle.appendChild(checkbox);
+            toggle.appendChild(document.createTextNode("Show definitions"));
+            group.appendChild(toggle);
+            checkboxes.push(checkbox);
+            var footer = panel.querySelector(":scope > .card-footer");
+            var actions = footer ? footer.querySelector(".card-actions") : null;
+            if (actions) {
+                group.appendChild(actions);
+                if (!footer.children.length) footer.hidden = true;
+            }
+            header.appendChild(group);
         });
 
         toolbar = document.createElement("div");
@@ -520,21 +552,13 @@ $(function () {
         var toolbarLabel = document.createElement("span");
         toolbarLabel.className = "job-stats-toolbar-label";
         toolbarLabel.textContent = "Fuzzer instances (" + panels.length + ")";
-        var toggle = document.createElement("button");
-        toggle.type = "button";
-        toggle.className = "btn btn-outline theme-secondary job-definitions-toggle";
-        toggle.setAttribute("aria-pressed", "false");
-        toggle.textContent = "Show definitions";
-        toggle.addEventListener("click", function() {
-            var show = toggle.getAttribute("aria-pressed") !== "true";
-            toggle.setAttribute("aria-pressed", String(show));
-            toggle.textContent = show ? "Hide definitions" : "Show definitions";
-            definitions.forEach(function(definition) {
-                definition.hidden = !show;
-            });
-        });
         toolbar.appendChild(toolbarLabel);
-        toolbar.appendChild(toggle);
+        if (panels.length > 1) {
+            var hint = document.createElement("span");
+            hint.className = "job-stats-toolbar-hint";
+            hint.textContent = "Select an instance to see its statistics.";
+            toolbar.appendChild(hint);
+        }
 
         var accordion = stats.querySelector(".accordion");
         var anchor = accordion && accordion.parentNode ? accordion : panels[0];

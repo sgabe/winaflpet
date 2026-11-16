@@ -2011,19 +2011,64 @@ footer .version:before {
   margin-bottom: 1rem;
 }
 
-.job-stats .card.fuzzer[hidden] {
+.job-stats .card.fuzzer[hidden],
+.job-stats .card.fuzzer > .card-footer[hidden] {
   display: none !important;
 }
 
 .job-stats .card.fuzzer > .card-header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
   height: auto;
   padding: 0;
+  background-color: #fff;
 }
 
 .job-stats .card.fuzzer > .card-header h5 {
+  flex: 1 1 16rem;
+  min-width: 0;
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
+}
+
+.job-stats .job-instance-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .5rem 1rem;
+  margin-left: auto;
+  padding: .25rem .75rem;
+}
+
+.job-stats .job-instance-actions .btn {
+  min-height: 44px;
+}
+
+.job-stats .job-definitions-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  min-height: 44px;
+  margin: 0;
+  font-size: .875rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+}
+
+.job-stats .job-definitions-toggle input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: #c2410c;
+}
+
+.job-stats .card.fuzzer > .collapse > .card-body {
+  padding: 0;
 }
 
 .job-stats .job-instance-toggle {
@@ -2055,13 +2100,61 @@ footer .version:before {
 
 .job-stats .job-stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
 }
 
 .job-stats .job-stat-grid > .card.stat {
   margin: 0;
   min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.job-stats .job-stat-grid > .card.stat + .card.stat {
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .job-stats .job-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .job-stats .job-stat-grid > .card.stat:nth-child(even) {
+    border-left: 1px solid #e2e8f0;
+  }
+  .job-stats .job-stat-grid > .card.stat:nth-child(2) {
+    border-top: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .job-stats .job-stat-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .job-stats .job-stat-grid > .card.stat + .card.stat {
+    border-top: 0;
+    border-left: 1px solid #e2e8f0;
+  }
+}
+
+.job-stats .card.stat > .card-header {
+  height: auto;
+  margin: 0;
+  padding: .875rem 1rem .5rem;
+  border: 0;
+  background-color: transparent;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.job-stats .card.stat > .card-body {
+  padding: 0 1rem .875rem;
 }
 
 .job-stats .card.stat .list-group-item {
@@ -2070,9 +2163,37 @@ footer .version:before {
   align-items: center;
   justify-content: space-between;
   gap: .25rem .5rem;
+  padding: .375rem 0;
+  border-width: 1px 0 0;
+  border-style: solid;
+  border-color: #eef2f6;
+  background-color: transparent;
+  font-size: .875rem;
+  color: #334155;
+}
+
+.job-stats .card.stat .list-group-item:first-child {
+  padding-top: 0;
+  border-top-width: 0;
+}
+
+.job-stats .card.stat .list-group-item pre {
+  margin: 0 0 0 auto;
+  font-size: .8125rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-align: right;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
 }
 
 .job-stats .card.stat .badge {
+  margin-left: auto;
+  padding: .125rem .5rem;
+  border-radius: 4px !important;
+  font-size: .8125rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
@@ -2255,9 +2376,10 @@ footer .version:before {
   color: #334155;
 }
 
-.job-stats-toolbar .job-definitions-toggle {
-  min-height: 44px;
-  min-width: 44px;
+.job-stats-toolbar-hint {
+  min-width: 0;
+  font-size: .875rem;
+  color: #475569;
 }
 
 .job-stats .card.stat .job-stat-definition {
@@ -2306,8 +2428,9 @@ footer .version:before {
 
 .job-instance-tile[aria-pressed="true"] {
   border-color: #c2410c;
-  background-color: #c2410c;
-  color: #fff;
+  background-color: #fff1e8;
+  box-shadow: inset 0 0 0 1px #c2410c;
+  color: #9a3412;
 }
 
 .job-instance-tile:focus-visible {
