@@ -560,12 +560,15 @@ $(function () {
         if (!panel.id) panel.id = "job-instance-" + index;
         var name = panel.querySelector(".job-instance-name");
         var label = (name ? name.textContent : "").replace(/\s+/g, " ").trim();
+        var fid = String(panel.getAttribute("data-fid") || "").trim();
+        var number = /^\d+$/.test(fid) ? Number(fid) : 0;
+        if (!Number.isSafeInteger(number) || number < 1) number = index + 1;
         var button = document.createElement("button");
         button.type = "button";
         button.className = "job-instance-tile";
-        button.textContent = String(index + 1);
+        button.textContent = String(number);
         button.title = label;
-        button.setAttribute("aria-label", "Instance " + (index + 1) + ": " + label);
+        button.setAttribute("aria-label", "Instance " + number + ": " + label);
         button.setAttribute("aria-controls", panel.id);
         button.addEventListener("click", function() {
             select(index);

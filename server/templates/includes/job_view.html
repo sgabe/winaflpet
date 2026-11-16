@@ -24,7 +24,7 @@
 <div id="content" class="stats job-stats">
   <div id="accordion" class="accordion">
   {{ range $i, $s := .stats }}
-    <div class="card fuzzer accordion-item" id="job-instance-{{ $i }}">
+    <div class="card fuzzer accordion-item" id="job-instance-{{ $i }}" data-fid="{{ .GetFID }}">
 
       <div class="card-header" id="heading-{{ $i }}">
         <h5>
