@@ -1007,27 +1007,27 @@ div:has(> .card.stat) {
   color: #64748b;
 }
 
-.card.agent .agent-check-result {
+.form-notice.agent-check-result {
   margin-top: .75rem;
 }
 
-.card.agent .agent-check-result[hidden] {
+.agent-check-result[hidden] {
   display: none !important;
 }
 
-.card.agent .agent-check-result-label {
+.agent-check-result-label {
   display: block;
   font-weight: 600;
 }
 
-.card.agent .agent-check-result.is-success {
+.agent-check-result.is-success {
   border-color: #bfe5cd;
   border-left-color: #15803d;
   background-color: #e8f6ee;
   color: #15803d;
 }
 
-.card.agent .agent-check-result.is-error {
+.agent-check-result.is-error {
   border-color: #fca5a5;
   border-left-color: #b91c1c;
   background-color: #fef2f2;
@@ -2501,13 +2501,15 @@ footer .version:before {
 .job-stats .badge.theme-warning { background-color: #f59e0b; color: #1f2937; }
 .job-stats .badge.theme-secondary { background-color: #e2e8f0; color: #334155; }
 
-.card-actions .btn.check {
+.card-actions .btn.check,
+.agent-check-context .btn.check {
   width: auto;
   height: auto;
   margin-block: 0;
 }
 
-.card-actions .btn.check::before {
+.card-actions .btn.check::before,
+.agent-check-context .btn.check::before {
   content: none;
 }
 

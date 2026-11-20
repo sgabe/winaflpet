@@ -68,7 +68,7 @@
   </div>
 </form>
 </div>
-<aside class="settings-aside" aria-labelledby="agent-edit-aside-heading">
+<aside class="settings-aside agent-check-context" aria-labelledby="agent-edit-aside-heading">
   <h2 id="agent-edit-aside-heading">Saved connection</h2>
   <dl>
     <dt>Name</dt>
@@ -85,8 +85,13 @@
     <dd>{{if .agent.Version}}{{.agent.Version}}{{else}}Not reported yet{{end}}</dd>
   </dl>
   <p class="settings-aside-note">These values reflect the saved settings, not unsaved edits in the form.</p>
-  <p>After saving changes, use Check connection on the Agents page to test the agent.</p>
+  <p id="agent-check-note">Check saved connection uses the saved host, port and key, not unsaved edits in the form. After a successful check, reload this page to see the latest reported version.</p>
+  {{- if (eq .agent.Status 0) }}
+  <p id="agent-check-help" class="form-text text-muted">Enable and save the agent before checking its connection.</p>
+  {{- end}}
+  <div class="form-notice agent-check-result" role="status" aria-live="polite" hidden><strong class="agent-check-result-label">Last connection check</strong><span class="agent-check-result-message"></span></div>
   <div class="settings-aside-actions">
+    <a href="/agent/{{.agent.GUID}}/check" class="btn btn-outline theme-secondary action check{{if (eq .agent.Status 0) }} disabled{{end}}" data-method="POST"{{if (eq .agent.Status 0) }} aria-disabled="true" tabindex="-1" aria-describedby="agent-check-help"{{else}} aria-describedby="agent-check-note"{{end}}>Check saved connection</a>
     <a href="/agents/view" class="btn btn-outline theme-secondary">View agents</a>
   </div>
 </aside></div>

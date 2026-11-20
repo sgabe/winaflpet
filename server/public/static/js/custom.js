@@ -43,7 +43,7 @@ $(function () {
 
     var showCheckResult = function(context, success, message) {
         var link = $(context).filter("a.action.check").get(0);
-        var card = link ? link.closest(".card.agent") : null;
+        var card = link ? link.closest(".card.agent, .agent-check-context") : null;
         var result = card ? card.querySelector(".agent-check-result") : null;
         var text = result ? result.querySelector(".agent-check-result-message") : null;
         if (!text) return;
@@ -52,7 +52,7 @@ $(function () {
         result.hidden = false;
         text.textContent = message;
         var cards = document.getElementById("cards");
-        if (cards && cards.contains(card) && $.fn.masonry) $(cards).masonry();
+        if (cards && card.matches(".card.agent") && cards.contains(card) && $.fn.masonry) $(cards).masonry();
     }
 
     var toggleActions = function(context) {
@@ -164,11 +164,20 @@ $(function () {
                 if (!(await confirmAction(this))) return;
                 if (!this.isConnected || $(this).is("a.disabled")) return;
             }
+            var link = this;
+            var isCheck = $(link).is("a.action.check") && !!link.closest(".card.agent, .agent-check-context");
+            var ariaDisabled = link.getAttribute("aria-disabled");
+            if (isCheck) {
+                link.classList.add("disabled");
+                link.setAttribute("aria-disabled", "true");
+                link.setAttribute("aria-busy", "true");
+            }
             $.ajax({
                 url: $(this).attr('href'),
                 method: $(this).attr("data-method"),
                 context: $(this),
                 dataType: $(this).attr("data-type") ? "binary" : "json",
+                global: !isCheck,
                 statusCode: {
                     401: function() {
                         setTimeout(function() {
@@ -177,9 +186,16 @@ $(function () {
                     }
                 },
             }).done(function(data, textStatus, jqXHR ) {
+                if (isCheck) {
+                    if (data !== null && typeof data === "object" && typeof data.context === "string" && typeof data.alert === "string") {
+                        showCheckResult(link, data.context.includes("success"), data.alert);
+                    } else {
+                        showCheckResult(link, false, "The server returned an unexpected response while checking the connection.");
+                    }
+                    return;
+                }
                 if (data.hasOwnProperty("context") && data.hasOwnProperty("alert")) {
                     showAlert(data.context, data.alert);
-                    showCheckResult(this, String(data.context).includes("success"), String(data.alert));
                     if (data.context.includes("success")) {
                         toggleActions(this);
                         if ($(this).is("a.plot")) {
@@ -212,9 +228,20 @@ $(function () {
                     setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100);
                 }
             }).fail(function(jqXHR, textStatus) {
-                showAlert("danger", "You are not logged in. Please log in and try again.");
                 var json = jqXHR && jqXHR.responseJSON;
-                showCheckResult(this, false, json && typeof json.alert === "string" ? json.alert : "Connection check failed.");
+                if (isCheck) {
+                    showCheckResult(link, false, json && typeof json.alert === "string" ? json.alert
+                        : jqXHR && jqXHR.status === 401 ? "You are not logged in. Please log in and try again."
+                        : "Connection check failed. Check your connection and try again.");
+                    return;
+                }
+                showAlert("danger", "You are not logged in. Please log in and try again.");
+            }).always(function() {
+                if (!isCheck) return;
+                link.classList.remove("disabled");
+                link.removeAttribute("aria-busy");
+                if (ariaDisabled === null) link.removeAttribute("aria-disabled");
+                else link.setAttribute("aria-disabled", ariaDisabled);
             });
         }
     });
