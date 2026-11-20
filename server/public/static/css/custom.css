@@ -1401,6 +1401,15 @@ div:has(> .card.stat) {
   border-radius: 6px;
 }
 
+.form-signin .alert:not(.alert-empty) {
+  margin-bottom: 1rem;
+}
+
+.form-signin .form-validation-summary {
+  margin: 0 0 1rem;
+  text-align: left;
+}
+
 .settings-panel {
   padding: 0 1.5rem;
   border: 1px solid #e2e8f0;
@@ -2540,6 +2549,44 @@ footer .version:before {
   min-height: 44px;
 }
 
+.plot-instance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem .5rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.plot-instance .form-label {
+  margin: 0;
+}
+
+.plot-instance .form-select {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: min(100%, 20rem);
+  min-height: 44px;
+  text-overflow: ellipsis;
+}
+
+.plot-instance .plot-instance-help {
+  flex: 1 1 100%;
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+  .plot-instance {
+    flex: 1 1 100%;
+  }
+  .plot-instance .form-select {
+    flex: 1 1 12rem;
+    max-width: 100%;
+  }
+}
+
 .plot-refresh-status {
   margin: 0 0 1rem;
   padding: .5rem .75rem;
@@ -2610,6 +2657,7 @@ footer .version:before {
 }
 
 .job-instance-tile {
+  position: relative;
   flex: 0 0 auto;
   min-width: 48px;
   height: 48px;
@@ -2640,6 +2688,40 @@ footer .version:before {
   outline-offset: 2px;
 }
 
+.job-instance-tile:disabled,
+.job-instance-tile:disabled:hover {
+  border-style: dashed;
+  border-color: #94a3b8;
+  background-color: #f1f5f9;
+  box-shadow: none;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.job-instance-tile-mark {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  box-sizing: border-box;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  forced-color-adjust: none;
+}
+
+.job-instance-tile.is-available .job-instance-tile-mark {
+  background-color: #475569;
+}
+
+.job-instance-tile.is-available[aria-pressed="true"] .job-instance-tile-mark {
+  background-color: #c2410c;
+}
+
+.job-instance-tile.is-missing .job-instance-tile-mark {
+  border: 1.5px solid #64748b;
+  background-color: transparent;
+}
+
 .settings-navigation {
   display: flex;
   flex-wrap: wrap;
@@ -2654,11 +2736,17 @@ footer .version:before {
   box-shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .08);
 }
 
-.settings-navigation .settings-navigation-label {
+.settings-navigation .settings-navigation-label,
+.settings-navigation .settings-navigation-note {
   flex: 1 1 100%;
   font-size: .75rem;
   font-weight: 600;
   color: #64748b;
+}
+
+.settings-navigation .settings-navigation-note {
+  margin: 0;
+  font-weight: 400;
 }
 
 .settings-navigation .settings-navigation-link {
@@ -2679,9 +2767,16 @@ footer .version:before {
 }
 
 .settings-navigation .settings-navigation-link:hover,
-.settings-navigation .settings-navigation-link:focus-visible {
+.settings-navigation .settings-navigation-link:focus-visible,
+.settings-navigation .settings-navigation-link[aria-current="location"] {
   border-color: #c2410c;
   color: #9a3412;
+}
+
+.settings-navigation .settings-navigation-link[aria-current="location"] {
+  background-color: #fff1e8;
+  box-shadow: inset 3px 0 0 #c2410c;
+  font-weight: 600;
 }
 
 .settings-navigation .settings-navigation-link:focus-visible {
@@ -2715,7 +2810,8 @@ footer .version:before {
     max-height: calc(100dvh - 6rem);
     overflow-y: auto;
   }
-  .settings-form-layout.has-section-navigation > nav.settings-navigation .settings-navigation-label {
+  .settings-form-layout.has-section-navigation > nav.settings-navigation .settings-navigation-label,
+  .settings-form-layout.has-section-navigation > nav.settings-navigation .settings-navigation-note {
     flex: none;
   }
   .settings-form-layout.has-section-navigation > nav.settings-navigation .settings-navigation-link {
@@ -2731,6 +2827,24 @@ footer .version:before {
 .settings-panel > .settings-section:target {
   outline: 2px solid rgba(194, 65, 12, .45);
   outline-offset: .5rem;
+}
+
+.settings-section > legend[tabindex="-1"]:focus {
+  outline: 0;
+}
+
+.settings-section > legend[tabindex="-1"]:focus-visible {
+  outline: 2px solid #c2410c;
+  outline-offset: 2px;
+}
+
+.settings-panel > .job-form-intro {
+  margin-top: 1.5rem;
+}
+
+.form-required-marker {
+  color: #b91c1c;
+  font-weight: 600;
 }
 
 @media (max-width: 767.98px) {

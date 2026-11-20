@@ -2,7 +2,7 @@
 {{ if .stats }}
 {{ $first := index .stats 0 }}
 {{ $job := $first.GetJob }}
-<dl class="job-overview" aria-label="Job configuration">
+<dl class="job-overview" aria-label="Job configuration" data-cores="{{ $job.Cores }}" data-banner="{{ $job.Banner }}">
   <div class="job-overview-item">
     <dt>Agent</dt>
     <dd><a href="/agents/view">Agent #{{ $job.AgentID }}</a></dd>

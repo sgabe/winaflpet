@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Move search from the navigation bar into the agent, job and crash list toolbars.
 - Group crash-edit fields into Analysis, Source and Notes sections with field-specific guidance.
 - Show job statistics as one divided panel per instance.
+- Refine crash details, instance statistics, plot and form navigation, and sign-in feedback.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.

@@ -497,6 +497,20 @@ $(function () {
     var panels = Array.prototype.slice.call(stats.querySelectorAll(".card.fuzzer"));
     var toolbar = null;
 
+    var overview = document.querySelector(".job-overview");
+    var cores = String(overview ? overview.getAttribute("data-cores") || "" : "").trim();
+    cores = /^\d+$/.test(cores) ? Number(cores) : 0;
+    if (!Number.isSafeInteger(cores) || cores > 4096) cores = 0;
+    var banner = String(overview ? overview.getAttribute("data-banner") || "" : "").replace(/\s+/g, " ").trim();
+    var fids = panels.map(function(panel) {
+        var fid = String(panel.getAttribute("data-fid") || "").trim();
+        return /^\d+$/.test(fid) ? Number(fid) : 0;
+    });
+    var configured = cores > 0 && panels.length > 0 && fids.every(function(fid, index) {
+        return Number.isSafeInteger(fid) && fid >= 1 && fid <= cores && fids.indexOf(fid) === index;
+    });
+    var total = configured ? cores : panels.length;
+
     if (panels.length) {
         var definitions = [];
         var checkboxes = [];
@@ -551,12 +565,16 @@ $(function () {
         toolbar.className = "job-stats-toolbar";
         var toolbarLabel = document.createElement("span");
         toolbarLabel.className = "job-stats-toolbar-label";
-        toolbarLabel.textContent = "Fuzzer instances (" + panels.length + ")";
+        toolbarLabel.textContent = configured
+            ? "Fuzzer instances (" + panels.length + " of " + cores + " with statistics)"
+            : "Fuzzer instances (" + panels.length + ")";
         toolbar.appendChild(toolbarLabel);
-        if (panels.length > 1) {
+        if (total > 1) {
             var hint = document.createElement("span");
             hint.className = "job-stats-toolbar-hint";
-            hint.textContent = "Select an instance to see its statistics.";
+            hint.textContent = configured && panels.length < cores
+                ? "Select an instance to see its statistics. Dashed tiles are instances with no statistics received and can't be selected."
+                : "Select an instance to see its statistics.";
             toolbar.appendChild(hint);
         }
 
@@ -565,52 +583,92 @@ $(function () {
         anchor.parentNode.insertBefore(toolbar, anchor);
     }
 
-    if (panels.length < 2) return;
+    if (!panels.length || total < 2) return;
 
     var picker = document.createElement("div");
     picker.className = "job-instance-picker";
     picker.setAttribute("role", "group");
     picker.setAttribute("aria-label", "Fuzzer instances");
 
-    var select = function(index) {
-        panels.forEach(function(panel, i) {
-            panel.hidden = i !== index;
-            buttons[i].setAttribute("aria-pressed", String(i === index));
-            buttons[i].tabIndex = i === index ? 0 : -1;
+    var select = function(target) {
+        panels.forEach(function(panel) {
+            panel.hidden = panel !== target;
+        });
+        available.forEach(function(tile) {
+            tile.button.setAttribute("aria-pressed", String(tile.panel === target));
+            tile.button.tabIndex = tile.panel === target ? 0 : -1;
         });
     };
 
-    var buttons = panels.map(function(panel, index) {
+    var entries = [];
+    panels.forEach(function(panel, index) {
         if (!panel.id) panel.id = "job-instance-" + index;
-        var name = panel.querySelector(".job-instance-name");
-        var label = (name ? name.textContent : "").replace(/\s+/g, " ").trim();
-        var fid = String(panel.getAttribute("data-fid") || "").trim();
-        var number = /^\d+$/.test(fid) ? Number(fid) : 0;
-        if (!Number.isSafeInteger(number) || number < 1) number = index + 1;
+    });
+    if (configured) {
+        for (var fid = 1; fid <= cores; fid++) {
+            var at = fids.indexOf(fid);
+            entries.push({ number: fid, panel: at >= 0 ? panels[at] : null });
+        }
+    } else {
+        panels.forEach(function(panel, index) {
+            var number = fids[index];
+            if (!Number.isSafeInteger(number) || number < 1) number = index + 1;
+            entries.push({ number: number, panel: panel });
+        });
+    }
+
+    var tiles = entries.map(function(entry) {
         var button = document.createElement("button");
+        var tile = { button: button, panel: entry.panel };
         button.type = "button";
         button.className = "job-instance-tile";
-        button.textContent = String(number);
+        if (configured) {
+            var mark = document.createElement("span");
+            mark.className = "job-instance-tile-mark";
+            mark.setAttribute("aria-hidden", "true");
+            button.appendChild(mark);
+        }
+        button.appendChild(document.createTextNode(String(entry.number)));
+        if (!entry.panel) {
+            var missing = (banner || "Instance ") + entry.number + ": No statistics received";
+            button.classList.add("is-missing");
+            button.disabled = true;
+            button.title = missing;
+            button.setAttribute("aria-label", missing);
+            picker.appendChild(button);
+            return tile;
+        }
+        var name = entry.panel.querySelector(".job-instance-name");
+        var label = (name ? name.textContent : "").replace(/\s+/g, " ").trim();
+        if (configured) {
+            button.classList.add("is-available");
+            label = (label || (banner || "Instance ") + entry.number) + ": Statistics available";
+        }
         button.title = label;
-        button.setAttribute("aria-label", "Instance " + number + ": " + label);
-        button.setAttribute("aria-controls", panel.id);
+        button.setAttribute("aria-label", "Instance " + entry.number + ": " + label);
+        button.setAttribute("aria-controls", entry.panel.id);
         button.addEventListener("click", function() {
-            select(index);
+            select(entry.panel);
         });
         button.addEventListener("keydown", function(e) {
             if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+            var index = available.indexOf(tile);
+            var count = available.length;
             var target;
-            if (e.key === "ArrowRight") target = (index + 1) % panels.length;
-            else if (e.key === "ArrowLeft") target = (index + panels.length - 1) % panels.length;
+            if (e.key === "ArrowRight") target = (index + 1) % count;
+            else if (e.key === "ArrowLeft") target = (index + count - 1) % count;
             else if (e.key === "Home") target = 0;
-            else if (e.key === "End") target = panels.length - 1;
+            else if (e.key === "End") target = count - 1;
             else return;
             e.preventDefault();
-            select(target);
-            buttons[target].focus();
+            select(available[target].panel);
+            available[target].button.focus();
         });
         picker.appendChild(button);
-        return button;
+        return tile;
+    });
+    var available = tiles.filter(function(tile) {
+        return tile.panel;
     });
 
     if (toolbar && toolbar.parentNode) {
@@ -618,7 +676,7 @@ $(function () {
     } else {
         stats.insertBefore(picker, stats.firstChild);
     }
-    select(0);
+    select(panels[0]);
 });
 
 $(function () {
@@ -636,6 +694,7 @@ $(function () {
         if (sections.length < 4 || !form.parentNode) return;
 
         var prefix = form.id || "settings-form-" + (formIndex + 1);
+        var jobForm = form.id === "createJob" || form.id === "editJob";
         var nav = document.createElement("nav");
         nav.className = "settings-navigation";
         nav.setAttribute("aria-label", "Form sections");
@@ -644,6 +703,40 @@ $(function () {
         label.className = "settings-navigation-label";
         label.textContent = "Jump to section";
         nav.appendChild(label);
+
+        var links = [];
+        var frame = 0;
+        var schedule = function() {
+            if (!frame) frame = window.requestAnimationFrame(updateCurrent);
+        };
+        var locationHash = function() {
+            try {
+                return decodeURIComponent(window.location.hash.slice(1));
+            } catch (error) {
+                return window.location.hash.slice(1);
+            }
+        };
+        var updateCurrent = function() {
+            frame = 0;
+            var root = document.documentElement;
+            var hash = locationHash();
+            var active = 0;
+            var target = -1;
+            sections.forEach(function(section, index) {
+                var top = section.getBoundingClientRect().top;
+                var margin = parseFloat(window.getComputedStyle(section).scrollMarginTop) || 0;
+                if (top <= Math.max(100, margin) + 1) active = index;
+                if (section.id === hash && top >= 0 && top < window.innerHeight) target = index;
+            });
+            var scrollable = root.scrollHeight > window.innerHeight + 2;
+            var bottom = scrollable && window.innerHeight + window.scrollY >= root.scrollHeight - 2;
+            if (target >= 0 && (bottom || !scrollable)) active = target;
+            else if (bottom) active = sections.length - 1;
+            links.forEach(function(link, index) {
+                if (index === active) link.setAttribute("aria-current", "location");
+                else link.removeAttribute("aria-current");
+            });
+        };
 
         sections.forEach(function(section, sectionIndex) {
             var legend = Array.prototype.find.call(section.children, function(part) {
@@ -665,11 +758,79 @@ $(function () {
             link.setAttribute("href", "#" + section.id);
             link.textContent = String(legend.textContent).replace(/\s+/g, " ").trim() || "Section " + (sectionIndex + 1);
             nav.appendChild(link);
+            links.push(link);
+
+            if (!jobForm) return;
+            if (!legend.hasAttribute("tabindex")) legend.setAttribute("tabindex", "-1");
+            link.addEventListener("click", function(e) {
+                if (e.defaultPrevented || e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+                setTimeout(function() {
+                    if (legend.isConnected) legend.focus({ preventScroll: true });
+                    schedule();
+                }, 0);
+            });
         });
+
+        if (jobForm) {
+            var required = 0;
+            Array.prototype.forEach.call(form.elements, function(control) {
+                if (!control.hasAttribute("required") || !control.labels) return;
+                Array.prototype.forEach.call(control.labels, function(text) {
+                    if (text.querySelector(".form-required-marker")) return;
+                    var marker = document.createElement("span");
+                    marker.className = "form-required-marker";
+                    marker.setAttribute("aria-hidden", "true");
+                    marker.textContent = " *";
+                    text.appendChild(marker);
+                });
+                required++;
+            });
+            if (required) {
+                var note = document.createElement("p");
+                note.className = "settings-navigation-note";
+                note.textContent = "Fields marked * are required.";
+                nav.appendChild(note);
+            }
+
+            if (!form.querySelector(":scope > .job-form-intro")) {
+                var intro = document.createElement("p");
+                intro.className = "form-notice job-form-intro";
+                intro.textContent = "Paths refer to the selected agent machine. Placeholder examples are hints, not saved values.";
+                form.insertBefore(intro, sections[0]);
+            }
+
+            Array.prototype.forEach.call(form.querySelectorAll('input[type="text"]'), function(input) {
+                if (input.name === "name" || input.name === "desc") return;
+                input.setAttribute("spellcheck", "false");
+            });
+
+            window.addEventListener("scroll", schedule, { passive: true });
+            window.addEventListener("resize", schedule, { passive: true });
+            window.addEventListener("hashchange", schedule);
+            window.addEventListener("load", schedule);
+        }
 
         form.parentNode.insertBefore(nav, form);
         if (form.parentNode.classList.contains("settings-form-layout")) {
             form.parentNode.classList.add("has-section-navigation");
+        }
+        if (jobForm) {
+            updateCurrent();
+            var initialHash = locationHash();
+            var initial = initialHash ? sections.filter(function(section) {
+                return section.id === initialHash;
+            })[0] : null;
+            if (initial) {
+                var reveal = function() {
+                    window.requestAnimationFrame(function() {
+                        if (!initial.isConnected || locationHash() !== initialHash || Math.abs(window.scrollY) > 1) return;
+                        initial.scrollIntoView({ block: "start" });
+                        updateCurrent();
+                    });
+                };
+                if (document.readyState === "complete") reveal();
+                else window.addEventListener("load", reveal, { once: true });
+            }
         }
     });
 });
@@ -1132,7 +1293,8 @@ function initValidationSummaries() {
         summary.setAttribute("role", "alert");
         summary.tabIndex = -1;
         summary.hidden = true;
-        form.insertBefore(summary, form.firstElementChild);
+        var anchor = form.id === "login" ? form.querySelector(":scope > .login-field") : null;
+        form.insertBefore(summary, anchor || form.firstElementChild);
 
         var owned = [];
         var attempted = false;
@@ -1140,7 +1302,14 @@ function initValidationSummaries() {
         var signature = "";
 
         var fieldLabel = function(control) {
-            var label = control.labels && control.labels.length ? control.labels[0].textContent : "";
+            var label = "";
+            if (control.labels && control.labels.length) {
+                var copy = control.labels[0].cloneNode(true);
+                Array.prototype.forEach.call(copy.querySelectorAll(".form-required-marker"), function(marker) {
+                    marker.remove();
+                });
+                label = copy.textContent;
+            }
             return String(label).replace(/\s+/g, " ").trim() || control.name || control.id || "Field";
         };
 
@@ -1607,6 +1776,77 @@ function initPlotRefresh() {
     if (back && /^\/job\/[^/]+\/plot$/.test(window.location.pathname)) {
         back.setAttribute("href", window.location.pathname.replace(/\/plot$/, "/view"));
         back.textContent = "Back to run";
+    }
+
+    var plotPath = /^\/job\/[^/]+\/plot$/.test(window.location.pathname) ? window.location.pathname : "";
+    var plotFids = typeof URLSearchParams === "function" ? new URLSearchParams(window.location.search).getAll("fid") : [];
+    var currentFID = plotFids.length === 1 && /^[1-9]\d*$/.test(plotFids[0]) ? Number(plotFids[0]) : 0;
+    var toolbar = button && button.parentNode && button.parentNode.classList.contains("plot-toolbar") ? button.parentNode : document.querySelector(".plot-toolbar");
+    if (plotPath && Number.isSafeInteger(currentFID) && currentFID > 0 && toolbar && !toolbar.querySelector(".plot-instance") && typeof fetch === "function" && typeof URL === "function") {
+        var jobPath = plotPath.replace(/\/plot$/, "");
+        fetch(jobPath + "/export", { method: "GET", cache: "no-store", credentials: "same-origin", headers: { Accept: "application/json" } }).then(function(response) {
+            var type = response.headers.get("Content-Type") || "";
+            if (!response.ok || response.redirected || !/^application\/json\b/i.test(type)) throw new Error("Job configuration is unavailable.");
+            return response.json();
+        }).then(function(data) {
+            if (data === null || typeof data !== "object" || Array.isArray(data)) return;
+            if (typeof data.cores !== "number" || !Number.isSafeInteger(data.cores) || data.cores < 1 || data.cores > 4096) return;
+            if (typeof data.banner !== "string" || typeof data.name !== "string") return;
+            if (!toolbar.isConnected || toolbar.querySelector(".plot-instance")) return;
+            var banner = data.banner.replace(/\s+/g, " ").trim();
+            var name = data.name.replace(/\s+/g, " ").trim();
+
+            var current = document.querySelector(".page-breadcrumbs .page-breadcrumb-current");
+            if (name && current && current.parentNode && !current.parentNode.querySelector(".page-breadcrumb-job")) {
+                var crumb = document.createElement("li");
+                var crumbLink = document.createElement("a");
+                crumbLink.className = "page-breadcrumb-parent page-breadcrumb-job";
+                crumbLink.setAttribute("href", jobPath + "/view");
+                crumbLink.textContent = name;
+                crumb.appendChild(crumbLink);
+                current.parentNode.insertBefore(crumb, current);
+            }
+
+            var controlId = "plot-instance-select";
+            for (var n = 2; document.getElementById(controlId); n++) {
+                controlId = "plot-instance-select-" + n;
+            }
+            var group = document.createElement("div");
+            group.className = "plot-instance";
+            var label = document.createElement("label");
+            label.className = "form-label";
+            label.setAttribute("for", controlId);
+            label.textContent = "Instance";
+            var select = document.createElement("select");
+            select.id = controlId;
+            select.className = "form-select";
+            var option = function(fid) {
+                var item = new Option((banner || "Instance ") + fid, String(fid));
+                if (fid === currentFID) {
+                    item.selected = true;
+                    item.defaultSelected = true;
+                }
+                select.appendChild(item);
+            };
+            for (var fid = 1; fid <= data.cores; fid++) option(fid);
+            if (currentFID > data.cores) option(currentFID);
+            var help = document.createElement("small");
+            help.className = "form-text plot-instance-help";
+            help.id = controlId + "-help";
+            help.textContent = "If the selected instance has no plots yet, use Refresh plot data to fetch them.";
+            select.setAttribute("aria-describedby", help.id);
+            select.addEventListener("change", function() {
+                var value = String(select.value);
+                if (!/^[1-9]\d*$/.test(value) || !Number.isSafeInteger(Number(value)) || Number(value) === currentFID) return;
+                var target = new URL(window.location.href);
+                target.searchParams.set("fid", value);
+                window.location.assign(target.pathname + target.search);
+            });
+            group.appendChild(label);
+            group.appendChild(select);
+            group.appendChild(help);
+            toolbar.insertBefore(group, button && button.parentNode === toolbar ? button : null);
+        }).catch(function() {});
     }
 
     Array.prototype.forEach.call(plots.querySelectorAll(".plot-figure img"), function(image, index) {

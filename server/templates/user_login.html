@@ -10,13 +10,13 @@
 </head>
 <body class="login text-center">
     <main role="main" class="container">
-        <form id="login" method="POST" action="/user/login" class="form-signin">
-            <div class="alert {{if .context}}{{if eq .context "empty"}}alert-empty{{else}}theme-{{.context}}{{end}}{{else}}alert-empty{{end}}" role="alert">
-                <div class="message">{{.alert}}</div>
-            </div>
+        <form id="login" method="POST" action="/user/login" class="form-signin" data-validation-summary>
             <img class="mb-4" src="/static/svg/carrot-solid.svg" alt="" width="72" height="72">
             <h1 class="h3 mb-3 font-weight-normal">WinAFL Pet</h1>
             <p class="login-subtitle">Sign in to manage your fuzzing jobs.</p>
+            <div class="alert {{if .context}}{{if eq .context "empty"}}alert-empty{{else}}theme-{{.context}}{{end}}{{else}}alert-empty{{end}}" role="alert">
+                <div class="message">{{.alert}}</div>
+            </div>
             <div class="login-field">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" id="username" name="username" class="form-control" placeholder="Username" autocomplete="username" required autofocus>
