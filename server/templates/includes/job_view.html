@@ -29,7 +29,7 @@
       <div class="card-header" id="heading-{{ $i }}">
         <h5>
           <button type="button" class="job-instance-toggle" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $i }}" aria-expanded="true" aria-controls="collapse-{{ $i }}">
-            <span class="job-instance-name">{{ .AFLBanner }} @ PID {{ .FuzzerProcessID }}</span>
+            <span class="job-instance-name">{{ .AFLBanner }} <span class="job-instance-pid">@ PID {{ .FuzzerProcessID }}</span></span>
             <i class="fas fa-chevron-down" aria-hidden="true"></i>
           </button>
         </h5>
@@ -65,13 +65,13 @@
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Total number of function calls attempted.">Total execs:</span>
-                  <span class="badge theme-primary rounded-pill">{{ formatNumber .ExecsDone }}</span></li>
+                  <span class="badge theme-primary rounded-pill job-stat-count">{{ .ExecsDone }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Number of function calls attempted since last recorded crash.">Execs since crash:</span>
-                  <span class="badge theme-primary rounded-pill">{{ formatNumber .ExecsSinceCrash }}</span></li>
+                  <span class="badge theme-primary rounded-pill job-stat-count">{{ .ExecsSinceCrash }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Current number of execs per second.">Exec speed:</span>
-                  <span class="badge theme-{{if lt .ExecsPerSec 20.0}}danger{{else if lt .ExecsPerSec 100.0}}warning{{else}}success{{end}} rounded-pill">{{ .ExecsPerSec }}/sec</span></li>
+                  <span class="badge theme-success rounded-pill">{{ .ExecsPerSec }}/sec</span></li>
               </ul>
             </div>
           </div>
@@ -82,16 +82,16 @@
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Count of queue passes done.">Cycles done:</span>
-                  <span class="badge theme-primary rounded-pill">{{ .CyclesDone }}</span></li>
+                  <span class="badge theme-primary rounded-pill job-stat-count">{{ .CyclesDone }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Number of test cases discovered.">Total paths:</span>
-                  <span class="badge theme-primary rounded-pill">{{ .PathsTotal }}</span></li>
+                  <span class="badge theme-primary rounded-pill job-stat-count">{{ .PathsTotal }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Number of unique crashes recorded.">Unique crashes:</span>
-                  <span class="badge theme-{{if ne .UniqueCrashes 0}}danger{{else}}secondary{{end}} rounded-pill">{{ .UniqueCrashes }}</span></li>
+                  <span class="badge theme-danger rounded-pill job-stat-count">{{ .UniqueCrashes }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Number of unique hangs encountered.">Unique hangs:</span>
-                  <span class="badge theme-{{if ne .UniqueHangs 0}}warning{{else}}secondary{{end}} rounded-pill">{{ .UniqueHangs }}</span></li>
+                  <span class="badge theme-warning rounded-pill job-stat-count">{{ .UniqueHangs }}</span></li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Bitmap coverage observed by the instrumentation.">Bitmap coverage:</span>
                   <span class="badge theme-success">{{ .BitmapCvg }}</span></li>
@@ -105,23 +105,23 @@
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Path depth reached through the guided fuzzing process.">Levels:</span>
-                  <span class="badge theme-primary rounded-pill">{{ .MaxDepth }}</span>
+                  <span class="badge theme-primary rounded-pill job-stat-count">{{ .MaxDepth }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Inputs that have not gone through any fuzzing yet.">Pending:</span>
-                  <span class="badge theme-primary rounded-pill">{{ .PendingTotal }}</span>
+                  <span class="badge theme-primary rounded-pill job-stat-count">{{ .PendingTotal }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Inputs that the fuzzer really wants to get to in this queue cycle.">Pend fav:</span>
-                  <span class="badge theme-primary rounded-pill">{{ .PendingFavs }}</span>
+                  <span class="badge theme-primary rounded-pill job-stat-count">{{ .PendingFavs }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="New paths found during this fuzzing section.">Own finds:</span>
-                  <span class="badge theme-primary rounded-pill">{{ .PathsFound }}</span>
+                  <span class="badge theme-primary rounded-pill job-stat-count">{{ .PathsFound }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Paths imported from other fuzzer instances when doing parallelized fuzzing.">Imported:</span>
-                  <span class="badge theme-primary rounded-pill">{{ .PathsImported }}</span>
+                  <span class="badge theme-primary rounded-pill job-stat-count">{{ .PathsImported }}</span>
                 </li>
                 <li class="list-group-item">
                   <span data-toggle="tooltip" title="Consistency of observed traces.">Stability:</span>

@@ -515,6 +515,10 @@ $(function () {
             });
         };
         panels.forEach(function(panel) {
+            panel.querySelectorAll(".job-stat-count").forEach(function(count) {
+                var text = String(count.textContent).trim();
+                if (/^\d+$/.test(text)) count.textContent = text.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            });
             panel.querySelectorAll('[data-toggle="tooltip"][title], [data-toggle="tooltip"][data-bs-original-title]').forEach(function(label) {
                 var item = label.closest("li.list-group-item");
                 if (!item || !panel.contains(item)) return;
@@ -522,7 +526,7 @@ $(function () {
                 if (!text || label.jobStatDefinition) return;
                 var definition = document.createElement("span");
                 definition.className = "job-stat-definition";
-                definition.hidden = true;
+                definition.hidden = false;
                 definition.textContent = text;
                 label.jobStatDefinition = definition;
                 item.appendChild(definition);
@@ -537,6 +541,7 @@ $(function () {
             toggle.className = "job-definitions-toggle";
             var checkbox = document.createElement("input");
             checkbox.type = "checkbox";
+            checkbox.checked = true;
             checkbox.addEventListener("change", function() {
                 showDefinitions(checkbox.checked);
             });
@@ -575,7 +580,7 @@ $(function () {
         anchor.parentNode.insertBefore(toolbar, anchor);
     }
 
-    if (!panels.length || total < 2) return;
+    if (!panels.length) return;
 
     var picker = document.createElement("div");
     picker.className = "job-instance-picker";
@@ -1429,6 +1434,25 @@ function initSettingsPasswordClear() {
 }
 
 $(initSettingsPasswordClear);
+
+function initCrashRiskPreview() {
+    var form = document.getElementById("editCrash");
+    var input = document.getElementById("bugID");
+    var preview = document.getElementById("bugIDRisk");
+    if (!form || !input || !preview || !form.contains(input) || !form.contains(preview) || preview.dataset.riskPreviewBound) return;
+    preview.dataset.riskPreviewBound = "1";
+    var labels = { high: "High", medium: "Medium", low: "Low", none: "None" };
+
+    input.addEventListener("input", function() {
+        var match = /\w{2,3}(R|W|E)\W?/.exec(String(input.value));
+        var risk = match ? { R: "low", W: "medium", E: "high" }[match[1]] : "none";
+        preview.classList.remove("is-high", "is-medium", "is-low", "is-none", "is-na");
+        preview.classList.add("is-" + risk);
+        preview.textContent = "Risk preview: " + labels[risk] + " (unsaved)";
+    });
+}
+
+$(initCrashRiskPreview);
 
 var plotDataLimit = 10*1024*1024;
 var plotDataMaxRows = 50000;

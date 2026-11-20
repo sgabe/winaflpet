@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show job statistics as one divided panel per instance.
 - Refine crash details, instance statistics, plot and form navigation, and sign-in feedback.
 - Regroup job configuration sections and refine shared card controls, descriptions and switches.
+- Refine onboarding, file selection and upload context, instance statistics and crash/profile editing feedback.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.

@@ -1,5 +1,7 @@
 {{define "content"}}
 {{if .job}}
+<div class="settings-layout">
+<div class="settings-main">
 <div class="settings-panel">
 {{if .can_upload}}
 <form method="POST" enctype="multipart/form-data" action="/job/{{.job.GUID}}/input">
@@ -10,13 +12,24 @@
     <div class="settings-fields">
 
       <div class="settings-field">
+        <div class="path-box">
+          <i class="fas fa-folder" aria-hidden="true"></i>
+          <div class="path-box-text">
+            <span class="path-box-label">Input directory on Agent #{{.job.AgentID}}</span>
+            <code>{{.job.Input}}</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-field">
         <p class="form-notice is-warning"><strong>This deletes files directly inside Input, then extracts the ZIP there with its directory structure.</strong> Prepare the archive in the layout required by your job. Existing subfolders are not deleted. Like Edit, Upload is available while the job is idle and is blocked once startup begins.</p>
       </div>
 
       <div class="settings-field">
         <div class="file-drop" data-file-drop="inputZip" data-file-drop-status="inputZipDropStatus">
+          <i class="fas fa-file-archive file-drop-icon" aria-hidden="true"></i>
           <label for="inputZip" class="form-label">Input files (ZIP)</label>
-          <p class="file-drop-hint text-muted">Choose a ZIP file, or drop it here.</p>
+          <p class="file-drop-hint text-muted"><strong class="file-drop-choose">Choose a ZIP file</strong> or drop it here.</p>
           <input id="inputZip" name="input" type="file" class="form-control" accept=".zip,application/zip" required data-file-summary="inputZipSummary" aria-describedby="inputHelp inputZipSummary">
         </div>
         <small id="inputHelp" class="form-text text-muted">Maximum 256 MiB ZIP, 1 GiB extracted. Input must be an existing directory. Existing files are deleted before extraction; a failed extraction may leave a partial input set.</small>
@@ -37,6 +50,20 @@
 {{else}}
 <div class="settings-section">
   <p class="settings-description text-muted">Upload input files for <strong>{{.job.Name}}</strong> to <code>{{.job.Input}}</code> on the Windows agent.</p>
+  <div class="settings-fields">
+    <div class="settings-field">
+      <p class="form-notice is-warning"><strong>Upload unavailable.</strong> Upload requires the job to be confirmed idle. The alert on this page gives the exact reason.</p>
+    </div>
+    <div class="settings-field">
+      <div class="path-box">
+        <i class="fas fa-folder" aria-hidden="true"></i>
+        <div class="path-box-text">
+          <span class="path-box-label">Input directory on Agent #{{.job.AgentID}}</span>
+          <code>{{.job.Input}}</code>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="form-actions">
@@ -45,6 +72,24 @@
   </div>
 </div>
 {{end}}
+</div>
+</div>
+<aside class="settings-aside" aria-labelledby="jobInputAsideTitle">
+  <h2 id="jobInputAsideTitle">Job summary</h2>
+  <dl>
+    <dt>Name</dt>
+    <dd>{{.job.Name}}</dd>
+    <dt>Job #</dt>
+    <dd>{{.job.ID}}</dd>
+    <dt>Agent</dt>
+    <dd>Agent #{{.job.AgentID}}</dd>
+    <dt>Input</dt>
+    <dd><code>{{.job.Input}}</code></dd>
+    <dt>Availability</dt>
+    <dd>{{if .can_upload}}Upload available{{else}}Upload unavailable{{end}}</dd>
+  </dl>
+  <p class="settings-aside-note">These values reflect the saved job configuration, not unsaved edits.</p>
+</aside>
 </div>
 {{end}}
 {{end}}
