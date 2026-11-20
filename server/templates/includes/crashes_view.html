@@ -105,7 +105,7 @@
   {{range .crashes}}
   <div class="col sm:col-6 lg:col-4 mb-3">
     <div class="card crash {{if not .Verified }}unverified{{end}}{{if and .Verified (not .Function) }}unavailable{{end}}" data-job-id="{{.JobID}}" data-function="{{.Function}}" data-risk="{{if .Verified}}{{.GetRisk}}{{else}}na{{end}}" role="article" aria-label="Crash #{{ .ID }}: {{if .Verified}}{{if .Function}}{{if .Label}}{{ .Label }}{{else}}{{ .Function }}{{end}}{{else}}Analysis unavailable{{end}}{{else}}Unverified crash{{end}}">
-      {{$jobName := .GetJob.Name}}
+      {{$job := .GetJob}}{{$jobName := printf "Job #%v" .JobID}}{{if trim $job.Name}}{{$jobName = $job.Name}}{{end}}
       <div class="card-header card-summary">
         <h2 class="card-summary-heading" aria-labelledby="crash-title-{{.ID}}">
         <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
@@ -175,13 +175,14 @@
 <div class="card-body">
   <p class="card-text">{{if .Description}}{{ .Description }}{{else if not .Verified}}Not analyzed yet. Verify runs BugId to analyze this crash.{{else if not .Function}}BugId did not report a function for this crash.{{else}}No description{{end}}</p>
   <dl class="card-details">
-    <div class="card-detail"><dt>Job</dt><dd>{{ .GetJob.Name }} (#{{ .JobID }})</dd></div>
+    {{- $job := .GetJob}}
+    <div class="card-detail"><dt>Job</dt><dd>{{if trim $job.Name}}{{ $job.Name }} (#{{ .JobID }}){{else}}Job #{{ .JobID }}{{end}}</dd></div>
     <div class="card-detail"><dt>Fuzzer ID</dt><dd class="font-monospace">{{if .FuzzerID}}{{ .FuzzerID }}{{else}}&mdash;{{end}}</dd></div>
     <div class="card-detail card-detail-wide"><dt>Risk</dt><dd>{{if not .Verified}}Not assessed <span class="form-text text-muted">Verify the crash to assess its Bug ID access type.</span>{{else if eq .GetRisk "high"}}High <span class="form-text text-muted">Bug ID access type E (execute).</span>{{else if eq .GetRisk "medium"}}Medium <span class="form-text text-muted">Bug ID access type W (write).</span>{{else if eq .GetRisk "low"}}Low <span class="form-text text-muted">Bug ID access type R (read).</span>{{else if eq .GetRisk "none"}}None <span class="form-text text-muted">No R/W/E access type was recognized in the Bug ID.</span>{{else}}Not assessed{{end}}<span class="form-text text-muted">This heuristic does not confirm exploitability.</span></dd></div>
     <div class="card-detail"><dt>Bug ID</dt><dd class="font-monospace">{{if .BugID}}{{ .BugID }}{{else}}&mdash;{{end}}</dd></div>
     <div class="card-detail"><dt>Module</dt><dd class="font-monospace">{{if .Module}}{{ .Module }}{{else}}&mdash;{{end}}</dd></div>
     <div class="card-detail"><dt>Function</dt><dd class="font-monospace">{{if .Function}}{{ .Function }}{{else}}&mdash;{{end}}</dd></div>
-    <div class="card-detail card-detail-wide"><dt>Impact</dt><dd>{{if .Impact}}{{ .Impact }}{{else}}&mdash;{{end}}</dd></div>
+    <div class="card-detail card-detail-wide"><dt>Impact</dt><dd>{{if .Impact}}{{ .Impact }}<span class="text-muted"> (reported by BugId)</span>{{else}}&mdash;{{end}}</dd></div>
     {{- if .Args }}
     {{template "crashArguments" .}}
     {{- end}}
