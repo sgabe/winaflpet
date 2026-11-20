@@ -85,12 +85,12 @@
         </div>
         {{if isActive $currentPath "/agents/view"}}
         <div class="page-heading-actions">
-            <a class="btn theme-primary" href="/agents/create">New agent</a>
+            <a class="btn theme-primary" href="/agents/create"><i class="fas fa-plus" aria-hidden="true"></i> New agent</a>
         </div>
         {{else if isActive $currentPath "/jobs/view"}}
         <div class="page-heading-actions">
-            <a class="btn btn-outline theme-secondary" href="/jobs/upload">Import jobs</a>
-            <a class="btn theme-primary" href="/jobs/create">New job</a>
+            <a class="btn btn-outline theme-secondary" href="/jobs/upload"><i class="fas fa-file-import" aria-hidden="true"></i> Import jobs</a>
+            <a class="btn theme-primary" href="/jobs/create"><i class="fas fa-plus" aria-hidden="true"></i> New job</a>
         </div>
         {{else if and (isActive $currentPath "/crashes/view") .crashes}}
         <div class="page-heading-actions">
