@@ -2291,6 +2291,25 @@ footer .version:before {
   text-align: center;
 }
 
+#plots .plot-figure-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+#plots .plot-figure-description {
+  margin: .125rem 0 .75rem;
+  padding-bottom: .75rem;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: .8125rem;
+  color: #64748b;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
 #plots .plot-figure img {
   max-width: 100%;
   height: auto;
@@ -2312,6 +2331,189 @@ footer .version:before {
 
 #plots .plot-figure a:hover {
   color: #9a3412;
+}
+
+#plots .plot-chart {
+  text-align: left;
+}
+
+#plots .plot-chart-viewport {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+#plots .plot-chart-viewport:focus-visible {
+  outline: 2px solid #c2410c;
+  outline-offset: 2px;
+}
+
+#plots .plot-chart-hint {
+  display: none;
+  margin: 0 0 .5rem;
+  font-size: .8125rem;
+  color: #475569;
+}
+
+#plots .plot-chart-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 767.98px) {
+  #plots .plot-chart-hint {
+    display: block;
+  }
+  #plots .plot-chart-svg {
+    min-width: 768px;
+  }
+}
+
+#plots .plot-chart-grid line {
+  stroke: #e2e8f0;
+  stroke-width: 1;
+}
+
+#plots .plot-chart-axis {
+  stroke: #94a3b8;
+  stroke-width: 1;
+}
+
+#plots .plot-chart-tick {
+  fill: #475569;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+#plots .plot-chart-line {
+  fill: none;
+  stroke: var(--plot-series);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#plots .plot-chart-area {
+  fill: var(--plot-series);
+  fill-opacity: .12;
+  stroke: none;
+}
+
+#plots .plot-chart-point {
+  fill: var(--plot-series);
+}
+
+#plots .plot-chart-axis-label {
+  fill: #475569;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+  #plots .plot-chart-tick,
+  #plots .plot-chart-axis-label {
+    font-size: 16px;
+  }
+}
+
+#plots .plot-series-1 { --plot-series: #2563eb; }
+#plots .plot-series-2 { --plot-series: #334155; }
+#plots .plot-series-3 { --plot-series: #94a3b8; }
+#plots .plot-series-4 { --plot-series: #be185d; }
+#plots .plot-series-5 { --plot-series: #7c3aed; }
+
+#plots .plot-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .25rem 1rem;
+  margin: .5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: .8125rem;
+  color: #334155;
+}
+
+#plots .plot-chart-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  min-width: 0;
+}
+
+#plots .plot-chart-swatch {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: .25rem;
+  border-radius: 2px;
+  background-color: var(--plot-series);
+  forced-color-adjust: none;
+}
+
+#plots .plot-chart-details {
+  margin-top: .25rem;
+  font-size: .8125rem;
+  color: #334155;
+}
+
+#plots .plot-chart-details summary {
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: .625rem 0;
+  color: #c2410c;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+#plots .plot-chart-details summary:hover {
+  color: #9a3412;
+}
+
+#plots .plot-chart-details summary:focus-visible {
+  outline: 2px solid #c2410c;
+  outline-offset: 2px;
+}
+
+#plots .plot-chart-table {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+#plots .plot-chart-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+#plots .plot-chart-table th,
+#plots .plot-chart-table td {
+  padding: .375rem .5rem;
+  border-top: 1px solid #e2e8f0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+#plots .plot-chart-table thead th {
+  border-top: 0;
+  font-weight: 600;
+  color: #64748b;
+}
+
+#plots .plot-chart-table th:first-child {
+  text-align: left;
+  white-space: normal;
+}
+
+#plots .plot-chart-table tbody th {
+  font-weight: 500;
+  color: #0f172a;
+}
+
+#plots .plot-chart-note {
+  margin: .5rem 0 0;
+  font-size: .8125rem;
+  color: #475569;
+  text-align: left;
+  overflow-wrap: anywhere;
 }
 
 .plot-toolbar {

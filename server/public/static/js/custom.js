@@ -1269,6 +1269,330 @@ function initSettingsPasswordClear() {
 
 $(initSettingsPasswordClear);
 
+var plotDataLimit = 10*1024*1024;
+var plotDataMaxRows = 50000;
+var plotDataColumns = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10];
+var plotDataRequests = {};
+var plotSvgNamespace = "http://www.w3.org/2000/svg";
+var plotCharts = {
+    "exec_speed.png": { height: 230, integer: false, series: [["Exec speed", 10, 1]] },
+    "high_freq.png": { height: 300, integer: true, series: [["Total paths", 3, 2], ["Current path", 2, 3], ["Pending paths", 4, 1], ["Pending favorites", 5, 4], ["Cycles done", 1, 5]] },
+    "low_freq.png": { height: 230, integer: true, series: [["Unique crashes", 7, 4], ["Unique hangs", 8, 5], ["Levels", 9, 1]] }
+};
+
+function plotDataText(response) {
+    var length = Number(response.headers.get("Content-Length"));
+    if (length > plotDataLimit) throw new Error("Plot data is too large.");
+    if (!response.body || typeof response.body.getReader !== "function" || typeof TextDecoder !== "function") {
+        return response.text().then(function(text) {
+            if (text.length > plotDataLimit) throw new Error("Plot data is too large.");
+            return text;
+        });
+    }
+    var reader = response.body.getReader();
+    var decoder = new TextDecoder("utf-8", { fatal: true });
+    var size = 0;
+    var parts = [];
+    var read = function() {
+        return reader.read().then(function(result) {
+            if (result.done) {
+                parts.push(decoder.decode());
+                return parts.join("");
+            }
+            size += result.value.byteLength;
+            if (size > plotDataLimit) {
+                reader.cancel();
+                throw new Error("Plot data is too large.");
+            }
+            parts.push(decoder.decode(result.value, { stream: true }));
+            return read();
+        });
+    };
+    return read();
+}
+
+function plotDataParse(text) {
+    if (/^\s*</.test(text)) throw new Error("Plot data is not CSV.");
+    var lines = text.split(/\r\n|\r|\n/);
+    var rows = [];
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line || line.charAt(0) === "#") continue;
+        var cells = line.split(",");
+        if (cells.length < 11) throw new Error("Plot data has too few columns.");
+        var row = [];
+        for (var j = 0; j < plotDataColumns.length; j++) {
+            var column = plotDataColumns[j];
+            var cell = cells[column].trim();
+            if (!/^\d+(?:\.\d+)?$/.test(cell)) throw new Error("Plot data has an invalid value.");
+            var value = Number(cell);
+            if (!isFinite(value) || value < 0) throw new Error("Plot data has an invalid value.");
+            row[column] = value;
+        }
+        if (rows.length && row[0] < rows[rows.length - 1][0]) throw new Error("Plot data time is out of order.");
+        if (rows.length >= plotDataMaxRows) throw new Error("Plot data has too many rows.");
+        rows.push(row);
+    }
+    if (!rows.length) throw new Error("Plot data is empty.");
+    return rows;
+}
+
+function plotDataLoad(url) {
+    if (!Object.prototype.hasOwnProperty.call(plotDataRequests, url)) {
+        plotDataRequests[url] = fetch(url, { method: "GET", cache: "no-store", credentials: "same-origin" }).then(function(response) {
+            var type = response.headers.get("Content-Type") || "";
+            if (!response.ok || response.redirected || /html/i.test(type)) throw new Error("Plot data is unavailable.");
+            return plotDataText(response);
+        }).then(plotDataParse);
+    }
+    return plotDataRequests[url];
+}
+
+function plotSvg(parent, name, attributes) {
+    var element = document.createElementNS(plotSvgNamespace, name);
+    Object.keys(attributes || {}).forEach(function(key) {
+        element.setAttribute(key, String(attributes[key]));
+    });
+    if (parent) parent.appendChild(element);
+    return element;
+}
+
+function plotStep(raw, integer) {
+    var power = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+    var factors = integer ? [1, 2, 5, 10] : [1, 2, 2.5, 5, 10];
+    for (var i = 0; i < factors.length; i++) {
+        var step = factors[i] * power;
+        if (step >= raw * (1 - 1e-9)) return integer ? Math.max(1, step) : step;
+    }
+    return 10 * power;
+}
+
+function plotTimeStep(span) {
+    var target = span / 5;
+    var steps = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200, 10800, 21600, 43200, 86400];
+    for (var i = 0; i < steps.length; i++) {
+        if (steps[i] >= target) return steps[i];
+    }
+    return 86400 * plotStep(target / 86400, true);
+}
+
+function plotNumber(value) {
+    var abs = Math.abs(value);
+    var units = [[1e9, "G"], [1e6, "M"], [1e3, "k"]];
+    for (var i = 0; i < units.length; i++) {
+        if (abs >= units[i][0]) return String(Number((value / units[i][0]).toFixed(1))) + units[i][1];
+    }
+    return String(Number(value.toFixed(abs < 10 ? 2 : 1)));
+}
+
+function plotValue(value) {
+    return value.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+function plotDuration(seconds) {
+    seconds = Math.round(seconds);
+    if (seconds < 60) return seconds + "s";
+    var days = Math.floor(seconds / 86400);
+    var hours = Math.floor(seconds % 86400 / 3600);
+    var minutes = Math.floor(seconds % 3600 / 60);
+    if (days) return days + "d" + (hours ? " " + hours + "h" : "");
+    if (hours) return hours + "h" + (minutes ? " " + minutes + "m" : "");
+    return minutes + "m" + (seconds % 60 ? " " + seconds % 60 + "s" : "");
+}
+
+function plotSample(rows, column, x) {
+    var picked = [];
+    var bucket = null;
+    var flush = function() {
+        if (!bucket) return;
+        [bucket.first, bucket.min, bucket.max, bucket.last].sort(function(a, b) {
+            return a - b;
+        }).forEach(function(i) {
+            if (picked[picked.length - 1] !== i) picked.push(i);
+        });
+    };
+    rows.forEach(function(row, i) {
+        var px = Math.round(x(row[0]));
+        if (!bucket || bucket.px !== px) {
+            flush();
+            bucket = { px: px, first: i, min: i, max: i, last: i };
+            return;
+        }
+        if (row[column] < rows[bucket.min][column]) bucket.min = i;
+        if (row[column] > rows[bucket.max][column]) bucket.max = i;
+        bucket.last = i;
+    });
+    flush();
+    return picked;
+}
+
+function plotChart(definition, rows, id, title) {
+    var width = 1000;
+    var height = definition.height;
+    var left = 64;
+    var right = 20;
+    var top = 12;
+    var bottom = 58;
+    var plotWidth = width - left - right;
+    var plotHeight = height - top - bottom;
+    var first = rows[0][0];
+    var last = rows[rows.length - 1][0];
+    var span = last - first;
+    var stats = definition.series.map(function(series) {
+        var column = series[1];
+        var max = 0;
+        rows.forEach(function(row) {
+            if (row[column] > max) max = row[column];
+        });
+        return { name: series[0], column: column, color: series[2], first: rows[0][column], max: max, last: rows[rows.length - 1][column] };
+    });
+    var max = Math.max.apply(null, stats.map(function(series) { return series.max; }));
+    var step = plotStep((max || 1) / 4, definition.integer);
+    var yMax = Math.max(step, Math.ceil(max / step) * step);
+    if (!isFinite(step) || step <= 0 || !isFinite(yMax) || yMax <= 0) throw new Error("Plot data has an invalid scale.");
+    var x = function(time) {
+        return left + (span > 0 ? (time - first) / span * plotWidth : plotWidth / 2);
+    };
+    var y = function(value) {
+        return top + plotHeight - value / yMax * plotHeight;
+    };
+    var format = function(value) {
+        return value.toFixed(1);
+    };
+
+    var svg = plotSvg(null, "svg", {
+        viewBox: "0 0 " + width + " " + height,
+        class: "plot-chart-svg",
+        role: "img",
+        focusable: "false",
+        "aria-labelledby": id + "-title",
+        "aria-describedby": id + "-desc"
+    });
+    plotSvg(svg, "title", { id: id + "-title" }).textContent = title;
+    plotSvg(svg, "desc", { id: id + "-desc" }).textContent = title + ": " + stats.map(function(series) {
+        return series.name.toLowerCase();
+    }).join(", ") + " over relative time from " + plotDuration(first) + " to " + plotDuration(last) + ", " + rows.length + (rows.length === 1 ? " row" : " rows") + " of plot data. Last values: " + stats.map(function(series) {
+        return series.name + " " + plotValue(series.last);
+    }).join(", ") + ".";
+
+    var grid = plotSvg(svg, "g", { class: "plot-chart-grid", "aria-hidden": "true" });
+    var axes = plotSvg(svg, "g", { class: "plot-chart-axes", "aria-hidden": "true" });
+    for (var i = 0; i * step <= yMax * (1 + 1e-9); i++) {
+        var value = Number((i * step).toPrecision(12));
+        var py = format(y(value));
+        plotSvg(grid, "line", { x1: left, x2: width - right, y1: py, y2: py });
+        plotSvg(axes, "text", { x: left - 8, y: py, dy: "0.35em", "text-anchor": "end", class: "plot-chart-tick" }).textContent = plotNumber(value);
+    }
+
+    var ticks = [];
+    if (span > 0) {
+        var timeStep = plotTimeStep(span);
+        for (var time = Math.ceil(first / timeStep) * timeStep, count = 0; time <= last && count < 20; time += timeStep, count++) {
+            ticks.push(time);
+        }
+    }
+    if (!ticks.length) ticks = span > 0 ? [first, last] : [first];
+    ticks.forEach(function(time) {
+        var px = x(time);
+        plotSvg(grid, "line", { x1: format(px), x2: format(px), y1: top, y2: top + plotHeight });
+        plotSvg(axes, "text", {
+            x: format(px),
+            y: top + plotHeight + 20,
+            "text-anchor": px < left + 24 ? "start" : px > width - right - 24 ? "end" : "middle",
+            class: "plot-chart-tick"
+        }).textContent = plotDuration(time);
+    });
+    plotSvg(axes, "text", { x: format(left + plotWidth / 2), y: height - 8, "text-anchor": "middle", class: "plot-chart-axis-label" }).textContent = "Relative time";
+    plotSvg(axes, "line", { x1: left, x2: left, y1: top, y2: top + plotHeight, class: "plot-chart-axis" });
+    plotSvg(axes, "line", { x1: left, x2: width - right, y1: top + plotHeight, y2: top + plotHeight, class: "plot-chart-axis" });
+
+    var layer = plotSvg(svg, "g", { "aria-hidden": "true" });
+    stats.forEach(function(entry, index) {
+        var group = plotSvg(layer, "g", { class: "plot-series-" + entry.color });
+        if (rows.length === 1) {
+            plotSvg(group, "circle", { class: "plot-chart-point", cx: format(x(first)), cy: format(y(entry.last)), r: 4 });
+            return;
+        }
+        var points = plotSample(rows, entry.column, x).map(function(i) {
+            return format(x(rows[i][0])) + "," + format(y(rows[i][entry.column]));
+        }).join("L");
+        if (index === 0) {
+            plotSvg(group, "path", { class: "plot-chart-area", d: "M" + format(x(first)) + "," + format(y(0)) + "L" + points + "L" + format(x(last)) + "," + format(y(0)) + "Z" });
+        }
+        plotSvg(group, "path", { class: "plot-chart-line", d: "M" + points, "vector-effect": "non-scaling-stroke" });
+    });
+
+    var container = document.createElement("div");
+    container.className = "plot-chart";
+    var hint = document.createElement("p");
+    hint.className = "plot-chart-hint";
+    hint.textContent = "Scroll horizontally to inspect the chart.";
+    container.appendChild(hint);
+    var viewport = document.createElement("div");
+    viewport.className = "plot-chart-viewport";
+    viewport.tabIndex = 0;
+    viewport.setAttribute("role", "region");
+    viewport.setAttribute("aria-label", title + " chart");
+    viewport.appendChild(svg);
+    container.appendChild(viewport);
+
+    var legend = document.createElement("ul");
+    legend.className = "plot-chart-legend";
+    legend.setAttribute("aria-label", title + " legend");
+    stats.forEach(function(entry) {
+        var item = document.createElement("li");
+        var swatch = document.createElement("span");
+        swatch.className = "plot-chart-swatch plot-series-" + entry.color;
+        swatch.setAttribute("aria-hidden", "true");
+        item.appendChild(swatch);
+        item.appendChild(document.createTextNode(entry.name));
+        legend.appendChild(item);
+    });
+    container.appendChild(legend);
+
+    var details = document.createElement("details");
+    details.className = "plot-chart-details";
+    var summary = document.createElement("summary");
+    summary.textContent = "Values as a table";
+    details.appendChild(summary);
+    var wrapper = document.createElement("div");
+    wrapper.className = "plot-chart-table";
+    var table = document.createElement("table");
+    var caption = document.createElement("caption");
+    caption.className = "sr-only";
+    caption.textContent = title + " values";
+    table.appendChild(caption);
+    var head = document.createElement("thead");
+    var headRow = document.createElement("tr");
+    ["Series", "First", "Max", "Last"].forEach(function(label) {
+        var cell = document.createElement("th");
+        cell.scope = "col";
+        cell.textContent = label;
+        headRow.appendChild(cell);
+    });
+    head.appendChild(headRow);
+    table.appendChild(head);
+    var body = document.createElement("tbody");
+    stats.forEach(function(entry) {
+        var row = document.createElement("tr");
+        var name = document.createElement("th");
+        name.scope = "row";
+        name.textContent = entry.name;
+        row.appendChild(name);
+        [entry.first, entry.max, entry.last].forEach(function(value) {
+            var cell = document.createElement("td");
+            cell.textContent = plotValue(value);
+            row.appendChild(cell);
+        });
+        body.appendChild(row);
+    });
+    table.appendChild(body);
+    wrapper.appendChild(table);
+    details.appendChild(wrapper);
+    container.appendChild(details);
+    return container;
+}
+
 function initPlotRefresh() {
     var plots = document.getElementById("plots");
     if (!plots || plots.dataset.plotRefreshBound) return;
@@ -1285,20 +1609,51 @@ function initPlotRefresh() {
         back.textContent = "Back to run";
     }
 
-    Array.prototype.forEach.call(plots.querySelectorAll(".plot-figure img"), function(image) {
+    Array.prototype.forEach.call(plots.querySelectorAll(".plot-figure img"), function(image, index) {
         var figure = image.closest(".plot-figure");
+        var plotLabels = {
+            "exec_speed.png": ["Exec speed", "Executions per second over time"],
+            "high_freq.png": ["Paths and cycles", "Total, current and pending paths, pending favorites and completed cycles"],
+            "low_freq.png": ["Crashes, hangs and levels", "Unique crashes, unique hangs and path depth"]
+        };
+        var plotName = "";
+        var plotUrl = null;
+        try {
+            plotUrl = new URL(image.getAttribute("src") || "", window.location.href);
+            plotName = plotUrl.pathname.split("/").pop();
+        } catch (error) {
+            plotUrl = null;
+            plotName = "";
+        }
+        var plotLabel = Object.prototype.hasOwnProperty.call(plotLabels, plotName)
+            ? plotLabels[plotName]
+            : ["Fuzzing plot", "Generated fuzzing statistics over time"];
+        var plotTitle = document.createElement("h2");
+        plotTitle.className = "plot-figure-title";
+        plotTitle.textContent = plotLabel[0];
+        var plotDescription = document.createElement("p");
+        plotDescription.className = "plot-figure-description";
+        plotDescription.textContent = plotLabel[1];
+        image.parentNode.insertBefore(plotTitle, image);
+        image.parentNode.insertBefore(plotDescription, image);
+        image.alt = plotLabel[0];
+        var open = figure.querySelector("figcaption a");
+        if (open) open.setAttribute("aria-label", "Open image: " + plotLabel[0]);
         var message = document.createElement("p");
         message.className = "plot-refresh-status is-error plot-image-error";
         message.setAttribute("role", "status");
         message.hidden = true;
         var caption = figure.querySelector("figcaption");
         figure.insertBefore(message, caption && caption.parentNode === figure ? caption : null);
+        var rendered = false;
         var failed = function() {
+            if (rendered) return;
             image.hidden = true;
             message.hidden = false;
             message.textContent = "This plot image couldn't be loaded. Use Open image to view it directly.";
         };
         var loaded = function() {
+            if (rendered) return;
             message.hidden = true;
             message.textContent = "";
             image.hidden = false;
@@ -1309,6 +1664,24 @@ function initPlotRefresh() {
             if (image.naturalWidth > 0) loaded();
             else failed();
         }
+
+        var chart = Object.prototype.hasOwnProperty.call(plotCharts, plotName) ? plotCharts[plotName] : null;
+        if (!chart || !plotUrl || plotUrl.origin !== window.location.origin || plotUrl.pathname.indexOf("/plots/") !== 0) return;
+        if (typeof fetch !== "function" || typeof Promise !== "function") return;
+        plotDataLoad(plotUrl.origin + plotUrl.pathname.replace(/[^/]*$/, "plot_data")).then(function(rows) {
+            var element = plotChart(chart, rows, "plot-chart-" + index, plotLabel[0]);
+            figure.insertBefore(element, message);
+            rendered = true;
+            image.hidden = true;
+            message.hidden = true;
+            message.textContent = "";
+        }).catch(function() {
+            if (rendered) return;
+            var note = document.createElement("p");
+            note.className = "plot-chart-note";
+            note.textContent = "Chart data is unavailable. Showing the generated image when available.";
+            figure.insertBefore(note, caption && caption.parentNode === figure ? caption : null);
+        });
     });
 
     var show = function(text, state) {

@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Recovery guidance for missing job statistics and plot images, and per-image load failure messages.
 - Validation summary with links to invalid fields on the job create and edit forms.
 - File drop areas on the import and input-upload forms.
+- Render instance plot data as SVG charts with legends and values tables, retaining generated image fallback.
 
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.
