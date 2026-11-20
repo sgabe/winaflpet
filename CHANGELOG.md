@@ -72,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
 - Submit the port from the agent edit form so saving keeps the configured port.
 - Number fuzzer instance selector tiles by instance ID so sparse or non-sequential statistics are no longer mislabeled.
+- Match numeric job field hints to the other form hints.
 
 ## [2.1.0] - 2026-09-12
 ### Added
