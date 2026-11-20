@@ -2141,7 +2141,6 @@ form[data-validation-summary] .form-control[aria-invalid="true"]:focus {
   margin: 1.625rem 0 0;
   padding: 0;
   list-style: none;
-  counter-reset: home-step;
 }
 
 .home-step {
@@ -2151,7 +2150,6 @@ form[data-validation-summary] .form-control[aria-invalid="true"]:focus {
   align-items: start;
   min-width: 0;
   padding: 1.125rem 0;
-  counter-increment: home-step;
 }
 
 .home-step + .home-step {
@@ -2166,8 +2164,7 @@ form[data-validation-summary] .form-control[aria-invalid="true"]:focus {
   padding-bottom: 0;
 }
 
-.home-step::before {
-  content: counter(home-step);
+.home-step-number {
   grid-row: 1 / span 2;
   grid-column: 1;
   display: inline-flex;
@@ -2289,7 +2286,7 @@ form[data-validation-summary] .form-control[aria-invalid="true"]:focus {
   .home-step {
     grid-template-columns: 2rem minmax(0, 1fr);
   }
-  .home-step::before {
+  .home-step-number {
     grid-row: 1 / span 3;
   }
   .home-step-action {

@@ -11,26 +11,31 @@
       <h2 id="stepsTitle" class="sr-only">Start your first job</h2>
       <ol class="home-steps" role="list" aria-labelledby="stepsTitle">
         <li class="home-step">
-          <h3>Prepare your machine</h3>
+          <span class="home-step-number" aria-hidden="true">1</span>
+          <h3><span class="sr-only">Step 1: </span>Prepare your machine</h3>
           <p>Set up WinAFL and confirm your target runs successfully from the command line. Prepare a few valid sample inputs, then install and start the WinAFL Pet agent.</p>
         </li>
         <li class="home-step">
-          <h3>Connect an agent</h3>
+          <span class="home-step-number" aria-hidden="true">2</span>
+          <h3><span class="sr-only">Step 2: </span>Connect an agent</h3>
           <p>Register your fuzzing machine using the secret key generated during agent installation.</p>
           <a href="/agents/create" class="btn btn-outline theme-secondary home-step-action">New agent <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </li>
         <li class="home-step">
-          <h3>Create a job</h3>
+          <span class="home-step-number" aria-hidden="true">3</span>
+          <h3><span class="sr-only">Step 3: </span>Create a job</h3>
           <p>Select your agent and configure tool locations, input/output directories and target settings. Paths refer to the remote fuzzing machine.</p>
           <a href="/jobs/create" class="btn btn-outline theme-secondary home-step-action">New job <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </li>
         <li class="home-step">
-          <h3>Start and monitor</h3>
+          <span class="home-step-number" aria-hidden="true">4</span>
+          <h3><span class="sr-only">Step 4: </span>Start and monitor</h3>
           <p>Click <strong>Start</strong> on the Jobs page and allow the initial dry run to finish. Use <strong>View run</strong> to inspect fuzzing statistics and <strong>Stop</strong> when needed.</p>
           <a href="/jobs/view" class="btn btn-outline theme-secondary home-step-action">Open Jobs <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </li>
         <li class="home-step">
-          <h3>Review crashes</h3>
+          <span class="home-step-number" aria-hidden="true">5</span>
+          <h3><span class="sr-only">Step 5: </span>Review crashes</h3>
           <p>Click <strong>Collect crashes</strong> on the job, then open Crashes and use <strong>Verify</strong> to analyze findings with BugId.</p>
           <a href="/crashes/view" class="btn btn-outline theme-secondary home-step-action">Open Crashes <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
         </li>
