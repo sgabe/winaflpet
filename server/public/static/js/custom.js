@@ -1158,14 +1158,41 @@ function initFileSummaries() {
         var output = document.getElementById(input.getAttribute("data-file-summary"));
         if (!output) return;
         input.dataset.fileSummaryBound = "1";
+        var max = Number(input.getAttribute("data-file-max") || 0);
+        var suffixes = String(input.getAttribute("accept") || "").split(",").map(function(token) {
+            return token.trim().toLowerCase();
+        }).filter(function(token) {
+            return /^\.[^.\s]+$/.test(token);
+        });
+        var problem = function(file) {
+            var name = String(file.name).toLowerCase();
+            if (file.size === 0) return "The file is empty.";
+            if (max > 0 && file.size > max) return "Larger than the " + formatFileSize(max) + " limit.";
+            if (suffixes.length && !suffixes.some(function(suffix) { return name.slice(-suffix.length) === suffix; })) {
+                if (suffixes.indexOf(".zip") >= 0) return "This doesn't look like a ZIP file.";
+                if (suffixes.indexOf(".json") >= 0) return "This doesn't look like a JSON export.";
+                return "This doesn't match the accepted file types (" + suffixes.join(", ") + ").";
+            }
+            return "";
+        };
         var update = function() {
             var file = input.files && input.files.length ? input.files[0] : null;
             if (!file) {
                 output.textContent = "";
+                output.classList.remove("is-warning");
                 output.hidden = true;
                 return;
             }
+            var warning = problem(file);
             output.textContent = "Selected: " + file.name + " (" + formatFileSize(file.size) + ")";
+            if (warning) {
+                var note = document.createElement("span");
+                note.className = "file-selection-warning";
+                note.textContent = warning;
+                output.appendChild(document.createTextNode(" "));
+                output.appendChild(note);
+            }
+            output.classList.toggle("is-warning", !!warning);
             output.hidden = false;
         };
         input.addEventListener("change", update);

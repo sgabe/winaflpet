@@ -1833,7 +1833,8 @@ div:has(> .card.stat) {
   overflow-wrap: anywhere;
 }
 
-.form-notice.is-warning {
+.form-notice.is-warning,
+.file-selection-summary.is-warning {
   border-color: #fcd34d;
   border-left-color: #d97706;
   background-color: #fffbeb;
@@ -3408,6 +3409,12 @@ footer .version:before {
   font-weight: 600;
   overflow-wrap: anywhere;
   white-space: normal;
+}
+
+.file-selection-summary .file-selection-warning {
+  display: block;
+  margin-top: .25rem;
+  font-weight: 400;
 }
 
 .path-box {
