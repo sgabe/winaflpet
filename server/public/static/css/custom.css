@@ -901,7 +901,7 @@ div:has(> .card.stat) {
   border-radius: 4px;
   font-size: 11.5px;
   line-height: 18px;
-  color: #334155;
+  color: #64748b;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1397,14 +1397,6 @@ div:has(> .card.stat) {
   text-align: center;
 }
 
-.card-header .id.on { background:LightGreen; border-color: LightGreen}
-.card-header .id.off { background:LightPink; border-color: LightPink}
-.card-header .id.info { background: LightSkyblue; border-color: LightSkyblue}
-.card-header .id.unknown { background: LightGrey; border-color: LightGrey}
-.card-header .id.low { background: LightCyan; border-color: LightCyan}
-.card-header .id.medium { background: PeachPuff; border-color: PeachPuff}
-.card-header .id.high { background: LightPink; border-color: LightPink;}
-
 .card-header .bugid {
   overflow: hidden;
   max-width: 159px;
@@ -1484,10 +1476,10 @@ div:has(> .card.stat) {
   cursor: help;
 }
 
-.card.job .instance-indicator.state-running { background: #d1e7dd; border-color: #198754; color: #0f5132; }
+.card.job .instance-indicator.state-running { background: #e8f6ee; border-color: #86d1a4; color: #15803d; }
 .card.job .instance-indicator.state-queued,
 .card.job .instance-indicator.state-starting,
-.card.job .instance-indicator.state-bootstrapping { background: #cff4fc; border-color: #087990; color: #055160; }
+.card.job .instance-indicator.state-bootstrapping { background: #fff6e0; border-color: #f2c46b; color: #b45309; }
 .card.job .instance-indicator.state-stopping { background: #fff3cd; border-color: #997404; color: #664d03; }
 .card.job .instance-indicator.state-failed,
 .card.job .instance-indicator.state-stop_failed { background: #f8d7da; border-color: #b02a37; color: #842029; }
@@ -3371,12 +3363,13 @@ footer .version:before {
 .card.crash .card-summary-badge.is-verified,
 .verification-badge.is-verified { color: #15803d; background: #e8f6ee; border-color: #bfe5cd; }
 .card.crash .card-summary-badge.is-unverified,
-.verification-badge.is-unverified { color: #475569; background: #f1f5f9; border-color: #cbd5e1; }
+.verification-badge.is-unverified { color: #b45309; background: #fff6e0; border-color: #f6dc9f; }
 .card.crash .card-summary-badge.is-unavailable,
 .verification-badge.is-unavailable { color: #475569; background: #f1f5f9; border-color: #cbd5e1; border-style: dashed; }
+.card.crash.unverified { border-style: dashed; border-color: #cbd5e1; }
 
 .card.job .job-state[data-state="running"] { color: #15803d; background: #e8f6ee; border-color: #bfe5cd; }
-.card.job .job-state[data-state="starting"] { color: #c2410c; background: #fff7ed; border-color: #fdba74; }
+.card.job .job-state[data-state="starting"] { color: #b45309; background: #fff6e0; border-color: #f6dc9f; }
 .card.job .job-state[data-state="stopped"] { color: #475569; background: #f1f5f9; border-color: #cbd5e1; }
 .card.job .job-state[data-state="unknown"] { color: #475569; background: #f1f5f9; border-color: #cbd5e1; border-style: dashed; }
 

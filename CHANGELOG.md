@@ -66,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show IDs for unnamed crash jobs and agents, attribute impact to BugId.
 - Clarify saved agent details and secret key guidance.
 - Align empty agent and job list action labels and icons.
+- Align card ID and status colours.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
