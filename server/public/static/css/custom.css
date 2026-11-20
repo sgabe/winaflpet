@@ -3567,3 +3567,11 @@ footer .version:before {
   font-weight: 500;
   font-style: italic;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .card-summary .card-summary-chevron,
+  .card-header .fas,
+  .home-shortcut-go {
+    transition: none;
+  }
+}

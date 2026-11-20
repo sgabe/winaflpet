@@ -38,7 +38,11 @@ $(function () {
     var showAlert = function(context, alert) {
         $(".alert").removeClass("alert-empty theme-danger theme-info").addClass("theme-" + context);
         $(".alert .message").html(alert);
-        $("html, body").animate({ scrollTop: 0 }, "fast");
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            $("html, body").stop(true).scrollTop(0);
+        } else {
+            $("html, body").animate({ scrollTop: 0 }, "fast");
+        }
     }
 
     var showCheckResult = function(context, success, message) {
