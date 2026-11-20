@@ -976,7 +976,11 @@ $(function () {
     toolbar.setAttribute("aria-label", "Filter " + noun + " on this page");
     if (noun === "crashes") toolbar.querySelector("#card-list-scope").textContent += " Unavailable crashes were verified but have no reported function.";
     var search = toolbar.querySelector("input");
-    search.placeholder = noun === "crashes" ? "Search label, Bug ID, module, function…" : "Search " + noun;
+    search.placeholder = {
+        agents: "Search name, host, description…",
+        jobs: "Search name, agent, target…",
+        crashes: "Search label, Bug ID, module, function…"
+    }[noun];
     search.setAttribute("aria-label", "Search " + noun);
     search.addEventListener("input", function() { filterCards(); });
     var selects = toolbar.querySelector(".card-list-selects");

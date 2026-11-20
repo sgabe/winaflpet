@@ -12,17 +12,18 @@
   <div id="cards" class="row row-cols-3">
     {{range .agents}}
     <div class="col sm:col-6 lg:col-4 mb-3">
-      <div class="card agent" role="article" aria-label="Agent #{{ .ID }}: {{ .Name }}">
+      {{$agentName := printf "Agent #%d" .ID}}{{if trim .Name}}{{$agentName = .Name}}{{end}}
+      <div class="card agent" role="article" aria-label="{{if trim .Name}}Agent #{{ .ID }}: {{ .Name }}{{else}}Agent #{{ .ID }}{{end}}">
         {{$agentLabel := printf "Agent #%d" .ID}}{{if trim .Name}}{{$agentLabel = printf "%s (Agent #%d)" (trim .Name) .ID}}{{end}}
 
         <div class="card-header card-summary">
           <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
-            <span class="card-summary-title name" title="{{ .Name }}">{{ .Name }}</span>
+            <span class="card-summary-title name" title="{{ $agentName }}">{{ $agentName }}</span>
             <span class="card-summary-badge {{if .Status}}is-enabled{{else}}is-disabled{{end}}">{{if .Status}}Enabled{{else}}Disabled{{end}}</span>
             <i class="fas fa-chevron-down card-summary-chevron" aria-hidden="true"></i>
             <span class="card-summary-meta">
               <small class="id {{if .Status}}on{{else}}off{{end}}">{{ .ID }}</small>
-              <span class="card-summary-label" title="{{.Host}}:{{.Port}}">{{.Host}}:{{.Port}}</span>
+              <span class="card-summary-label font-monospace" title="{{.Host}}:{{.Port}}">{{.Host}}:{{.Port}}</span>
             </span>
           </button>
         </div>
@@ -30,10 +31,10 @@
         <div id="collapse-{{ .ID }}" class="collapse collapsed">
           <div class="card-body">
             {{if .Description}}<p class="card-text card-description" title="{{ .Description }}">{{ .Description }}</p>{{else}}<p class="card-text card-description is-empty">No description</p>{{end}}
-            <dl class="card-details">
-              <div class="card-detail"><dt>Host</dt><dd class="font-monospace">{{ .Host }}</dd></div>
-              <div class="card-detail"><dt>Port</dt><dd class="font-monospace">{{ .Port }}</dd></div>
-              <div class="card-detail"><dt>Version</dt><dd>{{if .Version}}{{ .Version }}{{else}}<span class="text-muted">Not reported yet</span>{{end}}</dd></div>
+            <dl class="card-details agent-card-details">
+              <div class="card-detail"><dt>Host</dt><dd class="font-monospace" title="{{ .Host }}">{{ .Host }}</dd></div>
+              <div class="card-detail"><dt>Port</dt><dd class="font-monospace" title="{{ .Port }}">{{ .Port }}</dd></div>
+              <div class="card-detail"><dt>Agent version</dt><dd title="{{if .Version}}{{ .Version }}{{else}}Not reported yet{{end}}">{{if .Version}}{{ .Version }}{{else}}<span class="text-muted">Not reported yet</span>{{end}}</dd></div>
             </dl>
             <div class="form-notice agent-check-result" role="status" aria-live="polite" hidden><strong class="agent-check-result-label">Last connection check</strong><span class="agent-check-result-message"></span></div>
           </div>

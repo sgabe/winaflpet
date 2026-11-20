@@ -1007,6 +1007,27 @@ div:has(> .card.stat) {
   color: #64748b;
 }
 
+.card.job .job-card-details,
+.card.agent .agent-card-details {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+}
+
+.card.job .job-card-details dd,
+.card.agent .agent-card-details dd {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card.job .job-card-details + .card-description {
+  margin-top: .75rem;
+}
+
+.card.agent .card-description + .agent-card-details {
+  padding-top: .75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
 .form-notice.agent-check-result {
   margin-top: .75rem;
 }

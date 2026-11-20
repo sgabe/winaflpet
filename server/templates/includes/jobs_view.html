@@ -14,17 +14,18 @@
   <div id="cards" class="row row-cols-3">
     {{range .jobs}}
     <div class="col sm:col-6 lg:col-4 mb-3">
-      <div class="card job" role="article" aria-label="Job #{{.ID}}: {{.Name}}" data-guid="{{.GUID}}" data-cores="{{.Cores}}" data-agent-id="{{.AgentID}}">
+      {{$jobName := printf "Job #%d" .ID}}{{if trim .Name}}{{$jobName = .Name}}{{end}}
+      <div class="card job" role="article" aria-label="{{if trim .Name}}Job #{{.ID}}: {{.Name}}{{else}}Job #{{.ID}}{{end}}" data-guid="{{.GUID}}" data-cores="{{.Cores}}" data-agent-id="{{.AgentID}}">
         {{$agent := .GetAgent}}
         {{$jobLabel := printf "Job #%d" .ID}}{{if trim .Name}}{{$jobLabel = printf "%s (Job #%d)" (trim .Name) .ID}}{{end}}
         <div class="card-header card-summary">
           <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
-            <span class="card-summary-title name" title="{{.Name}}">{{.Name}}</span>
+            <span class="card-summary-title name" title="{{$jobName}}">{{$jobName}}</span>
             <span class="card-summary-badge job-state" data-state="unknown">Status unknown</span>
             <i class="fas fa-chevron-down card-summary-chevron" aria-hidden="true"></i>
             <span class="card-summary-meta">
               <small class="id {{if $agent.Status}}on{{else}}off{{end}}">{{ .ID }}</small>
-              <span class="card-summary-label" title="{{if $agent.Name}}{{$agent.Name}}{{else}}Agent #{{.AgentID}}{{end}}">@ {{if $agent.Name}}<span class="host">{{$agent.Name}}</span>{{else}}Agent #{{.AgentID}}{{end}}</span>
+              <span class="card-summary-label" title="{{if trim $agent.Name}}{{$agent.Name}}{{else}}Agent #{{.AgentID}}{{end}}">@ {{if trim $agent.Name}}<span class="host">{{$agent.Name}}</span>{{else}}Agent #{{.AgentID}}{{end}}</span>
               {{if .HasAlert}}<span class="job-alert-state" title="Email alert enabled for this job"><i class="fas fa-bell" aria-hidden="true"></i> Alert on</span>{{end}}
             </span>
             <span class="card-summary-count job-running" title="Running instances have not been observed yet.">Status unknown</span>
@@ -38,13 +39,15 @@
               <div class="job-progress small" role="status">Checking agent...</div>
               <div class="instance-progress small"></div>
             </section>
-            {{if .Desc}}<p class="card-text card-description" title="{{ .Desc }}">{{ .Desc }}</p>{{else}}<p class="card-text card-description is-empty">No description</p>{{end}}
-            <dl class="card-details">
-              <div class="card-detail"><dt>Instrumentation</dt><dd>{{if eq .InstMode "DynamorIO"}}DynamoRIO{{else}}{{.InstMode}}{{end}}</dd></div>
-              <div class="card-detail card-detail-wide"><dt>Coverage</dt><dd>{{.CoverageType}} for {{.CoverageModule}}</dd></div>
-              <div class="card-detail"><dt>Iterations</dt><dd>{{.FuzzIter}}</dd></div>
-              <div class="card-detail card-detail-wide"><dt>Target</dt><dd>{{if and .TargetOffset (ne .TargetOffset "0")}}{{.TargetOffset}}{{else}}{{.TargetMethod}}{{end}} in {{.TargetModule}} ({{.TargetArch}})</dd></div>
+            {{$jobTarget := .TargetMethod}}{{if and .TargetOffset (ne .TargetOffset "0")}}{{$jobTarget = .TargetOffset}}{{end}}
+            {{$jobInstMode := .InstMode}}{{if eq .InstMode "DynamorIO"}}{{$jobInstMode = "DynamoRIO"}}{{end}}
+            <dl class="card-details job-card-details">
+              <div class="card-detail"><dt>Target</dt><dd title="{{$jobTarget}} in {{.TargetModule}} ({{.TargetArch}})"><span class="font-monospace">{{$jobTarget}}</span><span class="text-muted"> in {{.TargetModule}} ({{.TargetArch}})</span></dd></div>
+              <div class="card-detail"><dt>Instrumentation</dt><dd title="{{$jobInstMode}}">{{$jobInstMode}}</dd></div>
+              <div class="card-detail"><dt>Coverage</dt><dd title="{{.CoverageType}} for {{.CoverageModule}}">{{.CoverageType}}<span class="text-muted"> for {{.CoverageModule}}</span></dd></div>
+              <div class="card-detail"><dt>Iterations</dt><dd class="font-monospace" title="{{.FuzzIter}}">{{.FuzzIter}}</dd></div>
             </dl>
+            {{if .Desc}}<p class="card-text card-description" title="{{ .Desc }}">{{ .Desc }}</p>{{else}}<p class="card-text card-description is-empty">No description</p>{{end}}
           </div>
 
         <div class="card-footer">
@@ -120,10 +123,10 @@
           </div>
         </div>
         </div>
-        <template class="job-config-template" data-name="{{.Name}}" data-agent="{{if $agent.Name}}{{$agent.Name}}{{else}}Agent #{{.AgentID}}{{end}}" data-job-id="{{.ID}}">
+        <template class="job-config-template" data-name="{{$jobName}}" data-agent="{{if trim $agent.Name}}{{$agent.Name}}{{else}}Agent #{{.AgentID}}{{end}}" data-job-id="{{.ID}}">
           <h3>General</h3>
           <dl class="card-details">
-            <div class="card-detail card-detail-wide"><dt>Agent</dt><dd>{{if $agent.Name}}{{$agent.Name}} (#{{.AgentID}}){{else}}Agent #{{.AgentID}}{{end}}</dd></div>
+            <div class="card-detail card-detail-wide"><dt>Agent</dt><dd>{{if trim $agent.Name}}{{$agent.Name}} (#{{.AgentID}}){{else}}Agent #{{.AgentID}}{{end}}</dd></div>
             <div class="card-detail"><dt>CPU cores</dt><dd>{{.Cores}}</dd></div>
             <div class="card-detail"><dt>Banner</dt><dd>{{or .Banner "—"}}</dd></div>
             <div class="card-detail card-detail-wide"><dt>Description</dt><dd>{{or .Desc "—"}}</dd></div>
