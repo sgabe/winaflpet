@@ -1826,6 +1826,7 @@ div:has(> .card.stat) {
   color: #0f172a;
 }
 
+.settings-aside ul,
 .settings-aside ol {
   margin: 0 0 .75rem;
   padding-left: 1.25rem;

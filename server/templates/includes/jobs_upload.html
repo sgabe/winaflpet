@@ -2,11 +2,11 @@
 <div class="settings-layout">
 <div class="settings-main">
 <div class="settings-panel">
-<form id="uploadJob" class="upload job" method="POST" enctype="multipart/form-data" action="/jobs/upload" data-validation-summary aria-label="Import jobs">
+<form id="uploadJob" class="upload job" method="POST" enctype="multipart/form-data" action="/jobs/upload" data-validation-summary aria-label="Import job">
 
   <fieldset class="settings-section">
     <legend>Job configuration</legend>
-    <p class="settings-description text-muted">Select a job configuration file to upload.</p>
+    <p class="settings-description text-muted">One exported job per file.</p>
     <div class="settings-fields">
 
       <div class="settings-field">
@@ -30,7 +30,7 @@
   <div class="form-actions">
     <div class="form-actions-buttons">
       <a href="/jobs/view" class="btn">Cancel</a>
-      <button type="submit" class="btn theme-primary">Import jobs</button>
+      <button type="submit" class="btn theme-primary">Import job</button>
     </div>
   </div>
 </form>
@@ -38,8 +38,12 @@
 </div>
 <aside class="settings-aside" aria-labelledby="jobsUploadAsideTitle">
   <h2 id="jobsUploadAsideTitle">About export files</h2>
-  <p>Export a configuration from More on an idle Job card.</p>
-  <p>The JSON contains the job configuration, including the agent ID and paths. Input files, crash samples and statistics are not included.</p>
+  <ul>
+    <li>Created by <strong>More &rarr; Export configuration</strong> on an idle job card.</li>
+    <li>Named <code>winaflpet_<wbr>&lt;name&gt;_<wbr>&lt;yyyymmdd&gt;.json</code>.</li>
+    <li>Contains the complete job configuration: agent ID, tool paths, input/output, target, instrumentation and options.</li>
+    <li>Doesn't include crashes, statistics or input files.</li>
+  </ul>
   <div class="settings-aside-actions">
     <a href="/jobs/view" class="btn btn-outline theme-secondary">View jobs</a>
   </div>
