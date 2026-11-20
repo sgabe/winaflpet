@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unify list filters, search and folding in one responsive toolbar using shared HTML templates.
 - Check saved agent connections inline without disabling sibling actions or losing unsaved edits.
 - Show saved agent names and email alert state, and confirm input replacement before uploading.
+- Explain crash risk access types in card details and show saved agent context when editing crashes.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.

@@ -3553,3 +3553,10 @@ footer .version:before {
   font-size: 11px;
   white-space: nowrap;
 }
+
+.card.crash.unverified .card-summary-title .label,
+.card.crash.unavailable .card-summary-title .label {
+  color: #64748b;
+  font-weight: 500;
+  font-style: italic;
+}

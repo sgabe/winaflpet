@@ -84,6 +84,8 @@
   <dl>
     <dt>Job</dt>
     <dd>{{.crash.GetJob.Name}} (#{{.crash.JobID}})</dd>
+    <dt>Agent</dt>
+    <dd>{{with .crash.GetJob.GetAgent}}{{if .Name}}{{.Name}}{{else}}Agent #{{$.crash.GetJob.AgentID}}{{end}}{{else}}Agent #{{.crash.GetJob.AgentID}}{{end}}</dd>
     <dt>Verification</dt>
     <dd>{{if not .crash.Verified}}<span class="verification-badge is-unverified">Unverified</span>{{else if not .crash.Function}}<span class="verification-badge is-unavailable">Unavailable</span>{{else}}<span class="verification-badge is-verified">Verified</span>{{end}}</dd>
     <dt>Impact</dt>
