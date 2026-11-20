@@ -303,7 +303,6 @@ var filterCardsAgent = "all";
 var filterCardsJob = "all";
 var filterCardsRisk = "all";
 var filterCardsFunction = "all";
-var filterCardsSummary = null;
 
 function cardListAgent(column) {
     var job = column.querySelector(".card.job");
@@ -342,15 +341,13 @@ function cardListSelect(definition) {
     for (var n = 2; document.getElementById(controlId); n++) {
         controlId = definition.prefix + "-" + n;
     }
-    var group = document.createElement("div");
-    group.className = definition.className;
-    var label = document.createElement("label");
-    label.className = "form-label";
+    var group = document.getElementById("tpl-card-list-select").content.firstElementChild.cloneNode(true);
+    group.classList.add(definition.className);
+    var label = group.querySelector("label");
     label.setAttribute("for", controlId);
     label.textContent = definition.label;
-    var select = document.createElement("select");
+    var select = group.querySelector("select");
     select.id = controlId;
-    select.className = "form-select";
     select.appendChild(new Option(definition.allLabel, "all"));
     definition.items.forEach(function(item) {
         select.appendChild(new Option(item.label, item.id));
@@ -358,8 +355,6 @@ function cardListSelect(definition) {
     select.addEventListener("change", function() {
         definition.change(select.value);
     });
-    group.appendChild(label);
-    group.appendChild(select);
     return group;
 }
 
@@ -393,62 +388,9 @@ function cardListCounts(selector) {
     return counts;
 }
 
-function cardListSummary(definition) {
-    var summary = document.createElement("div");
-    summary.className = definition.className;
-    summary.setAttribute("role", "group");
-    summary.setAttribute("aria-label", definition.label);
-    var scope = document.createElement("span");
-    scope.className = "card-list-summary-scope";
-    scope.textContent = "On this page";
-    summary.appendChild(scope);
-    var values = {};
-    definition.items.forEach(function(entry) {
-        var item = document.createElement("span");
-        item.className = "card-list-summary-item is-" + entry[0];
-        var dot = document.createElement("span");
-        dot.className = "card-list-summary-dot";
-        dot.setAttribute("aria-hidden", "true");
-        var label = document.createElement("span");
-        label.className = "card-list-summary-label";
-        label.textContent = entry[1];
-        var value = document.createElement("span");
-        value.className = "card-list-summary-count";
-        item.appendChild(dot);
-        item.appendChild(label);
-        item.appendChild(value);
-        summary.appendChild(item);
-        values[entry[0]] = value;
-    });
-    if (definition.note) {
-        var note = document.createElement("span");
-        note.className = "card-list-summary-note";
-        note.textContent = definition.note;
-        summary.appendChild(note);
-    }
-    filterCardsSummary = { selector: definition.selector, values: values };
-    return summary;
-}
-
-function updateCardListSummary() {
-    if (!filterCardsSummary) return;
-    var counts = cardListCounts(filterCardsSummary.selector);
-    Object.keys(filterCardsSummary.values).forEach(function(key) {
-        var value = String(counts[key] || 0);
-        if (filterCardsSummary.values[key].textContent !== value) filterCardsSummary.values[key].textContent = value;
-    });
-}
-
 function updateCardListToolbar() {
     var cards = document.getElementById("cards");
     if (!filterCardsToolbar || !cards) return;
-    var columns = Array.prototype.filter.call(cards.children, function(child) {
-        return child.classList.contains("col");
-    });
-    var shown = columns.filter(function(column) {
-        return !column.classList.contains("d-none") && !column.hidden;
-    }).length;
-    filterCardsToolbar.count.textContent = "Showing " + shown + " of " + columns.length + " on this page";
     var counts = {};
     filterCardsToolbar.buttons.forEach(function(button) {
         button.setAttribute("aria-pressed", String(button.filterValue === filterCardsConfig));
@@ -456,7 +398,6 @@ function updateCardListToolbar() {
         var value = String(counts[button.filterSelector][button.filterValue === "all" ? "total" : button.filterValue] || 0);
         if (button.filterCount.textContent !== value) button.filterCount.textContent = value;
     });
-    filterCardsToolbar.clear.hidden = !cardListFiltered();
 }
 
 function cardListFiltered() {
@@ -504,31 +445,10 @@ var filterCards = function(initial) {
 
     if (columns.length && !filterCardsEmpty && cards.parentNode) {
         var noun = cards.querySelector(".card.agent") ? "agents" : cards.querySelector(".card.job") ? "jobs" : cards.querySelector(".card.crash") ? "crashes" : "cards";
-        filterCardsEmpty = document.createElement("div");
-        filterCardsEmpty.className = "empty-state card-list-empty";
-        filterCardsEmpty.hidden = true;
-        var icon = document.createElement("span");
-        icon.className = "empty-icon";
-        icon.setAttribute("aria-hidden", "true");
-        var glyph = document.createElement("i");
-        glyph.className = "fas fa-search";
-        icon.appendChild(glyph);
-        var heading = document.createElement("h2");
-        heading.textContent = "No matching " + noun;
-        var text = document.createElement("p");
-        text.textContent = "No " + noun + " on this page match the current search and filters.";
-        var actions = document.createElement("div");
-        actions.className = "empty-state-actions";
-        var clear = document.createElement("button");
-        clear.type = "button";
-        clear.className = "btn btn-outline theme-secondary";
-        clear.textContent = "Clear filters";
-        clear.addEventListener("click", clearCardFilters);
-        actions.appendChild(clear);
-        filterCardsEmpty.appendChild(icon);
-        filterCardsEmpty.appendChild(heading);
-        filterCardsEmpty.appendChild(text);
-        filterCardsEmpty.appendChild(actions);
+        filterCardsEmpty = document.getElementById("tpl-card-list-empty").content.firstElementChild.cloneNode(true);
+        filterCardsEmpty.querySelector("h2").textContent = "No matching " + noun;
+        filterCardsEmpty.querySelector("p").textContent = "No " + noun + " on this page match the current search and filters.";
+        filterCardsEmpty.querySelector("button").addEventListener("click", clearCardFilters);
         cards.parentNode.insertBefore(filterCardsEmpty, cards.nextSibling);
     }
     var filtered = cardListFiltered();
@@ -1004,32 +924,17 @@ $(function () {
     });
     if (!columns.length) return;
 
-    var toolbar = document.createElement("div");
-    toolbar.className = "card-list-toolbar";
-    var searchLabel = "Search " + (cards.querySelector(".card.agent") ? "agents" : cards.querySelector(".card.job") ? "jobs" : cards.querySelector(".card.crash") ? "crashes" : "cards");
-    var searchArea = document.createElement("div");
-    searchArea.className = "card-list-search";
-    searchArea.setAttribute("role", "search");
-    var search = document.getElementById("search");
-    if (!search || search.tagName !== "INPUT") search = document.createElement("input");
-    var searchForm = search.closest ? search.closest("form") : null;
-    search.type = "search";
-    search.id = "search";
-    search.className = "form-control";
-    search.setAttribute("autocomplete", "off");
-    search.placeholder = searchLabel;
-    search.setAttribute("aria-label", searchLabel);
-    search.addEventListener("input", function() {
-        filterCards();
-    });
-    searchArea.appendChild(search);
-    if (searchForm && searchForm.closest(".navbar") && !searchForm.elements.length) searchForm.remove();
-    toolbar.appendChild(searchArea);
-    var count = document.createElement("span");
-    count.className = "card-list-count";
-    count.setAttribute("role", "status");
-    toolbar.appendChild(count);
-
+    var source = document.getElementById("tpl-card-list-toolbar");
+    if (!source) return;
+    var toolbar = source.content.firstElementChild.cloneNode(true);
+    var noun = cards.querySelector(".card.agent") ? "agents" : cards.querySelector(".card.job") ? "jobs" : "crashes";
+    toolbar.setAttribute("aria-label", "Filter " + noun + " on this page");
+    if (noun === "crashes") toolbar.querySelector("#card-list-scope").textContent += " Unavailable crashes were verified but have no reported function.";
+    var search = toolbar.querySelector("input");
+    search.placeholder = "Search " + noun;
+    search.setAttribute("aria-label", "Search " + noun);
+    search.addEventListener("input", function() { filterCards(); });
+    var selects = toolbar.querySelector(".card-list-selects");
     var buttons = [];
     [
         [".card.agent", "Agent configuration", [["All", "all"], ["Enabled", "enabled"], ["Disabled", "disabled"]]],
@@ -1037,19 +942,13 @@ $(function () {
         [".card.job", "Job status", [["All", "all"], ["Running", "running"], ["Starting", "starting"], ["Stopped", "stopped"], ["Unknown", "unknown"]]]
     ].forEach(function(definition) {
         if (!columns.some(function(column) { return column.querySelector(definition[0]); })) return;
-        var group = document.createElement("div");
-        group.className = "card-list-filter";
-        group.setAttribute("role", "group");
+        var group = toolbar.querySelector(".card-list-filter");
         group.setAttribute("aria-label", definition[1]);
         definition[2].forEach(function(option) {
-            var button = document.createElement("button");
-            button.type = "button";
-            button.className = "btn btn-outline theme-secondary";
-            button.textContent = option[0];
-            button.appendChild(document.createTextNode(" "));
-            var tally = document.createElement("span");
-            tally.className = "card-list-filter-count";
-            button.appendChild(tally);
+            var button = document.getElementById("tpl-card-list-status").content.firstElementChild.cloneNode(true);
+            button.querySelector(".card-list-filter-label").textContent = option[0];
+            button.setAttribute("data-status", option[1]);
+            var tally = button.querySelector(".card-list-filter-count");
             button.filterValue = option[1];
             button.filterSelector = definition[0];
             button.filterCount = tally;
@@ -1060,7 +959,6 @@ $(function () {
             group.appendChild(button);
             buttons.push(button);
         });
-        toolbar.appendChild(group);
     });
 
     var agents = [];
@@ -1072,7 +970,7 @@ $(function () {
         agents.push({ id: id, label: (name ? name + " " : "") + "(#" + id + ")" });
     });
     if (agents.length) {
-        toolbar.appendChild(cardListSelect({
+        selects.appendChild(cardListSelect({
             prefix: "card-list-agent-select",
             className: "card-list-agent",
             label: "Agent",
@@ -1094,7 +992,7 @@ $(function () {
         crashJobs.push({ id: id, label: (name ? name + " " : "") + "(#" + id + ")" });
     });
     if (crashJobs.length) {
-        toolbar.appendChild(cardListSelect({
+        selects.appendChild(cardListSelect({
             prefix: "card-list-job-select",
             className: "card-list-job",
             label: "Job",
@@ -1108,7 +1006,7 @@ $(function () {
     }
 
     if (columns.some(function(column) { return column.querySelector(".card.crash"); })) {
-        toolbar.appendChild(cardListSelect({
+        selects.appendChild(cardListSelect({
             prefix: "card-list-risk-select",
             className: "card-list-risk",
             label: "Crash Risk",
@@ -1143,7 +1041,7 @@ $(function () {
             return { id: "fn:" + name, label: name };
         });
         if (functionMissing) functionItems.push({ id: "missing", label: "No recorded function" });
-        toolbar.appendChild(cardListSelect({
+        selects.appendChild(cardListSelect({
             prefix: "card-list-function-select",
             className: "card-list-function",
             label: "Function",
@@ -1156,61 +1054,21 @@ $(function () {
         }));
     }
 
-    var clear = document.createElement("button");
-    clear.type = "button";
-    clear.className = "btn btn-outline theme-secondary card-list-clear";
-    clear.textContent = "Clear filters";
-    clear.hidden = true;
-    clear.addEventListener("click", clearCardFilters);
-    toolbar.appendChild(clear);
-
-    toolbar.count = count;
+    if (!selects.children.length) selects.remove();
     toolbar.buttons = buttons;
-    toolbar.clear = clear;
     filterCardsToolbar = toolbar;
-    var anchor = document.querySelector(".card-fold-tools");
-    if (!anchor || anchor.parentNode !== cards.parentNode) anchor = cards;
-    cards.parentNode.insertBefore(toolbar, anchor);
-
-    var summary = null;
-    if (columns.some(function(column) { return column.querySelector(".card.job"); })) {
-        summary = cardListSummary({
-            selector: ".card.job",
-            className: "card-list-summary job-list-summary",
-            label: "Job status summary",
-            items: [["total", "Jobs"], ["running", "Running"], ["starting", "Starting"], ["stopped", "Stopped"], ["unknown", "Status unknown"]]
-        });
-    } else if (columns.some(function(column) { return column.querySelector(".card.crash"); })) {
-        summary = cardListSummary({
-            selector: ".card.crash",
-            className: "card-list-summary",
-            label: "Crash verification summary",
-            items: [["total", "Crashes"], ["unverified", "Unverified"], ["verified", "Verified"], ["unavailable", "Unavailable"]],
-            note: "Unavailable means verified, but no function was reported."
-        });
-    }
-    if (summary) {
-        cards.parentNode.insertBefore(summary, toolbar);
-        updateCardListSummary();
-    }
+    cards.parentNode.insertBefore(toolbar, cards);
     updateCardListToolbar();
 });
 
 $(function () {
     var cards = document.getElementById("cards");
-    if (!cards || !cards.parentNode || document.querySelector(".card-fold-tools")) return;
+    if (!cards || !cards.parentNode) return;
     if (!filterCardsToolbar || filterCardsToolbar.parentNode !== cards.parentNode) return;
     if (!cardFoldItems(cards).length) return;
 
-    var tools = document.createElement("div");
-    tools.className = "card-fold-tools";
-
-    var button = document.createElement("button");
-    button.type = "button";
-    button.className = "btn btn-outline theme-secondary";
-    button.textContent = "Expand all";
-    button.setAttribute("aria-controls", "cards");
-    button.setAttribute("aria-pressed", "false");
+    var tools = filterCardsToolbar.querySelector(".card-fold-tools");
+    var button = tools.querySelector("button");
     button.addEventListener("click", function() {
         var items = cardFoldItems(cards).filter(function(item) {
             return item.visible;
@@ -1229,13 +1087,11 @@ $(function () {
         });
         updateCardFoldTools();
     });
-    tools.appendChild(button);
 
     ["shown.bs.collapse", "hidden.bs.collapse"].forEach(function(name) {
         cards.addEventListener(name, updateCardFoldTools);
     });
 
-    filterCardsToolbar.appendChild(tools);
     updateCardFoldTools();
 });
 
@@ -2121,7 +1977,6 @@ $(function () {
     var cards = document.getElementById("cards");
     if (!cards) return;
     cards.addEventListener("job-list-status-change", function () {
-        updateCardListSummary();
         var search = document.getElementById("search");
         if (filterCardsConfig !== "all" || (search && search.value && String(search.value).trim())) filterCards();
         else updateCardListToolbar();

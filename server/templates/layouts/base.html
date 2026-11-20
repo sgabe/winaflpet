@@ -141,6 +141,30 @@
             <button type="button" class="btn theme-danger confirm-ok">Delete</button>
         </div>
     </dialog>
+    {{if or (isActive $currentPath "/agents/view") (isActive $currentPath "/jobs/view") (isActive $currentPath "/crashes/view")}}
+    <template id="tpl-card-list-toolbar">
+        <div class="card-list-toolbar" role="search" aria-describedby="card-list-scope">
+            <span id="card-list-scope" class="sr-only">Search and filters apply to cards on this page.</span>
+            <div class="card-list-filter" role="group"></div>
+            <div class="card-list-selects"></div>
+            <div class="card-list-search"><input id="search" class="form-control" type="search" autocomplete="off"></div>
+            <div class="card-fold-tools"><button type="button" class="btn btn-outline theme-secondary" aria-controls="cards" aria-pressed="false">Expand all</button></div>
+        </div>
+    </template>
+    <template id="tpl-card-list-empty">
+        <div class="empty-state card-list-empty" role="status" hidden>
+            <span class="empty-icon" aria-hidden="true"><i class="fas fa-search"></i></span>
+            <h2></h2><p></p>
+            <div class="empty-state-actions"><button type="button" class="btn btn-outline theme-secondary">Clear filters</button></div>
+        </div>
+    </template>
+    <template id="tpl-card-list-status">
+        <button type="button" class="btn btn-outline theme-secondary" aria-pressed="false"><span class="card-list-filter-dot" aria-hidden="true"></span><span class="card-list-filter-label"></span> <span class="card-list-filter-count"></span></button>
+    </template>
+    <template id="tpl-card-list-select">
+        <div class="card-list-select"><label class="form-label"></label><select class="form-select"></select></div>
+    </template>
+    {{end}}
     <script src="/static/js/jquery.min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/jquery-succinct-min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/masonry.pkgd.min.js" type="text/javascript" charset="utf8"></script>

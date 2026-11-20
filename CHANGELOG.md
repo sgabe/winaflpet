@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unify page headings and empty states, improve list action placement, and clarify required, optional and technical fields.
 - Show per-page counts on agent, job and crash status filters and add a crash verification summary.
 - Align shared body and form typography and link colours with the interface design, and dock form actions in a sticky panel.
+- Unify list filters, search and folding in one responsive toolbar using shared HTML templates.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
