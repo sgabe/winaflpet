@@ -1,5 +1,7 @@
 {{define "content"}}
 {{if .job}}
+{{$jobName := printf "Job #%d" .job.ID}}{{if trim .job.Name}}{{$jobName = .job.Name}}{{end}}
+{{$agentName := printf "Agent #%d" .job.AgentID}}{{with .job.GetAgent}}{{if trim .Name}}{{$agentName = .Name}}{{end}}{{end}}
 <div class="settings-layout">
 <div class="settings-main">
 <div class="settings-panel">
@@ -8,14 +10,14 @@
 
   <fieldset class="settings-section">
     <legend>Input files</legend>
-    <p class="settings-description text-muted">Upload input files for <strong>{{.job.Name}}</strong> to <code>{{.job.Input}}</code> on the Windows agent.</p>
+    <p class="settings-description text-muted text-break">Upload input files for <strong>{{$jobName}}</strong> to <code>{{.job.Input}}</code> on the Windows agent.</p>
     <div class="settings-fields">
 
       <div class="settings-field">
         <div class="path-box">
           <i class="fas fa-folder" aria-hidden="true"></i>
           <div class="path-box-text">
-            <span class="path-box-label">Input directory on {{with .job.GetAgent}}{{if .Name}}{{.Name}}{{else}}Agent #{{$.job.AgentID}}{{end}}{{else}}Agent #{{.job.AgentID}}{{end}}</span>
+            <span class="path-box-label text-break">Input directory on {{$agentName}}</span>
             <code>{{.job.Input}}</code>
           </div>
         </div>
@@ -53,7 +55,7 @@
 </form>
 {{else}}
 <div class="settings-section">
-  <p class="settings-description text-muted">Upload input files for <strong>{{.job.Name}}</strong> to <code>{{.job.Input}}</code> on the Windows agent.</p>
+  <p class="settings-description text-muted text-break">Upload input files for <strong>{{$jobName}}</strong> to <code>{{.job.Input}}</code> on the Windows agent.</p>
   <div class="settings-fields">
     <div class="settings-field">
       <p class="form-notice is-warning"><strong>Upload unavailable.</strong> Upload requires the job to be confirmed idle. The alert on this page gives the exact reason.</p>
@@ -62,7 +64,7 @@
       <div class="path-box">
         <i class="fas fa-folder" aria-hidden="true"></i>
         <div class="path-box-text">
-          <span class="path-box-label">Input directory on {{with .job.GetAgent}}{{if .Name}}{{.Name}}{{else}}Agent #{{$.job.AgentID}}{{end}}{{else}}Agent #{{.job.AgentID}}{{end}}</span>
+          <span class="path-box-label text-break">Input directory on {{$agentName}}</span>
           <code>{{.job.Input}}</code>
         </div>
       </div>
@@ -82,11 +84,11 @@
   <h2 id="jobInputAsideTitle">Job summary</h2>
   <dl>
     <dt>Name</dt>
-    <dd>{{.job.Name}}</dd>
+    <dd title="{{$jobName}}">{{$jobName}}</dd>
     <dt>Job #</dt>
     <dd>{{.job.ID}}</dd>
     <dt>Agent</dt>
-    <dd>{{with .job.GetAgent}}{{if .Name}}{{.Name}}{{else}}Agent #{{$.job.AgentID}}{{end}}{{else}}Agent #{{.job.AgentID}}{{end}}</dd>
+    <dd title="{{$agentName}}">{{$agentName}}</dd>
     <dt>Input</dt>
     <dd><code>{{.job.Input}}</code></dd>
     <dt>Availability</dt>
