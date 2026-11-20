@@ -11,7 +11,7 @@
 
       <div class="settings-field settings-field-half">
         <label for="aid" class="form-label">Agent</label>
-        <select class="form-control" id="aid" name="aid" required>
+        <select class="form-control" id="aid" name="aid" aria-describedby="agentHelp" required>
           {{$ := .}}
           {{range .agents}}
             <option value="{{ .ID }}" {{if eq $.job.AgentID .ID }}selected{{end}}>{{.Name}}</option>
@@ -22,24 +22,24 @@
 
       <div class="settings-field settings-field-half">
         <label for="cores" class="form-label">CPU cores</label>
-        <select class="form-control" id="cores" name="cores">
+        <select class="form-control" id="cores" name="cores" aria-describedby="coresHelp">
         {{range seq 40}}
           <option value="{{.}}" {{if (eq $.job.Cores .) }}selected{{end}}>{{.}}</option>
         {{end}}
         </select>
-        <small id="coresHelp" class="form-text text-muted">Enable distributed mode by increasing CPU cores</small>
+        <small id="coresHelp" class="form-text text-muted">Enable distributed mode by increasing CPU cores. Each core runs one fuzzer instance.</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="name" class="form-label">Name</label>
         <input type="text" class="form-control" name="name" id="name" aria-describedby="nameHelp" value="{{.job.Name}}">
-        <small id="nameHelp" class="form-text text-muted">Short name of the new job</small>
+        <small id="nameHelp" class="form-text text-muted">Short name of the job</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="banner" class="form-label">Banner</label>
         <input type="text" class="form-control font-monospace" name="banner" id="banner" aria-describedby="bannerHelp" value="{{.job.Banner}}">
-        <small id="bannerHelp" class="form-text text-muted">Short text banner to show on the screen</small>
+        <small id="bannerHelp" class="form-text text-muted">Short text banner to show on the screen. Instance names are the banner plus the instance number, e.g. <code>fuzz1</code> for banner <code>fuzz</code>.</small>
       </div>
 
       <div class="settings-field">
@@ -81,7 +81,7 @@
       <div class="settings-field settings-field-half">
         <label for="bugidDir" class="form-label">BugId directory</label>
         <input type="text" class="form-control font-monospace" name="bugid_dir" id="bugidDir" aria-describedby="bugidDirHelp" value="{{.job.BugIdDir}}">
-        <small id="bugidDirHelp" class="form-text text-muted">BugId directory on the remote machine</small>
+        <small id="bugidDirHelp" class="form-text text-muted">BugId directory on the remote machine, used by Verify</small>
       </div>
 
     </div>
@@ -110,7 +110,7 @@
 
       <div class="settings-field settings-field-half">
         <label for="delivMode" class="form-label">Delivery</label>
-        <select class="form-control" name="deliv_mode" id="delivMode">
+        <select class="form-control" name="deliv_mode" id="delivMode" aria-describedby="delivModeHelp">
           <option value="" {{if (eq .job.DelivMode "") }}selected{{end}}>File</option>
           <option value="sm" {{if (eq .job.DelivMode "sm") }}selected{{end}}>Shared memory</option>
         </select>
@@ -147,7 +147,7 @@
 
       <div class="settings-field settings-field-half">
         <label for="instMode" class="form-label">Instrumentation mode</label>
-        <select class="form-control" name="inst_mode" id="instMode">
+        <select class="form-control" name="inst_mode" id="instMode" aria-describedby="instModeHelp">
           <option value="DynamoRIO" {{if (eq .job.InstMode "DynamoRIO") }}selected{{end}}>DynamoRIO</option>
           <option value="TinyInst" {{if (eq .job.InstMode "TinyInst") }}selected{{end}}>TinyInst</option>
         </select>
@@ -156,7 +156,7 @@
 
       <div class="settings-field settings-field-half">
         <label for="coverageType" class="form-label">Coverage type</label>
-        <select class="form-control" name="cov_type" id="coverageType">
+        <select class="form-control" name="cov_type" id="coverageType" aria-describedby="coverageTypeHelp">
           <option value="bb" {{if (eq .job.CoverageType "bb") }}selected{{end}}>Basic block</option>
           <option value="edge" {{if (eq .job.CoverageType "edge") }}selected{{end}}>Edge</option>
         </select>
@@ -192,7 +192,7 @@
       <div class="settings-field settings-field-half">
         <label for="targetOffset" class="form-label">Target offset</label>
         <input type="text" class="form-control font-monospace" name="target_offset" id="targetOffset" aria-describedby="targetOffsetHelp" value="{{.job.TargetOffset}}">
-        <small id="targetOffsetHelp" class="form-text text-muted">Offset to target function</small>
+        <small id="targetOffsetHelp" class="form-text text-muted">Offset to target function. When set and not 0, job cards show the offset instead of the target method.</small>
       </div>
 
       <div class="settings-field settings-field-half">
@@ -211,7 +211,7 @@
 
       <div class="settings-field settings-field-half">
         <label for="targetArch" class="form-label">Architecture</label>
-        <select class="form-control" name="target_arch" id="targetArch">
+        <select class="form-control" name="target_arch" id="targetArch" aria-describedby="targetArchHelp">
           <option value="x86" {{if (eq .job.TargetArch "x86") }}selected{{end}}>x86</option>
           <option value="x64" {{if (eq .job.TargetArch "x64") }}selected{{end}}>x64</option>
         </select>
