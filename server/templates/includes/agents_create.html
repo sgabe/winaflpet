@@ -42,12 +42,12 @@
       </div>
 
       <div class="settings-field">
-        <label for="key" class="form-label">Key</label>
+        <label for="key" class="form-label">Secret key</label>
         <div class="secret-field">
           <input type="password" class="form-control font-monospace" name="key" id="key" aria-describedby="keyHelp" placeholder="Enter API key" autocomplete="off" spellcheck="false">
           <button type="button" class="btn btn-outline theme-secondary" data-secret-toggle="key" aria-controls="key" aria-pressed="false" aria-label="Show API key">Show</button>
         </div>
-        <small id="keyHelp" class="form-text text-muted">Must match the authentication key of that agent</small>
+        <small id="keyHelp" class="form-text text-muted">Authentication key for API requests, sent to the agent as <code>X-Auth-Key</code>. Use the secret key generated during agent installation.</small>
       </div>
 
     </div>

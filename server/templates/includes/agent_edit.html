@@ -2,7 +2,7 @@
 <div class="settings-layout"><div class="settings-main">
 <form id="editAgent" class="edit agent settings-panel" method="POST" enctype="multipart/form-data" aria-label="Edit agent">
 
-  <p class="form-notice">Editing <strong>{{.agent.Name}}</strong>. The Key field is prefilled with the saved key. Changing it here doesn't change the key on the agent.</p>
+  <p class="form-notice">Editing <strong>{{if trim .agent.Name}}{{.agent.Name}}{{else}}Agent #{{.agent.ID}}{{end}}</strong>. The Secret key field is prefilled with the saved key. Changing it here doesn't change the key on the agent.</p>
 
   <fieldset class="settings-section">
     <legend>General settings</legend>
@@ -42,12 +42,12 @@
       </div>
 
       <div class="settings-field">
-        <label for="key" class="form-label">Key</label>
+        <label for="key" class="form-label">Secret key</label>
         <div class="secret-field">
           <input type="password" class="form-control font-monospace" name="key" id="key" aria-describedby="keyHelp" value="{{.agent.Key}}" autocomplete="off" spellcheck="false">
           <button type="button" class="btn btn-outline theme-secondary" data-secret-toggle="key" aria-controls="key" aria-pressed="false" aria-label="Show API key">Show</button>
         </div>
-        <small id="keyHelp" class="form-text text-muted">Must match the authentication key of that agent</small>
+        <small id="keyHelp" class="form-text text-muted">Authentication key for API requests, sent to the agent as <code>X-Auth-Key</code>. Pre-filled with the saved key. Changing it here does not change the key on the agent.</small>
       </div>
 
     </div>
@@ -72,13 +72,13 @@
   <h2 id="agent-edit-aside-heading">Saved connection</h2>
   <dl>
     <dt>Name</dt>
-    <dd>{{.agent.Name}}</dd>
+    <dd title="{{if trim .agent.Name}}{{.agent.Name}}{{else}}Agent #{{.agent.ID}}{{end}}">{{if trim .agent.Name}}{{.agent.Name}}{{else}}Agent #{{.agent.ID}}{{end}}</dd>
     <dt>Agent #</dt>
     <dd>{{.agent.ID}}</dd>
     <dt>Host</dt>
-    <dd>{{.agent.Host}}</dd>
+    <dd class="font-monospace" title="{{.agent.Host}}">{{.agent.Host}}</dd>
     <dt>Port</dt>
-    <dd>{{.agent.Port}}</dd>
+    <dd class="font-monospace" title="{{.agent.Port}}">{{.agent.Port}}</dd>
     <dt>Configuration</dt>
     <dd>{{if .agent.Status}}Enabled{{else}}Disabled{{end}}</dd>
     <dt>Version</dt>

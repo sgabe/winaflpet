@@ -64,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refine job statistics layout and heading structure.
 - Use level-two headings for agent, job, and crash card titles.
 - Show IDs for unnamed crash jobs and agents, attribute impact to BugId.
+- Clarify saved agent details and secret key guidance.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
