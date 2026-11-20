@@ -73,6 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Give unknown job instance panels dashed borders and red progress text.
 - Label agent and job creation pages consistently.
 - Improve input-upload context with ID fallbacks, tooltips and wrapping.
+- Clarify the empty crash state and Open Jobs link.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
