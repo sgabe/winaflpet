@@ -1458,6 +1458,12 @@ div:has(> .card.stat) {
   overflow-wrap: anywhere;
 }
 
+.card.job:has(.job-state[data-state="unknown"]) .job-instances {
+  background-color: #fcfcfd;
+  border-style: dashed;
+  border-color: #f1a9a9;
+}
+
 .card.job .job-instances .job-instances-title {
   float: none;
   margin: 0 0 .25rem;
@@ -1470,6 +1476,10 @@ div:has(> .card.stat) {
 .card.job .job-command-status {
   min-width: 0;
   color: #334155;
+}
+
+.card.job:has(.job-state[data-state="unknown"]) .job-progress {
+  color: #b91c1c;
 }
 
 .card.job .instance-progress {
