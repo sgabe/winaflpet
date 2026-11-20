@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Align crash filter order and risk labels, clarify search and page scope.
 - Respect reduced motion in fold icons, home shortcuts and alerts.
 - Improve list card identities, metadata and search guidance.
+- Refine job statistics layout and heading structure.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.

@@ -747,7 +747,7 @@ div:has(> .card.stat) {
   min-width: min(225px, calc(100% - 30px));
 }
 
-.card.fuzzer .card-header h5 {
+.card.fuzzer .card-header .job-instance-heading {
   margin: 0;
   cursor: pointer;
 }
@@ -1013,7 +1013,8 @@ div:has(> .card.stat) {
 }
 
 .card.job .job-card-details dd,
-.card.agent .agent-card-details dd {
+.card.agent .agent-card-details dd,
+.job-overview .job-overview-value {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2340,7 +2341,7 @@ footer .version:before {
   background-color: #fff;
 }
 
-.job-stats .card.fuzzer > .card-header h5 {
+.job-stats .card.fuzzer > .card-header .job-instance-heading {
   flex: 1 1 16rem;
   min-width: 0;
   margin: 0;
@@ -2962,8 +2963,11 @@ footer .version:before {
 }
 
 .job-instance-picker {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 48px);
+  grid-auto-rows: 48px;
+  justify-content: start;
+  align-content: start;
   gap: .5rem;
   width: 100%;
   margin-bottom: 1rem;
@@ -2975,10 +2979,11 @@ footer .version:before {
 
 .job-instance-tile {
   position: relative;
-  flex: 0 0 auto;
-  min-width: 48px;
-  height: 48px;
-  padding: 0 .5rem;
+  width: 100%;
+  min-width: 44px;
+  height: 100%;
+  min-height: 44px;
+  padding: 0;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background-color: #f8fafc;

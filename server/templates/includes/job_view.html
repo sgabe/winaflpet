@@ -13,7 +13,8 @@
 <dl class="job-overview" aria-label="Job configuration" data-cores="{{ $job.Cores }}" data-banner="{{ $job.Banner }}">
   <div class="job-overview-item">
     <dt>Agent</dt>
-    <dd><a href="/agents/view">{{with $job.GetAgent}}{{if .Name}}{{.Name}}{{else}}Agent #{{$job.AgentID}}{{end}}{{else}}Agent #{{$job.AgentID}}{{end}}</a></dd>
+    {{ $agentLabel := printf "Agent #%v" $job.AgentID }}{{ with $job.GetAgent }}{{ if trim .Name }}{{ $agentLabel = .Name }}{{ end }}{{ end }}
+    <dd><a href="/agents/view" title="{{ $agentLabel }}">{{ $agentLabel }}</a></dd>
   </div>
   <div class="job-overview-item">
     <dt>Configured instances</dt>
@@ -21,11 +22,15 @@
   </div>
   <div class="job-overview-item">
     <dt>Target</dt>
-    <dd>{{if and $job.TargetOffset (ne $job.TargetOffset "0")}}{{ $job.TargetOffset }}{{else}}{{ $job.TargetMethod }}{{end}} in {{ $job.TargetModule }} ({{ $job.TargetArch }})</dd>
+    {{ $target := $job.TargetMethod }}{{ if and $job.TargetOffset (ne $job.TargetOffset "0") }}{{ $target = $job.TargetOffset }}{{ end }}
+    {{ $targetContext := printf " in %v (%v)" $job.TargetModule $job.TargetArch }}
+    <dd class="job-overview-value" title="{{ $target }}{{ $targetContext }}"><span class="font-monospace">{{ $target }}</span><span class="text-muted">{{ $targetContext }}</span></dd>
   </div>
   <div class="job-overview-item">
     <dt>Instrumentation</dt>
-    <dd>{{if eq $job.InstMode "DynamorIO"}}DynamoRIO{{else}}{{ $job.InstMode }}{{end}} · {{ $job.CoverageType }} for {{ $job.CoverageModule }}</dd>
+    {{ $instMode := $job.InstMode }}{{ if eq $job.InstMode "DynamorIO" }}{{ $instMode = "DynamoRIO" }}{{ end }}
+    {{ $instContext := printf " · %v for %v" $job.CoverageType $job.CoverageModule }}
+    <dd class="job-overview-value" title="{{ $instMode }}{{ $instContext }}">{{ $instMode }}<span class="text-muted">{{ $instContext }}</span></dd>
   </div>
 </dl>
 {{ end }}
@@ -35,12 +40,12 @@
     <div class="card fuzzer accordion-item" id="job-instance-{{ $i }}" data-fid="{{ .GetFID }}">
 
       <div class="card-header" id="heading-{{ $i }}">
-        <h5>
+        <h2 class="job-instance-heading">
           <button type="button" class="job-instance-toggle" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $i }}" aria-expanded="true" aria-controls="collapse-{{ $i }}">
             <span class="job-instance-name">{{ .AFLBanner }} <span class="job-instance-pid">@ PID {{ .FuzzerProcessID }}</span></span>
             <i class="fas fa-chevron-down" aria-hidden="true"></i>
           </button>
-        </h5>
+        </h2>
       </div>
 
       <div id="collapse-{{ $i }}" class="stat accordion-collapse collapse show" role="region" aria-labelledby="heading-{{ $i }}">
@@ -48,7 +53,7 @@
           <div class="job-stat-grid">
 
           <div class="card stat">
-            <h5 class="card-header">Process timing</h5>
+            <h3 class="card-header">Process timing</h3>
             <div class="card-body">
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -68,7 +73,7 @@
           </div>
 
           <div class="card stat">
-            <h5 class="card-header">Stage progress</h5>
+            <h3 class="card-header">Stage progress</h3>
             <div class="card-body">
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -85,7 +90,7 @@
           </div>
 
           <div class="card stat">
-            <h5 class="card-header">Overall results</h5>
+            <h3 class="card-header">Overall results</h3>
             <div class="card-body">
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -108,7 +113,7 @@
           </div>
 
           <div class="card stat">
-            <h5 class="card-header">Path geometry</h5>
+            <h3 class="card-header">Path geometry</h3>
             <div class="card-body">
               <ul class="list-group list-group-flush">
                 <li class="list-group-item">
