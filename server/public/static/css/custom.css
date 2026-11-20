@@ -723,6 +723,7 @@ a.navbar-brand i.fas {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: .375rem;
   min-height: 44px;
   margin-left: 0;
 }

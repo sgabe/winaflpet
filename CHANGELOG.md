@@ -65,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use level-two headings for agent, job, and crash card titles.
 - Show IDs for unnamed crash jobs and agents, attribute impact to BugId.
 - Clarify saved agent details and secret key guidance.
+- Align empty agent and job list action labels and icons.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
