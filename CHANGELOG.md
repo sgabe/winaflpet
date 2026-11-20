@@ -68,6 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Align empty agent and job list action labels and icons.
 - Align card ID and status colours.
 - Refine card and instance status indicators.
+- Name the sign-in form and remove redundant placeholders.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
