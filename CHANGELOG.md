@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Check saved agent connections inline without disabling sibling actions or losing unsaved edits.
 - Show saved agent names and email alert state, and confirm input replacement before uploading.
 - Explain crash risk access types in card details and show saved agent context when editing crashes.
+- Name the crash in each crash card action for screen readers and label unanalyzed crash cards as Unverified crash or Analysis unavailable.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.

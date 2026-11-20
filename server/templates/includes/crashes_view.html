@@ -48,11 +48,11 @@
 {{end}}
 
 {{define "verifyCrash"}}
-<a href="/crash/{{.}}/verify" class="btn btn-outline theme-secondary action verify" data-method="POST">
+<a href="/crash/{{.GUID}}/verify" class="btn btn-outline theme-secondary action verify" data-method="POST">
   <svg class="bi" width="20" height="20" fill="currentColor" color="orangered" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#check-square-fill"/>
   </svg>
-  <span>Verify</span>
+  <span>Verify<span class="sr-only"> crash #{{.ID}}</span></span>
 </a>
 {{end}}
 
@@ -61,25 +61,25 @@
   <svg class="bi" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#x-square-fill"/>
   </svg>
-  <span>Delete</span>
+  <span>Delete<span class="sr-only"> crash #{{.ID}}</span></span>
 </a>
 {{end}}
 
 {{define "downloadCrash"}}
-<a href="/crash/{{.}}/download" class="btn btn-outline theme-secondary action download" data-type="binary" data-method="POST">
+<a href="/crash/{{.GUID}}/download" class="btn btn-outline theme-secondary action download" data-type="binary" data-method="POST">
   <svg class="bi" width="20" height="20" fill="currentColor" color="#0074D9" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#arrow-down-square-fill"/>
   </svg>
-  <span>Download sample</span>
+  <span>Download sample<span class="sr-only"> crash #{{.ID}}</span></span>
 </a>
 {{end}}
 
 {{define "editCrash"}}
-<a href="/crash/{{.}}/edit" class="btn btn-outline theme-secondary action edit">
+<a href="/crash/{{.GUID}}/edit" class="btn btn-outline theme-secondary action edit">
   <svg class="bi" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
   </svg>
-  <span>Edit</span>
+  <span>Edit<span class="sr-only"> crash #{{.ID}}</span></span>
 </a>
 {{end}}
 
@@ -104,20 +104,20 @@
 
   {{range .crashes}}
   <div class="col sm:col-6 lg:col-4 mb-3">
-    <div class="card crash {{if not .Verified }}unverified{{end}}{{if and .Verified (not .Function) }}unavailable{{end}}" data-job-id="{{.JobID}}" data-function="{{.Function}}" data-risk="{{if .Verified}}{{.GetRisk}}{{else}}na{{end}}" role="article" aria-label="Crash #{{ .ID }}: {{if .Verified}}{{if .Function}}{{if .Label}}{{ .Label }}{{else}}{{ .Function }}{{end}}{{else}}Unavailable{{end}}{{else}}Unverified{{end}}">
+    <div class="card crash {{if not .Verified }}unverified{{end}}{{if and .Verified (not .Function) }}unavailable{{end}}" data-job-id="{{.JobID}}" data-function="{{.Function}}" data-risk="{{if .Verified}}{{.GetRisk}}{{else}}na{{end}}" role="article" aria-label="Crash #{{ .ID }}: {{if .Verified}}{{if .Function}}{{if .Label}}{{ .Label }}{{else}}{{ .Function }}{{end}}{{else}}Analysis unavailable{{end}}{{else}}Unverified crash{{end}}">
       {{$jobName := .GetJob.Name}}
       <div class="card-header card-summary">
         <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
-          <span class="card-summary-title" title="{{if .Verified}}{{if .Function}}{{if .Label}}{{ .Label }}{{else}}{{ .Function }}{{end}}{{else}}Unavailable{{end}}{{else}}Unverified{{end}}">
+          <span class="card-summary-title" title="{{if .Verified}}{{if .Function}}{{if .Label}}{{ .Label }}{{else}}{{ .Function }}{{end}}{{else}}Analysis unavailable{{end}}{{else}}Unverified crash{{end}}">
           {{- if .Verified }}
             {{- if .Function }}
               {{- if .Label }}<span class="label">{{ .Label }}</span>
               {{- else if .Function }}<span class="label">{{ .Function }}</span>
               {{- else}}<span class="bugid">{{ .BugID }}</span>
               {{- end}}
-            {{- else}}<span class="label">Unavailable</span>
+            {{- else}}<span class="label">Analysis unavailable</span>
             {{- end}}
-          {{- else}}<span class="label">Unverified</span>
+          {{- else}}<span class="label">Unverified crash</span>
           {{- end -}}
           </span>
           {{- if .Verified }}
@@ -143,14 +143,14 @@
         <div class="card-footer">
           <div class="card-actions">
             {{- if not .Verified }}
-            {{template "verifyCrash" .GUID}}
+            {{template "verifyCrash" .}}
             {{- end}}
             {{- if and .Verified .Function }}
-            {{template "editCrash" .GUID}}
+            {{template "editCrash" .}}
             {{- end}}
-            {{template "downloadCrash" .GUID}}
+            {{template "downloadCrash" .}}
             {{- if .Verified }}
-            {{template "reportCrash" .GUID}}
+            {{template "reportCrash" .}}
             {{- end}}
             {{template "deleteCrash" .}}
           </div>
@@ -187,10 +187,10 @@
 {{end}}
 
 {{define "reportCrash"}}
-<a href="/crash/{{.}}/report" class="btn btn-outline theme-secondary crash-report" title="Report" aria-label="Report" data-method="POST">
+<a href="/crash/{{.GUID}}/report" class="btn btn-outline theme-secondary crash-report" title="Report" data-method="POST">
   <svg class="bi" width="20" height="20" fill="currentColor" color="purple" viewBox="0 0 20 20" aria-hidden="true">
     <use xlink:href="/static/svg/bootstrap-icons.svg#file-earmark-text"/>
   </svg>
-  <span>Report</span>
+  <span>Report<span class="sr-only"> crash #{{.ID}}</span></span>
 </a>
 {{end}}
