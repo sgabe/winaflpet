@@ -380,18 +380,62 @@ function cardListConfig(column) {
     return "";
 }
 
-function updateJobListSummary() {
+function cardListCounts(selector) {
     var cards = document.getElementById("cards");
-    if (!filterCardsSummary || !cards) return;
-    var counts = { total: 0, running: 0, starting: 0, stopped: 0, unknown: 0 };
+    var counts = { total: 0 };
+    if (!cards) return counts;
     Array.prototype.forEach.call(cards.children, function(child) {
-        if (!child.classList.contains("col") || !child.querySelector(".card.job")) return;
+        if (!child.classList.contains("col") || !child.querySelector(selector)) return;
+        var key = cardListConfig(child);
         counts.total++;
-        counts[cardListConfig(child)]++;
+        counts[key] = (counts[key] || 0) + 1;
     });
-    Object.keys(counts).forEach(function(key) {
-        var value = String(counts[key]);
-        if (filterCardsSummary[key].textContent !== value) filterCardsSummary[key].textContent = value;
+    return counts;
+}
+
+function cardListSummary(definition) {
+    var summary = document.createElement("div");
+    summary.className = definition.className;
+    summary.setAttribute("role", "group");
+    summary.setAttribute("aria-label", definition.label);
+    var scope = document.createElement("span");
+    scope.className = "card-list-summary-scope";
+    scope.textContent = "On this page";
+    summary.appendChild(scope);
+    var values = {};
+    definition.items.forEach(function(entry) {
+        var item = document.createElement("span");
+        item.className = "card-list-summary-item is-" + entry[0];
+        var dot = document.createElement("span");
+        dot.className = "card-list-summary-dot";
+        dot.setAttribute("aria-hidden", "true");
+        var label = document.createElement("span");
+        label.className = "card-list-summary-label";
+        label.textContent = entry[1];
+        var value = document.createElement("span");
+        value.className = "card-list-summary-count";
+        item.appendChild(dot);
+        item.appendChild(label);
+        item.appendChild(value);
+        summary.appendChild(item);
+        values[entry[0]] = value;
+    });
+    if (definition.note) {
+        var note = document.createElement("span");
+        note.className = "card-list-summary-note";
+        note.textContent = definition.note;
+        summary.appendChild(note);
+    }
+    filterCardsSummary = { selector: definition.selector, values: values };
+    return summary;
+}
+
+function updateCardListSummary() {
+    if (!filterCardsSummary) return;
+    var counts = cardListCounts(filterCardsSummary.selector);
+    Object.keys(filterCardsSummary.values).forEach(function(key) {
+        var value = String(counts[key] || 0);
+        if (filterCardsSummary.values[key].textContent !== value) filterCardsSummary.values[key].textContent = value;
     });
 }
 
@@ -405,8 +449,12 @@ function updateCardListToolbar() {
         return !column.classList.contains("d-none") && !column.hidden;
     }).length;
     filterCardsToolbar.count.textContent = "Showing " + shown + " of " + columns.length + " on this page";
+    var counts = {};
     filterCardsToolbar.buttons.forEach(function(button) {
         button.setAttribute("aria-pressed", String(button.filterValue === filterCardsConfig));
+        if (!counts[button.filterSelector]) counts[button.filterSelector] = cardListCounts(button.filterSelector);
+        var value = String(counts[button.filterSelector][button.filterValue === "all" ? "total" : button.filterValue] || 0);
+        if (button.filterCount.textContent !== value) button.filterCount.textContent = value;
     });
     filterCardsToolbar.clear.hidden = !cardListFiltered();
 }
@@ -998,7 +1046,13 @@ $(function () {
             button.type = "button";
             button.className = "btn btn-outline theme-secondary";
             button.textContent = option[0];
+            button.appendChild(document.createTextNode(" "));
+            var tally = document.createElement("span");
+            tally.className = "card-list-filter-count";
+            button.appendChild(tally);
             button.filterValue = option[1];
+            button.filterSelector = definition[0];
+            button.filterCount = tally;
             button.addEventListener("click", function() {
                 filterCardsConfig = option[1];
                 filterCards();
@@ -1118,35 +1172,26 @@ $(function () {
     if (!anchor || anchor.parentNode !== cards.parentNode) anchor = cards;
     cards.parentNode.insertBefore(toolbar, anchor);
 
+    var summary = null;
     if (columns.some(function(column) { return column.querySelector(".card.job"); })) {
-        var summary = document.createElement("div");
-        summary.className = "job-list-summary";
-        summary.setAttribute("role", "group");
-        summary.setAttribute("aria-label", "Job status summary");
-        var scope = document.createElement("span");
-        scope.className = "job-list-summary-scope";
-        scope.textContent = "On this page";
-        summary.appendChild(scope);
-        filterCardsSummary = {};
-        [["total", "Jobs"], ["running", "Running"], ["starting", "Starting"], ["stopped", "Stopped"], ["unknown", "Status unknown"]].forEach(function(entry) {
-            var item = document.createElement("span");
-            item.className = "job-list-summary-item is-" + entry[0];
-            var dot = document.createElement("span");
-            dot.className = "job-list-summary-dot";
-            dot.setAttribute("aria-hidden", "true");
-            var label = document.createElement("span");
-            label.className = "job-list-summary-label";
-            label.textContent = entry[1];
-            var value = document.createElement("span");
-            value.className = "job-list-summary-count";
-            item.appendChild(dot);
-            item.appendChild(label);
-            item.appendChild(value);
-            summary.appendChild(item);
-            filterCardsSummary[entry[0]] = value;
+        summary = cardListSummary({
+            selector: ".card.job",
+            className: "card-list-summary job-list-summary",
+            label: "Job status summary",
+            items: [["total", "Jobs"], ["running", "Running"], ["starting", "Starting"], ["stopped", "Stopped"], ["unknown", "Status unknown"]]
         });
+    } else if (columns.some(function(column) { return column.querySelector(".card.crash"); })) {
+        summary = cardListSummary({
+            selector: ".card.crash",
+            className: "card-list-summary",
+            label: "Crash verification summary",
+            items: [["total", "Crashes"], ["unverified", "Unverified"], ["verified", "Verified"], ["unavailable", "Unavailable"]],
+            note: "Unavailable means verified, but no function was reported."
+        });
+    }
+    if (summary) {
         cards.parentNode.insertBefore(summary, toolbar);
-        updateJobListSummary();
+        updateCardListSummary();
     }
     updateCardListToolbar();
 });
@@ -2076,9 +2121,10 @@ $(function () {
     var cards = document.getElementById("cards");
     if (!cards) return;
     cards.addEventListener("job-list-status-change", function () {
-        updateJobListSummary();
+        updateCardListSummary();
         var search = document.getElementById("search");
         if (filterCardsConfig !== "all" || (search && search.value && String(search.value).trim())) filterCards();
+        else updateCardListToolbar();
     });
 });
 

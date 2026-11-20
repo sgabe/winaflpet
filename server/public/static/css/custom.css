@@ -3215,7 +3215,7 @@ footer .version:before {
   font-variant-numeric: tabular-nums;
 }
 
-.job-list-summary {
+.card-list-summary {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -3229,26 +3229,26 @@ footer .version:before {
   color: #475569;
 }
 
-.job-list-summary-scope {
+.card-list-summary-scope {
   font-size: .75rem;
   font-weight: 600;
   color: #64748b;
 }
 
-.job-list-summary-item {
+.card-list-summary-item {
   display: inline-flex;
   align-items: center;
   gap: .375rem;
   min-width: 0;
 }
 
-.job-list-summary-count {
+.card-list-summary-count {
   font-weight: 700;
   color: #0f172a;
   font-variant-numeric: tabular-nums;
 }
 
-.job-list-summary-dot {
+.card-list-summary-dot {
   flex: 0 0 auto;
   width: .5rem;
   height: .5rem;
@@ -3256,17 +3256,28 @@ footer .version:before {
   background-color: #64748b;
 }
 
-.job-list-summary-item.is-total .job-list-summary-dot {
+.card-list-summary-item.is-total .card-list-summary-dot {
   display: none;
 }
 
-.job-list-summary-item.is-running .job-list-summary-dot { background-color: #15803d; }
-.job-list-summary-item.is-starting .job-list-summary-dot { background-color: #c2410c; }
-.job-list-summary-item.is-stopped .job-list-summary-dot { background-color: #64748b; }
-.job-list-summary-item.is-unknown .job-list-summary-dot {
+.card-list-summary-item.is-running .card-list-summary-dot,
+.card-list-summary-item.is-verified .card-list-summary-dot { background-color: #15803d; }
+.card-list-summary-item.is-starting .card-list-summary-dot { background-color: #c2410c; }
+.card-list-summary-item.is-stopped .card-list-summary-dot,
+.card-list-summary-item.is-unverified .card-list-summary-dot { background-color: #64748b; }
+.card-list-summary-item.is-unknown .card-list-summary-dot,
+.card-list-summary-item.is-unavailable .card-list-summary-dot {
   background-color: transparent;
   border: 1px dashed #64748b;
   box-sizing: border-box;
+}
+
+.card-list-summary-note {
+  flex: 1 1 100%;
+  min-width: 0;
+  font-size: .8125rem;
+  color: #475569;
+  overflow-wrap: anywhere;
 }
 
 .card-list-filter {
@@ -3291,6 +3302,19 @@ footer .version:before {
 .card-list-filter .btn[aria-pressed="true"] {
   border-color: #c2410c;
   background-color: #c2410c;
+  color: #fff;
+}
+
+.card-list-filter-count {
+  display: inline-block;
+  margin-left: .125rem;
+  font-size: .75rem;
+  font-weight: 600;
+  color: #475569;
+  font-variant-numeric: tabular-nums;
+}
+
+.card-list-filter .btn[aria-pressed="true"] .card-list-filter-count {
   color: #fff;
 }
 

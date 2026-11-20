@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refine onboarding, file selection and upload context, instance statistics and crash/profile editing feedback.
 - Inline agent connection results and improve configuration summaries, dialog navigation, form context and action icon colors.
 - Unify page headings and empty states, improve list action placement, and clarify required, optional and technical fields.
+- Show per-page counts on agent, job and crash status filters and add a crash verification summary.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
