@@ -68,15 +68,16 @@
         </div>
     </nav>
     <main id="main" role="main" class="container" tabindex="-1">
-    {{if .title}}{{$parentlabel := ""}}{{$parenthref := ""}}{{if or (isActive $currentPath "/agents/create") (hasPrefix "/agent/" $currentPath)}}{{$parentlabel = "Agents"}}{{$parenthref = "/agents/view"}}{{else if or (isActive $currentPath "/jobs/create") (isActive $currentPath "/jobs/upload") (hasPrefix "/job/" $currentPath)}}{{$parentlabel = "Jobs"}}{{$parenthref = "/jobs/view"}}{{else if hasPrefix "/crash/" $currentPath}}{{$parentlabel = "Crashes"}}{{$parenthref = "/crashes/view"}}{{end}}{{if $parenthref}}
+    {{if .title}}{{$parentlabel := ""}}{{$parenthref := ""}}{{if or (isActive $currentPath "/agents/create") (hasPrefix "/agent/" $currentPath)}}{{$parentlabel = "Agents"}}{{$parenthref = "/agents/view"}}{{else if or (isActive $currentPath "/jobs/create") (isActive $currentPath "/jobs/upload") (hasPrefix "/job/" $currentPath)}}{{$parentlabel = "Jobs"}}{{$parenthref = "/jobs/view"}}{{else if hasPrefix "/crash/" $currentPath}}{{$parentlabel = "Crashes"}}{{$parenthref = "/crashes/view"}}{{end}}{{$contextlabel := ""}}{{$currentlabel := .title}}{{if .agent}}{{if isActive $currentPath (printf "/agent/%s/edit" .agent.GUID)}}{{$currentlabel = or (trim .agent.Name) (printf "Agent #%d" .agent.ID)}}{{end}}{{end}}{{if .job}}{{if isActive $currentPath (printf "/job/%s/edit" .job.GUID)}}{{$currentlabel = or (trim .job.Name) (printf "Job #%d" .job.ID)}}{{else if isActive $currentPath (printf "/job/%s/input" .job.GUID)}}{{$contextlabel = or (trim .job.Name) (printf "Job #%d" .job.ID)}}{{end}}{{end}}{{if .crash}}{{if isActive $currentPath (printf "/crash/%s/edit" .crash.GUID)}}{{$currentlabel = printf "Crash #%d" .crash.ID}}{{end}}{{end}}{{if $parenthref}}
     <nav class="page-breadcrumbs" aria-label="Breadcrumb">
         <ol>
             <li><a class="page-breadcrumb-parent" href="{{$parenthref}}">{{$parentlabel}}</a></li>
-            <li class="page-breadcrumb-current" aria-current="page">{{.title}}</li>
+            {{if $contextlabel}}<li>{{$contextlabel}}</li>
+            {{end}}<li class="page-breadcrumb-current" aria-current="page">{{$currentlabel}}</li>
         </ol>
     </nav>
     {{end}}{{end}}
-    {{block "page-heading" .}}{{$currentPath := default "" .path}}{{if .title}}{{$formsubtitle := ""}}{{if isActive $currentPath "/agents/create"}}{{$formsubtitle = "Register a Windows fuzzing machine running the WinAFL Pet agent."}}{{else if isActive $currentPath "/jobs/create"}}{{$formsubtitle = "Configure a fuzzing job for one of your agents. All paths refer to the agent machine."}}{{else if isActive $currentPath "/settings"}}{{$formsubtitle = "Email alerts for new crashes. These are the only server settings available here."}}{{else if isActive $currentPath "/user/edit"}}{{$formsubtitle = "Your name, alert email address and password."}}{{else if isActive $currentPath "/jobs/upload"}}{{$formsubtitle = "Create a job from a JSON file exported from WinAFL Pet."}}{{end}}{{if .agent}}{{if isActive $currentPath (printf "/agent/%s/edit" .agent.GUID)}}{{$formsubtitle = "Change how WinAFL Pet connects to this fuzzing machine."}}{{end}}{{end}}{{if .job}}{{if isActive $currentPath (printf "/job/%s/edit" .job.GUID)}}{{$formsubtitle = "Review or change the saved tool locations, input and output directories, and target settings."}}{{else if isActive $currentPath (printf "/job/%s/input" .job.GUID)}}{{$formsubtitle = "Upload seed input files to this job's input directory on the Windows agent."}}{{end}}{{end}}{{if .crash}}{{if isActive $currentPath (printf "/crash/%s/edit" .crash.GUID)}}{{$formsubtitle = "Correct or annotate the analysis for this crash."}}{{end}}{{end}}{{if or (isActive $currentPath "/agents/view") (isActive $currentPath "/jobs/view") (isActive $currentPath "/crashes/view")}}
+    {{block "page-heading" .}}{{$currentPath := default "" .path}}{{if .title}}{{$formsubtitle := ""}}{{if isActive $currentPath "/agents/create"}}{{$formsubtitle = "Register a Windows fuzzing machine running the WinAFL Pet agent."}}{{else if isActive $currentPath "/jobs/create"}}{{$formsubtitle = "Configure a fuzzing job for one of your agents. All paths refer to the agent machine."}}{{else if isActive $currentPath "/settings"}}{{$formsubtitle = "Email alerts for new crashes. These are the only server settings available here."}}{{else if isActive $currentPath "/user/edit"}}{{$formsubtitle = "Your name, alert email address and password."}}{{else if isActive $currentPath "/jobs/upload"}}{{$formsubtitle = "Create a job from a JSON file exported from WinAFL Pet."}}{{end}}{{$headingtitle := .title}}{{if .agent}}{{if isActive $currentPath (printf "/agent/%s/edit" .agent.GUID)}}{{$formsubtitle = printf "Change how WinAFL Pet connects to %s." (or (trim .agent.Name) (printf "Agent #%d" .agent.ID))}}{{end}}{{end}}{{if .job}}{{if isActive $currentPath (printf "/job/%s/edit" .job.GUID)}}{{if trim .job.Name}}{{$formsubtitle = printf "Review or change the saved configuration for %s (Job #%d)." (trim .job.Name) .job.ID}}{{else}}{{$formsubtitle = printf "Review or change the saved configuration for Job #%d." .job.ID}}{{end}}{{else if isActive $currentPath (printf "/job/%s/input" .job.GUID)}}{{$formsubtitle = printf "Upload seed input files for %s to its input directory on the Windows agent." (or (trim .job.Name) (printf "Job #%d" .job.ID))}}{{end}}{{end}}{{if .crash}}{{if isActive $currentPath (printf "/crash/%s/edit" .crash.GUID)}}{{$headingtitle = printf "Edit crash #%d" .crash.ID}}{{$formsubtitle = printf "Correct or annotate the analysis for a crash from %s." (or (trim .crash.GetJob.Name) (printf "Job #%d" .crash.JobID))}}{{end}}{{end}}{{if or (isActive $currentPath "/agents/view") (isActive $currentPath "/jobs/view") (isActive $currentPath "/crashes/view")}}
     <div class="page-heading">
         <div class="page-heading-text">
             <h1>{{.title}}</h1>
@@ -105,11 +106,11 @@
     {{else if $formsubtitle}}
     <div class="page-heading">
         <div class="page-heading-text">
-            <h1>{{.title}}</h1>
+            <h1>{{$headingtitle}}</h1>
             <p class="page-heading-subtitle">{{$formsubtitle}}</p>
         </div>
     </div>
-    {{else}}<h1>{{.title}}</h1>{{end}}{{end}}{{end}}
+    {{else}}<h1>{{$headingtitle}}</h1>{{end}}{{end}}{{end}}
     <div id="alert" class="alert {{if .context}}{{if eq .context "empty"}}alert-empty{{else}}theme-{{.context}}{{end}}{{else}}alert-empty{{end}} alert-dismissible fade show" role="alert">
         <div class="message">{{.alert}}</div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">

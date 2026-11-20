@@ -16,11 +16,11 @@
           <option value="1">Default</option>
           {{else}}
             {{range .agents}}
-              <option value="{{ .ID }}">{{.Name}}</option>
+              <option value="{{ .ID }}">{{if trim .Name}}{{.Name}}{{else}}Agent #{{.ID}}{{end}}{{if not .Status}} (disabled){{end}}</option>
             {{end}}
           {{end}}
         </select>
-        <small id="agentHelp" class="form-text text-muted">Specify the remote agent</small>
+        <small id="agentHelp" class="form-text text-muted">Specify the remote agent. (disabled) reflects the saved agent configuration, not its current connection status.</small>
       </div>
 
       <div class="settings-field settings-field-half">

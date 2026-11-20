@@ -16,6 +16,7 @@
     <div class="col sm:col-6 lg:col-4 mb-3">
       <div class="card job" role="article" aria-label="Job #{{.ID}}: {{.Name}}" data-guid="{{.GUID}}" data-cores="{{.Cores}}" data-agent-id="{{.AgentID}}">
         {{$agent := .GetAgent}}
+        {{$jobLabel := printf "Job #%d" .ID}}{{if trim .Name}}{{$jobLabel = printf "%s (Job #%d)" (trim .Name) .ID}}{{end}}
         <div class="card-header card-summary">
           <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
             <span class="card-summary-title name" title="{{.Name}}">{{.Name}}</span>
@@ -52,67 +53,67 @@
               <svg class="bi play-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#play-fill"/>
               </svg>
-              <span>Start</span>
+              <span>Start<span class="sr-only">: {{$jobLabel}}</span></span>
             </button>
             <button type="button" class="btn btn-outline theme-secondary job-stop d-none">
               <svg class="bi stop-fill" width="20" height="20" fill="currentColor" color="orangered" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#stop-fill"/>
               </svg>
-              <span>Stop</span>
+              <span>Stop<span class="sr-only">: {{$jobLabel}}</span></span>
             </button>
             <a href="/job/{{.GUID}}/view" class="btn btn-outline theme-secondary action view d-none">
               <svg class="bi eye-fill" width="20" height="20" fill="currentColor" color="blue" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#eye-fill"/>
               </svg>
-              <span>View run</span>
+              <span>View run<span class="sr-only">: {{$jobLabel}}</span></span>
             </a>
-            <button type="button" class="btn btn-outline theme-secondary job-config" aria-haspopup="dialog" aria-controls="job-config-dialog" aria-label="Configuration: {{.Name}}">Configuration</button>
+            <button type="button" class="btn btn-outline theme-secondary job-config" aria-haspopup="dialog" aria-controls="job-config-dialog" aria-label="Configuration: {{$jobLabel}}">Configuration</button>
             <div class="card-actions-more">
-              <button type="button" class="btn btn-outline theme-secondary" id="job-actions-{{.ID}}" data-bs-toggle="menu" data-bs-placement="bottom-end" aria-expanded="false" aria-label="More actions for {{.Name}}">More</button>
+              <button type="button" class="btn btn-outline theme-secondary" id="job-actions-{{.ID}}" data-bs-toggle="menu" data-bs-placement="bottom-end" aria-expanded="false" aria-label="More actions for {{$jobLabel}}">More</button>
               <div class="menu" aria-labelledby="job-actions-{{.ID}}">
                 <a href="/job/{{.GUID}}/collect" class="menu-item action collect d-none" data-method="POST">
                   <svg class="bi cloud-arrow-down-fill" width="20" height="20" fill="currentColor" color="purple" viewBox="0 0 20 20" aria-hidden="true">
                     <use xlink:href="/static/svg/bootstrap-icons.svg#cloud-arrow-down-fill"/>
                   </svg>
-                  <span>Collect crashes</span>
+                  <span>Collect crashes<span class="sr-only">: {{$jobLabel}}</span></span>
                 </a>
                 {{if not (.HasAlert) }}
                 <a href="/job/{{.GUID}}/alert" class="menu-item action alarm d-none" data-method="POST">
                   <svg class="bi alarm-fill" width="20" height="20" fill="currentColor" color="green" viewBox="0 0 20 20" aria-hidden="true">
                     <use xlink:href="/static/svg/bootstrap-icons.svg#alarm-fill"/>
                   </svg>
-                  <span>Enable email alert</span>
+                  <span>Enable email alert<span class="sr-only">: {{$jobLabel}}</span></span>
                 </a>
                 {{end}}
                 <a href="/job/{{.GUID}}/input" class="menu-item action upload">
                   <svg class="bi bi-upload" width="20" height="20" fill="currentColor" color="teal" viewBox="0 0 20 20" aria-hidden="true">
                     <use xlink:href="/static/svg/bootstrap-icons.svg#upload"/>
                   </svg>
-                  <span>Upload input files</span>
+                  <span>Upload input files<span class="sr-only">: {{$jobLabel}}</span></span>
                 </a>
                 <a href="/job/{{.GUID}}/download" class="menu-item job-download download d-none">
                   <svg class="bi bi-download" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20" aria-hidden="true">
                     <use xlink:href="/static/svg/bootstrap-icons.svg#download"/>
                   </svg>
-                  <span>Download crash samples</span>
+                  <span>Download crash samples<span class="sr-only">: {{$jobLabel}}</span></span>
                 </a>
                 <a href="/job/{{.GUID}}/export" class="menu-item action export">
                   <svg class="bi bi-box-arrow-right" width="20" height="20" fill="currentColor" color="#e67e22" viewBox="0 0 20 20" aria-hidden="true">
                     <use xlink:href="/static/svg/bootstrap-icons.svg#box-arrow-right"/>
                   </svg>
-                  <span>Export configuration</span>
+                  <span>Export configuration<span class="sr-only">: {{$jobLabel}}</span></span>
                 </a>
                 <a href="/job/{{.GUID}}/edit" class="menu-item action edit">
                   <svg class="bi bi-pencil" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20" aria-hidden="true">
                     <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
                   </svg>
-                  <span>Edit</span>
+                  <span>Edit<span class="sr-only">: {{$jobLabel}}</span></span>
                 </a>
                 <a href="/job/{{.GUID}}" class="menu-item action delete" data-method="DELETE" data-confirm-title="Delete job?" data-confirm-message="Delete job “{{.Name}}” (#{{.ID}}) from WinAFL Pet? This can't be undone.">
                   <svg class="bi bi-trash-fill" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20" aria-hidden="true">
                     <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
                   </svg>
-                  <span>Delete</span>
+                  <span>Delete<span class="sr-only">: {{$jobLabel}}</span></span>
                 </a>
               </div>
             </div>

@@ -13,6 +13,7 @@
     {{range .agents}}
     <div class="col sm:col-6 lg:col-4 mb-3">
       <div class="card agent" role="article" aria-label="Agent #{{ .ID }}: {{ .Name }}">
+        {{$agentLabel := printf "Agent #%d" .ID}}{{if trim .Name}}{{$agentLabel = printf "%s (Agent #%d)" (trim .Name) .ID}}{{end}}
 
         <div class="card-header card-summary">
           <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
@@ -43,7 +44,7 @@
               <svg class="bi" width="20" height="20" fill="currentColor" color="grey" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
               </svg>
-              <span>Check connection</span>
+              <span>Check connection<span class="sr-only">: {{$agentLabel}}</span></span>
             </a>
             {{- if (eq .Status 0) }}
             <span id="agent-check-help-{{.ID}}" class="form-text text-muted">Enable to check</span>
@@ -52,13 +53,13 @@
               <svg class="bi" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>
               </svg>
-              <span>Edit</span>
+              <span>Edit<span class="sr-only">: {{$agentLabel}}</span></span>
             </a>
             <a href="/agent/{{.GUID}}" class="btn btn-outline theme-secondary action delete" data-method="DELETE" data-confirm-title="Delete agent?" data-confirm-message="Delete agent “{{.Name}}” ({{.Host}}:{{.Port}}) from WinAFL Pet? This can't be undone.">
               <svg class="bi" width="20" height="20" fill="currentColor" color="red" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#trash-fill"/>
               </svg>
-              <span>Delete</span>
+              <span>Delete<span class="sr-only">: {{$agentLabel}}</span></span>
             </a>
             </div>
           </div>

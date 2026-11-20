@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Name the crash in each crash card action for screen readers and label unanalyzed crash cards as Unverified crash or Analysis unavailable.
 - Connect job and settings help text to its fields and clarify banner, CPU core, target offset and BugId directory help.
 - Move statistics, form feedback, and plot controls into HTML templates.
+- Clarify agent and job names in page context, choices and actions.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
