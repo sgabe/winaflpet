@@ -842,6 +842,26 @@ div:has(> .card.stat) {
 .card-summary .card-summary-badge.is-enabled { color: #15803d; background: #e8f6ee; border-color: #bfe5cd; }
 .card-summary .card-summary-badge.is-disabled { color: #475569; background: #f1f5f9; border-color: #cbd5e1; }
 
+.card.agent .card-summary-badge::before,
+.card.job .job-state::before {
+  content: "";
+  display: inline-block;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 7px;
+  height: 7px;
+  margin-inline-end: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.card.agent .card-summary-badge.is-disabled::before { background: transparent; border: 1px solid #94a3b8; }
+.card.job .job-state[data-state="stopped"]::before { background: #94a3b8; }
+.card.job .job-state[data-state="starting"]::before { background: #d97706; }
+.card.job .job-state[data-state="unknown"]::before { background: transparent; border: 1px dashed currentColor; }
+
+.card.agent:has(.card-summary-badge.is-disabled) { background-color: #fbfcfd; }
+
 .card-summary .card-summary-chevron {
   grid-column: 3;
   grid-row: 1;
@@ -1480,10 +1500,11 @@ div:has(> .card.stat) {
 .card.job .instance-indicator.state-queued,
 .card.job .instance-indicator.state-starting,
 .card.job .instance-indicator.state-bootstrapping { background: #fff6e0; border-color: #f2c46b; color: #b45309; }
+.card.job .instance-indicator.state-stopped { background: #fff; border-color: #cbd5e1; color: #64748b; }
 .card.job .instance-indicator.state-stopping { background: #fff3cd; border-color: #997404; color: #664d03; }
 .card.job .instance-indicator.state-failed,
 .card.job .instance-indicator.state-stop_failed { background: #f8d7da; border-color: #b02a37; color: #842029; }
-.card.job .instance-indicator.is-stale { border-style: dashed; background: #f8f9fa; }
+.card.job .instance-indicator.is-stale { border-style: dashed; border-color: #b8c2d0; background: #f8fafc; color: #64748b; }
 .card.job .instance-indicator.job-start:not(:disabled) { cursor: pointer; }
 .card.job .instance-indicator:focus-visible { outline: 2px solid #212529; outline-offset: 2px; }
 .card.job .instance-indicator:focus-visible::after {
@@ -3371,7 +3392,24 @@ footer .version:before {
 .card.job .job-state[data-state="running"] { color: #15803d; background: #e8f6ee; border-color: #bfe5cd; }
 .card.job .job-state[data-state="starting"] { color: #b45309; background: #fff6e0; border-color: #f6dc9f; }
 .card.job .job-state[data-state="stopped"] { color: #475569; background: #f1f5f9; border-color: #cbd5e1; }
-.card.job .job-state[data-state="unknown"] { color: #475569; background: #f1f5f9; border-color: #cbd5e1; border-style: dashed; }
+.card.job .job-state[data-state="unknown"] { color: #b91c1c; background: #fdeeee; border-color: #f1a9a9; border-style: dashed; }
+[data-status="unknown"] .card-list-filter-dot { border-color: #b91c1c; }
+
+.card.job::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  left: -1px;
+  height: 3px;
+  border-radius: 9px 9px 0 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.card.job:has(.job-state[data-state="running"])::before { background: #15803d; }
+.card.job:has(.job-state[data-state="starting"])::before { background: #d97706; }
+.card.job:has(.job-state[data-state="unknown"])::before { background: repeating-linear-gradient(90deg, #b91c1c 0 8px, transparent 8px 13px); }
 
 .card.crash .card-summary-count.crash-risk,
 .crash-risk-preview { font-weight: 600; }
