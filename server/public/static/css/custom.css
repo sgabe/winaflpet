@@ -266,6 +266,7 @@ main .page-heading h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: .375rem;
   min-height: 44px;
   margin: 0;
 }
@@ -662,14 +663,24 @@ a.navbar-brand i.fas {
 }
 
 .empty-state {
-  max-width: 40rem;
-  padding: 1.25rem 1.5rem;
-  border: 1px solid #e2e8f0;
-  border-left: 4px solid #c2410c;
+  padding: 3rem 1.5rem;
+  border: 1px dashed #cbd5e1;
   border-radius: 10px;
   background-color: #fff;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .08);
-  text-align: left;
+  text-align: center;
+}
+
+.empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background-color: #f1f5f9;
+  color: #64748b;
+  font-size: 22px;
 }
 
 .empty-state h2 {
@@ -680,18 +691,24 @@ a.navbar-brand i.fas {
 }
 
 .empty-state p {
-  margin: 0 0 1rem;
+  max-width: 32.5rem;
+  margin: 0 auto 1rem;
   color: #475569;
 }
 
 .empty-state-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: .5rem;
 }
 
 .empty-state-actions .btn,
 :not(.btn-group) > .empty-state-actions .btn + .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
   margin-left: 0;
 }
 
@@ -912,7 +929,8 @@ div:has(> .card.stat) {
 }
 
 .card-actions .btn .bi,
-.card-actions .menu-item .bi {
+.card-actions .menu-item .bi,
+.page-heading-actions .btn .bi {
   flex: 0 0 auto;
   color: inherit;
 }
@@ -1200,12 +1218,6 @@ div:has(> .card.stat) {
   margin-bottom: 1rem;
 }
 
-.crash-toolbar .nav-pills {
-  float: none;
-  margin: 0 0 0 auto;
-  order: 2;
-}
-
 .crash-toolbar .crash-pagination {
   min-width: 0;
   order: 1;
@@ -1265,12 +1277,8 @@ div:has(> .card.stat) {
 }
 
 @media (max-width: 575.98px) {
-  .crash-toolbar .nav-pills,
   .crash-toolbar .crash-pagination {
     flex: 1 1 100%;
-  }
-  .crash-toolbar .nav-pills {
-    margin-left: 0;
   }
 }
 
@@ -1298,24 +1306,21 @@ div:has(> .card.stat) {
 
 .card-actions .btn.delete,
 .card-actions .menu-item.delete,
-.crash-toolbar .nav-link.delete {
+.page-heading-actions .btn.delete {
   color: #b91c1c;
 }
 
-.card-actions .btn.delete {
+.card-actions .btn.delete,
+.page-heading-actions .btn.delete {
   border-color: #f1a9a9;
-}
-
-.crash-toolbar .nav-link.delete {
-  box-shadow: inset 0 0 0 1px #f1a9a9;
 }
 
 .card-actions .btn.delete:not(.disabled):hover,
 .card-actions .btn.delete:not(.disabled):focus-visible,
 .card-actions .menu-item.delete:not(.disabled):hover,
 .card-actions .menu-item.delete:not(.disabled):focus-visible,
-.crash-toolbar .nav-link.delete:not(.disabled):hover,
-.crash-toolbar .nav-link.delete:not(.disabled):focus-visible {
+.page-heading-actions .btn.delete:not(.disabled):hover,
+.page-heading-actions .btn.delete:not(.disabled):focus-visible {
   background-color: #fdeeee;
   color: #991b1b;
 }
@@ -2795,6 +2800,11 @@ footer .version:before {
   min-height: 44px;
 }
 
+.page-heading > .plot-toolbar {
+  margin-bottom: 0;
+  max-width: 100%;
+}
+
 .plot-instance {
   display: flex;
   flex-wrap: wrap;
@@ -3120,13 +3130,20 @@ footer .version:before {
   outline-offset: 2px;
 }
 
-.settings-panel > .job-form-intro {
+.settings-panel > .form-notice:not(.form-validation-summary) {
   margin-top: 1.5rem;
 }
 
 .form-required-marker {
   color: #b91c1c;
   font-weight: 600;
+}
+
+.form-optional-marker {
+  margin-left: .25rem;
+  font-size: .875em;
+  font-weight: 400;
+  color: #64748b;
 }
 
 @media (max-width: 767.98px) {

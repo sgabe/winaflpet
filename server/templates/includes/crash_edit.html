@@ -17,19 +17,19 @@
 
       <div class="settings-field settings-field-half">
         <label for="bugID" class="form-label">Bug ID</label>
-        <input type="text" class="form-control" name="bugID" id="bugID" aria-describedby="bugIDHelp" value="{{.crash.BugID}}" spellcheck="false">
+        <input type="text" class="form-control font-monospace" name="bugID" id="bugID" aria-describedby="bugIDHelp" value="{{.crash.BugID}}" spellcheck="false">
         <small id="bugIDHelp" class="form-text text-muted">BugId identifier. Its access type informs the heuristic risk. <span id="bugIDRisk" class="crash-risk-preview is-{{if .crash.Verified}}{{.crash.GetRisk}}{{else}}na{{end}}" role="status" aria-live="polite" title="Risk is based on the Bug ID access type and does not confirm exploitability.">Risk preview: {{if .crash.Verified}}{{if eq .crash.GetRisk "high"}}High{{else if eq .crash.GetRisk "medium"}}Medium{{else if eq .crash.GetRisk "low"}}Low{{else if eq .crash.GetRisk "none"}}None{{else}}Not assessed{{end}}{{else}}Not assessed{{end}}</span></small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="mod" class="form-label">Module</label>
-        <input type="text" class="form-control" name="mod" id="mod" aria-describedby="modHelp" value="{{.crash.Module}}" spellcheck="false">
+        <input type="text" class="form-control font-monospace" name="mod" id="mod" aria-describedby="modHelp" value="{{.crash.Module}}" spellcheck="false">
         <small id="modHelp" class="form-text text-muted">Module where the crash occurred</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="func" class="form-label">Function</label>
-        <input type="text" class="form-control" name="func" id="func" aria-describedby="funcHelp" value="{{.crash.Function}}" spellcheck="false">
+        <input type="text" class="form-control font-monospace" name="func" id="func" aria-describedby="funcHelp" value="{{.crash.Function}}" spellcheck="false">
         <small id="funcHelp" class="form-text text-muted">Function where the crash occurred</small>
       </div>
 
@@ -43,13 +43,13 @@
 
       <div class="settings-field settings-field-half">
         <label for="fuzzerID" class="form-label">Fuzzer ID</label>
-        <input type="text" class="form-control" name="fuzzerID" id="fuzzerID" aria-describedby="fuzzerIDHelp" value="{{.crash.FuzzerID}}" spellcheck="false">
+        <input type="text" class="form-control font-monospace" name="fuzzerID" id="fuzzerID" aria-describedby="fuzzerIDHelp" value="{{.crash.FuzzerID}}" spellcheck="false">
         <small id="fuzzerIDHelp" class="form-text text-muted">Fuzzer instance that found the crash</small>
       </div>
 
       <div class="settings-field">
         <label for="args" class="form-label">Args</label>
-        <input type="text" class="form-control" name="args" id="args" aria-describedby="argsHelp" value="{{.crash.Args}}" spellcheck="false">
+        <input type="text" class="form-control font-monospace" name="args" id="args" aria-describedby="argsHelp" value="{{.crash.Args}}" spellcheck="false">
         <small id="argsHelp" class="form-text text-muted">Path of the crashing input on the agent</small>
       </div>
 

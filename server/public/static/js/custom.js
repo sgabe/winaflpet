@@ -459,6 +459,12 @@ var filterCards = function(initial) {
         filterCardsEmpty = document.createElement("div");
         filterCardsEmpty.className = "empty-state card-list-empty";
         filterCardsEmpty.hidden = true;
+        var icon = document.createElement("span");
+        icon.className = "empty-icon";
+        icon.setAttribute("aria-hidden", "true");
+        var glyph = document.createElement("i");
+        glyph.className = "fas fa-search";
+        icon.appendChild(glyph);
         var heading = document.createElement("h2");
         heading.textContent = "No matching " + noun;
         var text = document.createElement("p");
@@ -471,6 +477,7 @@ var filterCards = function(initial) {
         clear.textContent = "Clear filters";
         clear.addEventListener("click", clearCardFilters);
         actions.appendChild(clear);
+        filterCardsEmpty.appendChild(icon);
         filterCardsEmpty.appendChild(heading);
         filterCardsEmpty.appendChild(text);
         filterCardsEmpty.appendChild(actions);
@@ -1362,7 +1369,7 @@ function initValidationSummaries() {
             var label = "";
             if (control.labels && control.labels.length) {
                 var copy = control.labels[0].cloneNode(true);
-                Array.prototype.forEach.call(copy.querySelectorAll(".form-required-marker"), function(marker) {
+                Array.prototype.forEach.call(copy.querySelectorAll(".form-required-marker, .form-optional-marker"), function(marker) {
                     marker.remove();
                 });
                 label = copy.textContent;

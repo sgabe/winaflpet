@@ -1,3 +1,11 @@
+{{ define "page-heading" }}{{ if .title }}
+    <div class="page-heading">
+        <div class="page-heading-text">
+            <h1>{{ .title }}</h1>
+            <p class="page-heading-subtitle">Per-instance fuzzer statistics reported by the agent.</p>
+        </div>
+    </div>
+    {{ end }}{{ end }}
 {{ define "content" }}
 {{ if .stats }}
 {{ $first := index .stats 0 }}
@@ -154,6 +162,7 @@
 
   {{else}}
     <section class="empty-state" aria-labelledby="job-stats-empty-title">
+      <span class="empty-icon" aria-hidden="true"><i class="fas fa-unlink"></i></span>
       <h2 id="job-stats-empty-title">No statistics received</h2>
       <p>Fuzzer statistics aren't available for this view. Check the agent connection and the job status from Jobs.</p>
       <div class="empty-state-actions">

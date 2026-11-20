@@ -2,19 +2,22 @@
 <div class="settings-layout"><div class="settings-main">
 <form class="settings-panel" method="POST" action="/settings" data-validation-summary>
 
+  <p class="form-notice">Enable alerts from a job card (More → Enable email alert). Messages are sent to the email address in your <a href="/user/edit">Profile</a>. Fields marked * are required.</p>
+
   <fieldset class="settings-section">
     <legend>SMTP server</legend>
     <p class="settings-description text-muted">Outgoing mail server used to send crash alert emails.</p>
     <div class="settings-fields">
 
       <div class="settings-field settings-field-half">
-        <label for="smtp_host" class="form-label">SMTP host</label>
-        <input type="text" class="form-control" id="smtp_host" name="smtp_host" value="{{.settings.Host}}" placeholder="smtp.example.com" required>
+        <label for="smtp_host" class="form-label">SMTP host<span class="form-required-marker" aria-hidden="true"> *</span></label>
+        <input type="text" class="form-control font-monospace" id="smtp_host" name="smtp_host" value="{{.settings.Host}}" placeholder="smtp.example.com" aria-describedby="smtp_host_help" required>
+        <small id="smtp_host_help" class="form-text text-muted">Hostname or IP address, without a port or URL scheme.</small>
       </div>
 
       <div class="settings-field settings-field-half">
-        <label for="smtp_port" class="form-label">SMTP port</label>
-        <input type="number" class="form-control" id="smtp_port" name="smtp_port" min="1" max="65535" value="{{.settings.Port}}" required>
+        <label for="smtp_port" class="form-label">SMTP port<span class="form-required-marker" aria-hidden="true"> *</span></label>
+        <input type="number" class="form-control font-monospace" id="smtp_port" name="smtp_port" min="1" max="65535" value="{{.settings.Port}}" required>
         <small class="form-text text-muted">Usually 587 for STARTTLS. Implicit TLS on port 465 is not supported.</small>
       </div>
 
@@ -27,13 +30,13 @@
     <div class="settings-fields">
 
       <div class="settings-field settings-field-half">
-        <label for="smtp_username" class="form-label">SMTP username</label>
+        <label for="smtp_username" class="form-label">SMTP username<span class="form-required-marker" aria-hidden="true"> *</span></label>
         <input type="text" class="form-control" id="smtp_username" name="smtp_username" value="{{.settings.Username}}" autocomplete="off" required>
         <small class="form-text text-muted">Also used as the sender address.</small>
       </div>
 
       <div class="settings-field settings-field-half">
-        <label for="smtp_password" class="form-label">SMTP password</label>
+        <label for="smtp_password" class="form-label">SMTP password<span class="form-optional-marker"> optional</span></label>
         <input type="password" class="form-control" id="smtp_password" name="smtp_password" autocomplete="new-password" aria-describedby="password_help">
         <small id="password_help" class="form-text text-muted">Leave blank to keep the current password.</small>
         <div class="form-check mt-2">
@@ -51,7 +54,7 @@
     <div class="settings-fields">
 
       <div class="settings-field settings-field-half">
-        <label for="alert_interval" class="form-label">Alert interval (minutes)</label>
+        <label for="alert_interval" class="form-label">Alert interval (minutes)<span class="form-required-marker" aria-hidden="true"> *</span></label>
         <input type="number" class="form-control" id="alert_interval" name="alert_interval" min="1" max="10080" value="{{.settings.Interval}}" required>
         <small class="form-text text-muted">Check for new crashes every 1–10080 minutes. Email is sent only when new crashes are found.</small>
       </div>

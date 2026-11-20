@@ -16,7 +16,7 @@
       </div>
 
       <div class="settings-field">
-        <label for="desc" class="form-label">Description</label>
+        <label for="desc" class="form-label">Description<span class="form-optional-marker"> optional</span></label>
         <textarea class="form-control" name="desc" id="desc" rows="3" aria-describedby="descHelp">{{.agent.Description}}</textarea>
         <small id="descHelp" class="form-text text-muted">Short description of the agent</small>
       </div>
@@ -31,20 +31,20 @@
 
       <div class="settings-field settings-field-half">
         <label for="host" class="form-label">Host</label>
-        <input type="text" class="form-control" name="host" id="host" aria-describedby="hostHelp" value="{{.agent.Host}}" spellcheck="false" autocapitalize="none">
+        <input type="text" class="form-control font-monospace" name="host" id="host" aria-describedby="hostHelp" value="{{.agent.Host}}" spellcheck="false" autocapitalize="none">
         <small id="hostHelp" class="form-text text-muted">Host name or IP address of the fuzzing machine</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="port" class="form-label">Port</label>
-        <input type="text" class="form-control" name="port" id="port" aria-describedby="portHelp" value="{{.agent.Port}}" inputmode="numeric">
+        <input type="text" class="form-control font-monospace" name="port" id="port" aria-describedby="portHelp" value="{{.agent.Port}}" inputmode="numeric">
         <small id="portHelp" class="form-text text-muted">Must match the port configured on the running agent</small>
       </div>
 
       <div class="settings-field">
         <label for="key" class="form-label">Key</label>
         <div class="secret-field">
-          <input type="password" class="form-control" name="key" id="key" aria-describedby="keyHelp" value="{{.agent.Key}}" autocomplete="off" spellcheck="false">
+          <input type="password" class="form-control font-monospace" name="key" id="key" aria-describedby="keyHelp" value="{{.agent.Key}}" autocomplete="off" spellcheck="false">
           <button type="button" class="btn btn-outline theme-secondary" data-secret-toggle="key" aria-controls="key" aria-pressed="false" aria-label="Show API key">Show</button>
         </div>
         <small id="keyHelp" class="form-text text-muted">Must match the authentication key of that agent</small>

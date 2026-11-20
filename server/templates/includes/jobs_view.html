@@ -1,10 +1,12 @@
 {{define "content"}}
 {{if not .jobs}}
   <section class="empty-state" aria-labelledby="empty-jobs-title">
+    <span class="empty-icon" aria-hidden="true"><i class="fas fa-microchip"></i></span>
     <h2 id="empty-jobs-title">No jobs yet</h2>
-    <p>Register an agent, then configure a job for it.</p>
+    <p>Create a job to run WinAFL on one of your agents, or import a job exported from another WinAFL Pet server.</p>
     <div class="empty-state-actions">
       <a href="/jobs/create" class="btn theme-primary">Create job</a>
+      <a href="/jobs/upload" class="btn btn-outline theme-secondary">Import jobs</a>
       <a href="/agents/view" class="btn btn-outline theme-secondary">View agents</a>
     </div>
   </section>

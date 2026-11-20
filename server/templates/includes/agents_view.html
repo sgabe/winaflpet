@@ -1,8 +1,9 @@
 {{define "content"}}
 {{if not .agents}}
   <section class="empty-state" aria-labelledby="empty-agents-title">
+    <span class="empty-icon" aria-hidden="true"><i class="fas fa-server"></i></span>
     <h2 id="empty-agents-title">No agents yet</h2>
-    <p>Register a Windows fuzzing machine to get started.</p>
+    <p>Register a fuzzing machine to start creating jobs. You need its host, port and the secret key generated during agent installation.</p>
     <div class="empty-state-actions">
       <a href="/agents/create" class="btn theme-primary">Add agent</a>
     </div>
@@ -29,8 +30,8 @@
           <div class="card-body">
             {{if .Description}}<p class="card-text card-description" title="{{ .Description }}">{{ .Description }}</p>{{else}}<p class="card-text card-description is-empty">No description</p>{{end}}
             <dl class="card-details">
-              <div class="card-detail"><dt>Host</dt><dd>{{ .Host }}</dd></div>
-              <div class="card-detail"><dt>Port</dt><dd>{{ .Port }}</dd></div>
+              <div class="card-detail"><dt>Host</dt><dd class="font-monospace">{{ .Host }}</dd></div>
+              <div class="card-detail"><dt>Port</dt><dd class="font-monospace">{{ .Port }}</dd></div>
               <div class="card-detail"><dt>Version</dt><dd>{{if .Version}}{{ .Version }}{{else}}<span class="text-muted">Not reported yet</span>{{end}}</dd></div>
             </dl>
             <div class="form-notice agent-check-result" role="status" aria-live="polite" hidden><strong class="agent-check-result-label">Last connection check</strong><span class="agent-check-result-message"></span></div>
@@ -38,12 +39,15 @@
 
           <div class="card-footer">
             <div class="card-actions">
-            <a href="/agent/{{.GUID}}/check" class="btn btn-outline theme-secondary action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST"{{if (eq .Status 0) }} aria-disabled="true" tabindex="-1"{{end}}>
+            <a href="/agent/{{.GUID}}/check" class="btn btn-outline theme-secondary action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST"{{if (eq .Status 0) }} aria-disabled="true" tabindex="-1" aria-describedby="agent-check-help-{{.ID}}"{{end}}>
               <svg class="bi" width="20" height="20" fill="currentColor" color="grey" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
               </svg>
               <span>Check connection</span>
             </a>
+            {{- if (eq .Status 0) }}
+            <span id="agent-check-help-{{.ID}}" class="form-text text-muted">Enable to check</span>
+            {{- end}}
             <a href="/agent/{{.GUID}}/edit" class="btn btn-outline theme-secondary action edit">
               <svg class="bi" width="20" height="20" fill="currentColor" color="brown" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#pencil"/>

@@ -41,12 +41,12 @@
 
       <div class="settings-field settings-field-half">
         <label for="banner" class="form-label">Banner</label>
-        <input type="text" class="form-control" name="banner" id="banner" aria-describedby="bannerHelp" placeholder="Enter banner">
+        <input type="text" class="form-control font-monospace" name="banner" id="banner" aria-describedby="bannerHelp" placeholder="Enter banner">
         <small id="bannerHelp" class="form-text text-muted">Short text banner to show on the screen</small>
       </div>
 
       <div class="settings-field">
-        <label for="desc" class="form-label">Description</label>
+        <label for="desc" class="form-label">Description<span class="form-optional-marker"> optional</span></label>
         <input type="text" class="form-control" name="desc" id="desc" aria-describedby="descHelp" placeholder="Enter short description">
         <small id="descHelp" class="form-text text-muted">Short description of the job</small>
       </div>
@@ -65,25 +65,25 @@
 
       <div class="settings-field settings-field-half">
         <label for="aflDir" class="form-label">AFL directory</label>
-        <input type="text" class="form-control" name="afl_dir" id="aflDir" aria-describedby="aflDirHelp" placeholder="Enter AFL directory">
+        <input type="text" class="form-control font-monospace" name="afl_dir" id="aflDir" aria-describedby="aflDirHelp" placeholder="Enter AFL directory">
         <small id="aflDirHelp" class="form-text text-muted">AFL directory on the remote machine</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="drioDir" class="form-label">DynamoRIO directory</label>
-        <input type="text" class="form-control" name="drio_dir" id="drioDir" aria-describedby="drioDirHelp" placeholder="Enter DynamoRIO directory">
+        <input type="text" class="form-control font-monospace" name="drio_dir" id="drioDir" aria-describedby="drioDirHelp" placeholder="Enter DynamoRIO directory">
         <small id="drioDirHelp" class="form-text text-muted">DynamoRIO directory on the remote machine</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="pyDir" class="form-label">Python directory</label>
-        <input type="text" class="form-control" name="py_dir" id="pyDir" aria-describedby="pyDirHelp" placeholder="Enter Python directory">
+        <input type="text" class="form-control font-monospace" name="py_dir" id="pyDir" aria-describedby="pyDirHelp" placeholder="Enter Python directory">
         <small id="pyDirHelp" class="form-text text-muted">Python directory on the remote machine</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="bugidDir" class="form-label">BugId directory</label>
-        <input type="text" class="form-control" name="bugid_dir" id="bugidDir" aria-describedby="bugidDirHelp" placeholder="Enter BugId directory">
+        <input type="text" class="form-control font-monospace" name="bugid_dir" id="bugidDir" aria-describedby="bugidDirHelp" placeholder="Enter BugId directory">
         <small id="bugidDirHelp" class="form-text text-muted">BugId directory on the remote machine</small>
       </div>
 
@@ -101,13 +101,13 @@
 
       <div class="settings-field settings-field-half">
         <label for="input" class="form-label">Input</label>
-        <input type="text" class="form-control" name="input" id="input" aria-describedby="inputHelp" placeholder="Enter input directory">
+        <input type="text" class="form-control font-monospace" name="input" id="input" aria-describedby="inputHelp" placeholder="Enter input directory">
         <small id="inputHelp" class="form-text text-muted">Input directory with test cases</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="output" class="form-label">Output</label>
-        <input type="text" class="form-control" name="output" id="output" aria-describedby="outputHelp" placeholder="Enter output directory">
+        <input type="text" class="form-control font-monospace" name="output" id="output" aria-describedby="outputHelp" placeholder="Enter output directory">
         <small id="outputHelp" class="form-text text-muted">Output directory for findings</small>
       </div>
 
@@ -127,14 +127,14 @@
       </div>
 
       <div class="settings-field settings-field-half">
-        <label for="memoryLimit" class="form-label">Memory limit</label>
+        <label for="memoryLimit" class="form-label">Memory limit<span class="form-optional-marker"> optional</span></label>
         <input type="text" class="form-control" name="memory_limit" id="memoryLimit" aria-describedby="memoryLimitHelp" placeholder="0">
         <small id="memoryLimitHelp" class="form-text text-muted">Memory limit for the target process</small>
       </div>
 
       <div class="settings-field settings-field-half">
-        <label for="extrasDir" class="form-label">Extras directory</label>
-        <input type="text" class="form-control" name="extras_dir" id="extrasDir" aria-describedby="extrasDirHelp" placeholder="Enter extras directory">
+        <label for="extrasDir" class="form-label">Extras directory<span class="form-optional-marker"> optional</span></label>
+        <input type="text" class="form-control font-monospace" name="extras_dir" id="extrasDir" aria-describedby="extrasDirHelp" placeholder="Enter extras directory">
         <small id="extrasDirHelp" class="form-text text-muted">Optional fuzzer dictionary</small>
       </div>
 
@@ -168,7 +168,7 @@
 
       <div class="settings-field settings-field-half">
         <label for="coverageModule" class="form-label">Coverage module(s)</label>
-        <input type="text" class="form-control" name="cov_module" id="coverageModule" aria-describedby="coverageModuleHelp" placeholder="Enter coverage module(s)">
+        <input type="text" class="form-control font-monospace" name="cov_module" id="coverageModule" aria-describedby="coverageModuleHelp" placeholder="Enter coverage module(s)">
         <small id="coverageModuleHelp" class="form-text text-muted">Module(s) to collect coverage for</small>
       </div>
 
@@ -182,19 +182,19 @@
 
       <div class="settings-field settings-field-half">
         <label for="targetModule" class="form-label">Target module</label>
-        <input type="text" class="form-control" name="target_module" id="targetModule" aria-describedby="targetModuleHelp" placeholder="Enter target module">
+        <input type="text" class="form-control font-monospace" name="target_module" id="targetModule" aria-describedby="targetModuleHelp" placeholder="Enter target module">
         <small id="targetModuleHelp" class="form-text text-muted">Module with target function to fuzz</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="targetMethod" class="form-label">Target method</label>
-        <input type="text" class="form-control" name="target_method" id="targetMethod" aria-describedby="targetMethodHelp" placeholder="Enter target method">
+        <input type="text" class="form-control font-monospace" name="target_method" id="targetMethod" aria-describedby="targetMethodHelp" placeholder="Enter target method">
         <small id="targetMethodHelp" class="form-text text-muted">Name of the method to fuzz</small>
       </div>
 
       <div class="settings-field settings-field-half">
         <label for="targetOffset" class="form-label">Target offset</label>
-        <input type="text" class="form-control" name="target_offset" id="targetOffset" aria-describedby="targetOffsetHelp" placeholder="Enter target offset">
+        <input type="text" class="form-control font-monospace" name="target_offset" id="targetOffset" aria-describedby="targetOffsetHelp" placeholder="Enter target offset">
         <small id="targetOffsetHelp" class="form-text text-muted">Offset to target function</small>
       </div>
 
@@ -208,7 +208,7 @@
 
       <div class="settings-field">
         <label for="targetApp" class="form-label">Target application command line</label>
-        <input type="text" class="form-control" name="target_app" id="targetApp" aria-describedby="targetAppHelp" placeholder="Enter application">
+        <input type="text" class="form-control font-monospace" name="target_app" id="targetApp" aria-describedby="targetAppHelp" placeholder="Enter application">
         <small id="targetAppHelp" class="form-text text-muted">Target application or harness to execute for fuzzing (e.g. harness.exe)</small>
       </div>
 
@@ -232,14 +232,14 @@
       <h3 class="settings-subgroup-heading">Libraries</h3>
 
       <div class="settings-field settings-field-half">
-        <label for="attachLib" class="form-label">Attach library</label>
-        <input type="text" class="form-control" name="attach_lib" id="attachLib" aria-describedby="attachLibHelp" placeholder="Enter module to watch">
+        <label for="attachLib" class="form-label">Attach library<span class="form-optional-marker"> optional</span></label>
+        <input type="text" class="form-control font-monospace" name="attach_lib" id="attachLib" aria-describedby="attachLibHelp" placeholder="Enter module to watch">
         <small id="attachLibHelp" class="form-text text-muted">Library identifying a unique process to attach to</small>
       </div>
 
       <div class="settings-field settings-field-half">
-        <label for="customLib" class="form-label">Custom library</label>
-        <input type="text" class="form-control" name="custom_lib" id="customLib" aria-describedby="customLibHelp" placeholder="Enter path to custom module">
+        <label for="customLib" class="form-label">Custom library<span class="form-optional-marker"> optional</span></label>
+        <input type="text" class="form-control font-monospace" name="custom_lib" id="customLib" aria-describedby="customLibHelp" placeholder="Enter path to custom module">
         <small id="customLibHelp" class="form-text text-muted">Path to user-defined library for custom test cases processing</small>
       </div>
 
@@ -334,14 +334,14 @@
       <h3 class="settings-subgroup-heading">Postprocessor</h3>
 
       <div class="settings-field settings-field-half">
-        <label for="postLib" class="form-label">Postprocessor library name</label>
-        <input type="text" class="form-control" name="post_lib" id="postLib" aria-describedby="postLibHelp" placeholder="Enter postprocessor name">
+        <label for="postLib" class="form-label">Postprocessor library name<span class="form-optional-marker"> optional</span></label>
+        <input type="text" class="form-control font-monospace" name="post_lib" id="postLib" aria-describedby="postLibHelp" placeholder="Enter postprocessor name">
         <small id="postLibHelp" class="form-text text-muted">Name (or full path) of the postprocessor library to load</small>
       </div>
 
       <div class="settings-field settings-field-half">
-        <label for="postLibArgs" class="form-label">Postprocessor library arguments</label>
-        <input type="text" class="form-control" name="post_lib_args" id="postLibArgs" aria-describedby="postLibArgsHelp" placeholder="Enter postprocessor arguments">
+        <label for="postLibArgs" class="form-label">Postprocessor library arguments<span class="form-optional-marker"> optional</span></label>
+        <input type="text" class="form-control font-monospace" name="post_lib_args" id="postLibArgs" aria-describedby="postLibArgsHelp" placeholder="Enter postprocessor arguments">
         <small id="postLibArgsHelp" class="form-text text-muted">Custom arguments (space-separated) for the postprocessor library</small>
       </div>
 

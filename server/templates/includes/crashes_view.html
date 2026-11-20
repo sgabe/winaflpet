@@ -86,28 +86,20 @@
 {{define "content"}}
 {{if not .crashes}}
   <section class="empty-state" aria-labelledby="empty-crashes-title">
+    <span class="empty-icon" aria-hidden="true"><i class="fas fa-bug"></i></span>
     <h2 id="empty-crashes-title">No crashes collected</h2>
-    <p>Collected crashes appear here for review.</p>
+    <p>Crashes appear here after you use Collect crashes on a running job.</p>
     <div class="empty-state-actions">
       <a href="/jobs/view" class="btn btn-outline theme-secondary">View jobs</a>
     </div>
   </section>
 {{else}}
 
+  {{if gt totalPages 1}}
   <div class="crash-toolbar">
-  <ul class="nav nav-pills">
-    <li class="nav-item">
-      <a href="/crashes" class="nav-link action delete" data-method="DELETE" data-confirm-title="Delete all crashes?" data-confirm-message="Delete all crash records from WinAFL Pet, including those on other pages? This can't be undone.">
-        <svg class="bi" width="1.5em" height="1.5em" fill="currentColor" color="red" aria-hidden="true">
-          <use xlink:href="/static/svg/bootstrap-icons.svg#eraser-fill"/>
-        </svg>
-        <span>Delete all crashes</span>
-      </a>
-    </li>
-  </ul>
-
   {{template "pagination" .currentPage}}
   </div>
+  {{end}}
   <div id="cards" class="row row-cols-3">
 
   {{range .crashes}}
@@ -181,10 +173,10 @@
   <p class="card-text">{{if .Description}}{{ .Description }}{{else if not .Verified}}Not analyzed yet. Verify runs BugId to analyze this crash.{{else if not .Function}}BugId did not report a function for this crash.{{else}}No description{{end}}</p>
   <dl class="card-details">
     <div class="card-detail"><dt>Job</dt><dd>{{ .GetJob.Name }} (#{{ .JobID }})</dd></div>
-    <div class="card-detail"><dt>Fuzzer ID</dt><dd>{{if .FuzzerID}}{{ .FuzzerID }}{{else}}&mdash;{{end}}</dd></div>
-    <div class="card-detail"><dt>Bug ID</dt><dd>{{if .BugID}}{{ .BugID }}{{else}}&mdash;{{end}}</dd></div>
-    <div class="card-detail"><dt>Module</dt><dd>{{if .Module}}{{ .Module }}{{else}}&mdash;{{end}}</dd></div>
-    <div class="card-detail"><dt>Function</dt><dd>{{if .Function}}{{ .Function }}{{else}}&mdash;{{end}}</dd></div>
+    <div class="card-detail"><dt>Fuzzer ID</dt><dd class="font-monospace">{{if .FuzzerID}}{{ .FuzzerID }}{{else}}&mdash;{{end}}</dd></div>
+    <div class="card-detail"><dt>Bug ID</dt><dd class="font-monospace">{{if .BugID}}{{ .BugID }}{{else}}&mdash;{{end}}</dd></div>
+    <div class="card-detail"><dt>Module</dt><dd class="font-monospace">{{if .Module}}{{ .Module }}{{else}}&mdash;{{end}}</dd></div>
+    <div class="card-detail"><dt>Function</dt><dd class="font-monospace">{{if .Function}}{{ .Function }}{{else}}&mdash;{{end}}</dd></div>
     <div class="card-detail card-detail-wide"><dt>Impact</dt><dd>{{if .Impact}}{{ .Impact }}{{else}}&mdash;{{end}}</dd></div>
     {{- if .Args }}
     {{template "crashArguments" .}}

@@ -1,8 +1,16 @@
+{{define "page-heading"}}
+    <div class="page-heading">
+        {{if .title}}<div class="page-heading-text">
+            <h1>{{.title}}</h1>
+            <p class="page-heading-subtitle">Progress of one fuzzer instance over time, from the agent's plot data.</p>
+        </div>
+        {{end}}<div class="plot-toolbar page-heading-actions">
+            <a href="/jobs/view" id="plot-back-link">Back to jobs</a>
+            <button type="button" id="plot-refresh" class="btn btn-outline theme-secondary">Refresh plot data</button>
+        </div>
+    </div>
+    {{end}}
 {{define "content"}}
-<div class="plot-toolbar">
-  <a href="/jobs/view" id="plot-back-link">Back to jobs</a>
-  <button type="button" id="plot-refresh" class="btn btn-outline theme-secondary">Refresh plot data</button>
-</div>
 <p id="plot-refresh-status" class="plot-refresh-status" role="status" aria-live="polite" hidden></p>
 <div id="plots">
 {{range .plots}}
@@ -12,6 +20,7 @@
   </figure>
 {{else}}
   <section class="empty-state" aria-labelledby="plot-empty-title">
+    <span class="empty-icon" aria-hidden="true"><i class="fas fa-chart-line"></i></span>
     <h2 id="plot-empty-title">No plot images yet</h2>
     <p>Plot images appear once the instance has written plot data. Use Refresh plot data above to fetch it from the agent.</p>
   </section>
