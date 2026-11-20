@@ -770,8 +770,13 @@ div:has(> .card.stat) {
   border-bottom: 1px solid transparent;
 }
 
-.card .card-header.card-summary:has(> .card-toggle[aria-expanded="true"]) {
+.card .card-header.card-summary:has(> .card-summary-heading > .card-toggle[aria-expanded="true"]) {
   border-bottom-color: #e2e8f0;
+}
+
+.card-summary > .card-summary-heading {
+  margin: 0;
+  font: inherit;
 }
 
 .card-summary .card-toggle {

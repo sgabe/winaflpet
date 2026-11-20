@@ -107,8 +107,9 @@
     <div class="card crash {{if not .Verified }}unverified{{end}}{{if and .Verified (not .Function) }}unavailable{{end}}" data-job-id="{{.JobID}}" data-function="{{.Function}}" data-risk="{{if .Verified}}{{.GetRisk}}{{else}}na{{end}}" role="article" aria-label="Crash #{{ .ID }}: {{if .Verified}}{{if .Function}}{{if .Label}}{{ .Label }}{{else}}{{ .Function }}{{end}}{{else}}Analysis unavailable{{end}}{{else}}Unverified crash{{end}}">
       {{$jobName := .GetJob.Name}}
       <div class="card-header card-summary">
+        <h2 class="card-summary-heading" aria-labelledby="crash-title-{{.ID}}">
         <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
-          <span class="card-summary-title" title="{{if .Verified}}{{if .Function}}{{if .Label}}{{ .Label }}{{else}}{{ .Function }}{{end}}{{else}}Analysis unavailable{{end}}{{else}}Unverified crash{{end}}">
+          <span id="crash-title-{{.ID}}" class="card-summary-title" title="{{if .Verified}}{{if .Function}}{{if .Label}}{{ .Label }}{{else}}{{ .Function }}{{end}}{{else}}Analysis unavailable{{end}}{{else}}Unverified crash{{end}}">
           {{- if .Verified }}
             {{- if .Function }}
               {{- if .Label }}<span class="label">{{ .Label }}</span>
@@ -137,6 +138,7 @@
           <span class="card-summary-count crash-risk is-na" title="Risk is based on the Bug ID access type and does not confirm exploitability.">Risk: Not assessed</span>
           {{- end}}
         </button>
+        </h2>
       </div>
       <div id="collapse-{{ .ID }}" class="collapse collapsed">
         {{template "crashContext" .}}

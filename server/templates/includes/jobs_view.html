@@ -19,8 +19,9 @@
         {{$agent := .GetAgent}}
         {{$jobLabel := printf "Job #%d" .ID}}{{if trim .Name}}{{$jobLabel = printf "%s (Job #%d)" (trim .Name) .ID}}{{end}}
         <div class="card-header card-summary">
+          <h2 class="card-summary-heading" aria-labelledby="job-title-{{.ID}}">
           <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
-            <span class="card-summary-title name" title="{{$jobName}}">{{$jobName}}</span>
+            <span id="job-title-{{.ID}}" class="card-summary-title name" title="{{$jobName}}">{{$jobName}}</span>
             <span class="card-summary-badge job-state" data-state="unknown">Status unknown</span>
             <i class="fas fa-chevron-down card-summary-chevron" aria-hidden="true"></i>
             <span class="card-summary-meta">
@@ -30,6 +31,7 @@
             </span>
             <span class="card-summary-count job-running" title="Running instances have not been observed yet.">Status unknown</span>
           </button>
+          </h2>
         </div>
 
         <div id="collapse-{{ .ID }}" class="collapse collapsed">

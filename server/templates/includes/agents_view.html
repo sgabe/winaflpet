@@ -17,8 +17,9 @@
         {{$agentLabel := printf "Agent #%d" .ID}}{{if trim .Name}}{{$agentLabel = printf "%s (Agent #%d)" (trim .Name) .ID}}{{end}}
 
         <div class="card-header card-summary">
+          <h2 class="card-summary-heading" aria-labelledby="agent-title-{{.ID}}">
           <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
-            <span class="card-summary-title name" title="{{ $agentName }}">{{ $agentName }}</span>
+            <span id="agent-title-{{.ID}}" class="card-summary-title name" title="{{ $agentName }}">{{ $agentName }}</span>
             <span class="card-summary-badge {{if .Status}}is-enabled{{else}}is-disabled{{end}}">{{if .Status}}Enabled{{else}}Disabled{{end}}</span>
             <i class="fas fa-chevron-down card-summary-chevron" aria-hidden="true"></i>
             <span class="card-summary-meta">
@@ -26,6 +27,7 @@
               <span class="card-summary-label font-monospace" title="{{.Host}}:{{.Port}}">{{.Host}}:{{.Port}}</span>
             </span>
           </button>
+          </h2>
         </div>
 
         <div id="collapse-{{ .ID }}" class="collapse collapsed">
