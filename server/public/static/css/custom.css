@@ -1960,6 +1960,7 @@ form[data-validation-summary] .form-control[aria-invalid="true"]:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: .375rem;
   min-height: 44px;
   margin-left: 0;
 }

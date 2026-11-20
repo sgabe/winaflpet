@@ -96,9 +96,9 @@
   </dl>
   <p class="settings-aside-note">Risk is a heuristic from the Bug ID access type and does not confirm exploitability.</p>
   <div class="settings-aside-actions">
-    <a href="/crash/{{.crash.GUID}}/download" class="btn btn-outline theme-secondary action download" data-type="binary" data-method="POST">Download sample</a>
+    <a href="/crash/{{.crash.GUID}}/download" class="btn btn-outline theme-secondary action download" data-type="binary" data-method="POST"><i class="fas fa-download" aria-hidden="true"></i> Download sample</a>
     {{- if .crash.Verified}}
-    <a href="/crash/{{.crash.GUID}}/report" class="btn btn-outline theme-secondary crash-report" data-method="POST">Report</a>
+    <a href="/crash/{{.crash.GUID}}/report" class="btn btn-outline theme-secondary crash-report" data-method="POST"><i class="fas fa-file-alt" aria-hidden="true"></i> Report</a>
     {{- end}}
   </div>
 </aside>

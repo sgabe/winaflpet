@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Icons to new agent, new job, and import jobs actions.
 - Risk bars to crash cards, details, editing and previews.
 - Onboarding step numbers to HTML and accessible headings.
+- Add icons to saved connection check and crash actions.
 
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.
