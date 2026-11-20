@@ -12,7 +12,7 @@
   <div id="cards" class="row row-cols-3">
     {{range .jobs}}
     <div class="col sm:col-6 lg:col-4 mb-3">
-      <div class="card job" data-guid="{{.GUID}}" data-cores="{{.Cores}}" data-agent-id="{{.AgentID}}">
+      <div class="card job" role="article" aria-label="Job #{{.ID}}: {{.Name}}" data-guid="{{.GUID}}" data-cores="{{.Cores}}" data-agent-id="{{.AgentID}}">
         {{$agent := .GetAgent}}
         <div class="card-header card-summary">
           <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
@@ -34,7 +34,7 @@
               <div class="job-progress small" role="status">Checking agent...</div>
               <div class="instance-progress small"></div>
             </section>
-            <p class="card-text truncate">{{ .Desc }}</p>
+            {{if .Desc}}<p class="card-text card-description" title="{{ .Desc }}">{{ .Desc }}</p>{{else}}<p class="card-text card-description is-empty">No description</p>{{end}}
             <dl class="card-details">
               <div class="card-detail"><dt>Instrumentation</dt><dd>{{.InstMode}}</dd></div>
               <div class="card-detail card-detail-wide"><dt>Coverage</dt><dd>{{.CoverageType}} for {{.CoverageModule}}</dd></div>

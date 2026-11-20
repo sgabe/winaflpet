@@ -14,14 +14,6 @@ $(function () {
         Tooltip.getOrCreateInstance(element);
     });
 
-    $('.truncate').each(function() {
-        var text = $(this).text();
-        if (text.length > 120) {
-            var truncated = text.trim().substring(0, 120).split(' ').slice(0, -1).join(' ');
-            $(this).text(truncated.replace(/[!-\/:-@\[-`{-~]$/, '') + '...');
-        }
-    });
-
     setInterval(function(){
         $.ajax({
             url: "/user/refresh",

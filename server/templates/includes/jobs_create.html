@@ -3,8 +3,8 @@
 <form id="createJob" class="create job settings-panel" method="PUT" enctype="multipart/form-data" action="/jobs/create" data-validation-summary>
 
   <fieldset class="settings-section">
-    <legend>General settings</legend>
-    <p class="settings-description text-muted">Choose the agent and CPU cores, and identify the job.</p>
+    <legend>General</legend>
+    <p class="settings-description text-muted">Which agent runs the job, how many CPU cores it uses and how it is identified.</p>
     <div class="settings-fields">
 
       <div class="settings-field settings-field-half">
@@ -64,9 +64,9 @@
       </div>
 
       <div class="settings-field settings-field-half">
-        <label for="drioDir" class="form-label">DynamorIO directory</label>
-        <input type="text" class="form-control" name="drio_dir" id="drioDir" aria-describedby="drioDirHelp" placeholder="Enter DynamorIO directory">
-        <small id="drioDirHelp" class="form-text text-muted">DynamorIO directory on the remote machine</small>
+        <label for="drioDir" class="form-label">DynamoRIO directory</label>
+        <input type="text" class="form-control" name="drio_dir" id="drioDir" aria-describedby="drioDirHelp" placeholder="Enter DynamoRIO directory">
+        <small id="drioDirHelp" class="form-text text-muted">DynamoRIO directory on the remote machine</small>
       </div>
 
       <div class="settings-field settings-field-half">
@@ -85,8 +85,8 @@
   </fieldset>
 
   <fieldset class="settings-section">
-    <legend>Basic parameters</legend>
-    <p class="settings-description text-muted">Test case directories, delivery, limits and fuzzing modes.</p>
+    <legend>Input &amp; output</legend>
+    <p class="settings-description text-muted">Test case and findings directories, sample delivery, per-run limits and an optional dictionary.</p>
     <div class="settings-fields">
 
       <div class="settings-field settings-field-half">
@@ -117,6 +117,111 @@
       </div>
 
       <div class="settings-field settings-field-half">
+        <label for="memoryLimit" class="form-label">Memory limit</label>
+        <input type="text" class="form-control" name="memory_limit" id="memoryLimit" aria-describedby="memoryLimitHelp" placeholder="0">
+        <small id="memoryLimitHelp" class="form-text text-muted">Memory limit for the target process</small>
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="extrasDir" class="form-label">Extras directory</label>
+        <input type="text" class="form-control" name="extras_dir" id="extrasDir" aria-describedby="extrasDirHelp" placeholder="Enter extras directory">
+        <small id="extrasDirHelp" class="form-text text-muted">Optional fuzzer dictionary</small>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset class="settings-section">
+    <legend>Instrumentation &amp; target</legend>
+    <p class="settings-description text-muted">How the target is instrumented, which function is fuzzed and which application runs it.</p>
+    <div class="settings-fields">
+
+      <h3 class="settings-subgroup-heading">Instrumentation</h3>
+
+      <div class="settings-field settings-field-half">
+        <label for="instMode" class="form-label">Instrumentation mode</label>
+        <select class="form-control" name="inst_mode" id="instMode">
+          <option value="DynamoRIO">DynamoRIO</option>
+          <option value="TinyInst">TinyInst</option>
+        </select>
+        <small id="instModeHelp" class="form-text text-muted">Tool used to instrument the target</small>
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="coverageType" class="form-label">Coverage type</label>
+        <select class="form-control" name="cov_type" id="coverageType">
+          <option value="bb">Basic block</option>
+          <option value="edge">Edge</option>
+        </select>
+        <small id="coverageTypeHelp" class="form-text text-muted">The type of coverage being recorded</small>
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="coverageModule" class="form-label">Coverage module(s)</label>
+        <input type="text" class="form-control" name="cov_module" id="coverageModule" aria-describedby="coverageModuleHelp" placeholder="Enter coverage module(s)">
+        <small id="coverageModuleHelp" class="form-text text-muted">Module(s) to collect coverage for</small>
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="fuzzIter" class="form-label">Fuzz iterations</label>
+        <input type="number" class="form-control" name="fuzz_iter" id="fuzzIter" aria-describedby="fuzzIterHelp" placeholder="5000" required>
+        <small id="fuzzIterHelp" class="form-number">Fuzzing iterations to perform</small>
+      </div>
+
+      <h3 class="settings-subgroup-heading">Target function</h3>
+
+      <div class="settings-field settings-field-half">
+        <label for="targetModule" class="form-label">Target module</label>
+        <input type="text" class="form-control" name="target_module" id="targetModule" aria-describedby="targetModuleHelp" placeholder="Enter target module">
+        <small id="targetModuleHelp" class="form-text text-muted">Module with target function to fuzz</small>
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="targetMethod" class="form-label">Target method</label>
+        <input type="text" class="form-control" name="target_method" id="targetMethod" aria-describedby="targetMethodHelp" placeholder="Enter target method">
+        <small id="targetMethodHelp" class="form-text text-muted">Name of the method to fuzz</small>
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="targetOffset" class="form-label">Target offset</label>
+        <input type="text" class="form-control" name="target_offset" id="targetOffset" aria-describedby="targetOffsetHelp" placeholder="Enter target offset">
+        <small id="targetOffsetHelp" class="form-text text-muted">Offset to target function</small>
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="targetNArgs" class="form-label">Target argument count</label>
+        <input type="number" class="form-control" name="target_nargs" id="targetNArgs" aria-describedby="targetNArgsHelp" placeholder="1" required>
+        <small id="targetNArgsHelp" class="form-number">Number of arguments the fuzzed method takes</small>
+      </div>
+
+      <h3 class="settings-subgroup-heading">Target application</h3>
+
+      <div class="settings-field">
+        <label for="targetApp" class="form-label">Target application command line</label>
+        <input type="text" class="form-control" name="target_app" id="targetApp" aria-describedby="targetAppHelp" placeholder="Enter application">
+        <small id="targetAppHelp" class="form-text text-muted">Target application or harness to execute for fuzzing (e.g. harness.exe)</small>
+      </div>
+
+      <div class="settings-field settings-field-half">
+        <label for="targetArch" class="form-label">Architecture</label>
+        <select class="form-control" name="target_arch" id="targetArch">
+          <option>x86</option>
+          <option>x64</option>
+        </select>
+        <small id="targetArchHelp" class="form-text text-muted">Target architecture</small>
+      </div>
+
+    </div>
+  </fieldset>
+
+  <fieldset class="settings-section">
+    <legend>Advanced</legend>
+    <p class="settings-description text-muted">Optional libraries, fuzzer modes, environment variables and a postprocessor library.</p>
+    <div class="settings-fields">
+
+      <h3 class="settings-subgroup-heading">Libraries</h3>
+
+      <div class="settings-field settings-field-half">
         <label for="attachLib" class="form-label">Attach library</label>
         <input type="text" class="form-control" name="attach_lib" id="attachLib" aria-describedby="attachLibHelp" placeholder="Enter module to watch">
         <small id="attachLibHelp" class="form-text text-muted">Library identifying a unique process to attach to</small>
@@ -128,17 +233,7 @@
         <small id="customLibHelp" class="form-text text-muted">Path to user-defined library for custom test cases processing</small>
       </div>
 
-      <div class="settings-field settings-field-half">
-        <label for="extrasDir" class="form-label">Extras directory</label>
-        <input type="text" class="form-control" name="extras_dir" id="extrasDir" aria-describedby="extrasDirHelp" placeholder="Enter extras directory">
-        <small id="extrasDirHelp" class="form-text text-muted">Optional fuzzer dictionary</small>
-      </div>
-
-      <div class="settings-field settings-field-half">
-        <label for="memoryLimit" class="form-label">Memory limit</label>
-        <input type="text" class="form-control" name="memory_limit" id="memoryLimit" aria-describedby="memoryLimitHelp" placeholder="0">
-        <small id="memoryLimitHelp" class="form-text text-muted">Memory limit for the target process</small>
-      </div>
+      <h3 class="settings-subgroup-heading">Fuzzer modes</h3>
 
       <div class="settings-field settings-field-half form-field">
         <div class="switch">
@@ -196,13 +291,7 @@
         <label for="bugBucket">Bug bucket</label>
       </div>
 
-    </div>
-  </fieldset>
-
-  <fieldset class="settings-section">
-    <legend>Environment variables</legend>
-    <p class="settings-description text-muted">Fuzzer environment flags and an optional postprocessor library.</p>
-    <div class="settings-fields">
+      <h3 class="settings-subgroup-heading">Environment variables</h3>
 
       <div class="settings-field settings-field-half form-field">
         <div class="switch">
@@ -232,6 +321,8 @@
         <label for="autoresume">Autoresume</label>
       </div>
 
+      <h3 class="settings-subgroup-heading">Postprocessor</h3>
+
       <div class="settings-field settings-field-half">
         <label for="postLib" class="form-label">Postprocessor library name</label>
         <input type="text" class="form-control" name="post_lib" id="postLib" aria-describedby="postLibHelp" placeholder="Enter postprocessor name">
@@ -242,91 +333,6 @@
         <label for="postLibArgs" class="form-label">Postprocessor library arguments</label>
         <input type="text" class="form-control" name="post_lib_args" id="postLibArgs" aria-describedby="postLibArgsHelp" placeholder="Enter postprocessor arguments">
         <small id="postLibArgsHelp" class="form-text text-muted">Custom arguments (space-separated) for the postprocessor library</small>
-      </div>
-
-    </div>
-  </fieldset>
-
-  <fieldset class="settings-section">
-    <legend>Instrumentation settings</legend>
-    <p class="settings-description text-muted">Instrumentation tool, coverage collection and the target function.</p>
-    <div class="settings-fields">
-
-      <div class="settings-field settings-field-half">
-        <label for="instMode" class="form-label">Instrumentation mode</label>
-        <select class="form-control" name="inst_mode" id="instMode">
-          <option value="DynamoRIO">DynamoRIO</option>
-          <option value="TinyInst">TinyInst</option>
-        </select>
-        <small id="instModeHelp" class="form-text text-muted">Tool used to instrument the target</small>
-      </div>
-
-      <div class="settings-field settings-field-half">
-        <label for="coverageModule" class="form-label">Coverage module(s)</label>
-        <input type="text" class="form-control" name="cov_module" id="coverageModule" aria-describedby="coverageModuleHelp" placeholder="Enter coverage module(s)">
-        <small id="coverageModuleHelp" class="form-text text-muted">Module(s) to collect coverage for</small>
-      </div>
-
-      <div class="settings-field settings-field-half">
-        <label for="coverageType" class="form-label">Coverage type</label>
-        <select class="form-control" name="cov_type" id="coverageType">
-          <option value="bb">Basic block</option>
-          <option value="edge">Edge</option>
-        </select>
-        <small id="coverageTypeHelp" class="form-text text-muted">The type of coverage being recorded</small>
-      </div>
-
-      <div class="settings-field settings-field-half">
-        <label for="fuzzIter" class="form-label">Fuzz iterations</label>
-        <input type="number" class="form-control" name="fuzz_iter" id="fuzzIter" aria-describedby="fuzzIterHelp" placeholder="5000" required>
-        <small id="fuzzIterHelp" class="form-number">Fuzzing iterations to perform</small>
-      </div>
-
-      <div class="settings-field settings-field-half">
-        <label for="targetModule" class="form-label">Target module</label>
-        <input type="text" class="form-control" name="target_module" id="targetModule" aria-describedby="targetModuleHelp" placeholder="Enter target module">
-        <small id="targetModuleHelp" class="form-text text-muted">Module with target function to fuzz</small>
-      </div>
-
-      <div class="settings-field settings-field-half">
-        <label for="targetMethod" class="form-label">Target method</label>
-        <input type="text" class="form-control" name="target_method" id="targetMethod" aria-describedby="targetMethodHelp" placeholder="Enter target method">
-        <small id="targetMethodHelp" class="form-text text-muted">Name of the method to fuzz</small>
-      </div>
-
-      <div class="settings-field settings-field-half">
-        <label for="targetOffset" class="form-label">Target offset</label>
-        <input type="text" class="form-control" name="target_offset" id="targetOffset" aria-describedby="targetOffsetHelp" placeholder="Enter target offset">
-        <small id="targetOffsetHelp" class="form-text text-muted">Offset to target function</small>
-      </div>
-
-      <div class="settings-field settings-field-half">
-        <label for="targetNArgs" class="form-label">Target argument count</label>
-        <input type="number" class="form-control" name="target_nargs" id="targetNArgs" aria-describedby="targetNArgsHelp" placeholder="1" required>
-        <small id="targetNAargsHelp" class="form-number">Number of arguments the fuzzed method takes</small>
-      </div>
-
-    </div>
-  </fieldset>
-
-  <fieldset class="settings-section">
-    <legend>Target application</legend>
-    <p class="settings-description text-muted">Command line of the application or harness and its architecture.</p>
-    <div class="settings-fields">
-
-      <div class="settings-field">
-        <label for="targetApp" class="form-label">Target application command line</label>
-        <input type="text" class="form-control" name="target_app" id="targetApp" aria-describedby="targetAppHelp" placeholder="Enter application">
-        <small id="targetAppHelp" class="form-text text-muted">Target application or harness to execute for fuzzing (e.g. harness.exe)</small>
-      </div>
-
-      <div class="settings-field settings-field-half">
-        <label for="targetArch" class="form-label">Architecture</label>
-        <select class="form-control" name="target_arch" id="targetArch">
-          <option>x86</option>
-          <option>x64</option>
-        </select>
-        <small id="targetArchHelp" class="form-text text-muted">Target architecture</small>
       </div>
 
     </div>

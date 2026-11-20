@@ -54,6 +54,14 @@
     align-items: center;
     min-height: 44px;
   }
+  .navbar .navbar-account {
+    display: none;
+  }
+  .navbar .nav-split {
+    margin-top: .375rem;
+    padding-top: .375rem;
+    border-top: 1px solid #334155;
+  }
   .btn:not(.card-header .btn),
   .form-control,
   .form-select,
@@ -98,6 +106,9 @@
   }
   .navbar .navbar-collapse .navbar-nav {
     flex-direction: row;
+  }
+  .navbar .nav-mobile-only {
+    display: none;
   }
 }
 
@@ -324,6 +335,9 @@ body.login main {
 }
 
 .navbar-dark .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
   margin-right: auto;
   color: #fff;
   font-weight: 600;
@@ -359,6 +373,24 @@ body.login main {
 .navbar-dark .nav-link.active {
   background-color: #c2410c;
   color: #fff;
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+  background-color: rgba(255, 255, 255, .1);
+  box-shadow: inset 0 -2px 0 #f97316;
+}
+
+.brand-mark {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+}
+
+.brand-mark.brand-big {
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 10px;
 }
 
 .navbar-dark :focus-visible {
@@ -482,6 +514,16 @@ main a:focus-visible,
 .form-field .switch {
   margin-right: .5rem;
   vertical-align: middle;
+}
+
+.switch {
+  --bs-switch-checked-bg: #c2410c;
+  --bs-switch-checked-border-color: #c2410c;
+}
+
+.switch:has(input:focus-visible) {
+  outline: 2px solid #c2410c;
+  outline-offset: 2px;
 }
 
 .form-field .switch + label {
@@ -905,6 +947,22 @@ div:has(> .card.stat) {
   overflow-wrap: anywhere;
 }
 
+.card.agent .card-description,
+.card.job .card-description {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .875rem;
+  color: #475569;
+}
+
+.card.agent .card-description.is-empty,
+.card.job .card-description.is-empty {
+  font-style: italic;
+  color: #64748b;
+}
+
 .btn.theme-danger {
   background-color: #b91c1c;
   border-color: #b91c1c;
@@ -1173,6 +1231,30 @@ div:has(> .card.stat) {
 
 .card-actions .menu-item .bi {
   flex: 0 0 auto;
+}
+
+.card-actions .btn.delete,
+.card-actions .menu-item.delete,
+.crash-toolbar .nav-link.delete {
+  color: #b91c1c;
+}
+
+.card-actions .btn.delete {
+  border-color: #f1a9a9;
+}
+
+.crash-toolbar .nav-link.delete {
+  box-shadow: inset 0 0 0 1px #f1a9a9;
+}
+
+.card-actions .btn.delete:not(.disabled):hover,
+.card-actions .btn.delete:not(.disabled):focus-visible,
+.card-actions .menu-item.delete:not(.disabled):hover,
+.card-actions .menu-item.delete:not(.disabled):focus-visible,
+.crash-toolbar .nav-link.delete:not(.disabled):hover,
+.crash-toolbar .nav-link.delete:not(.disabled):focus-visible {
+  background-color: #fdeeee;
+  color: #991b1b;
 }
 
 @media (max-width: 767.98px) {
@@ -1467,6 +1549,23 @@ div:has(> .card.stat) {
   grid-column: auto;
 }
 
+.settings-subgroup-heading {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: .8125rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  line-height: 1.35;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.settings-subgroup-heading:not(:first-child) {
+  margin-top: .5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #e2e8f0;
+}
+
 .settings-field .form-label {
   display: block;
   margin-bottom: .25rem;
@@ -1478,10 +1577,19 @@ div:has(> .card.stat) {
 }
 
 .settings-field.form-field:has(.switch) {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: .5rem;
+  gap: .625rem;
   min-height: 2rem;
+  padding: 0 .75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.settings-field.form-field:has(.switch):hover {
+  border-color: #cbd5e1;
 }
 
 .settings-field.form-field .switch {
@@ -1489,8 +1597,15 @@ div:has(> .card.stat) {
 }
 
 .settings-field.form-field .switch + label {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
   min-width: 0;
+  min-height: 44px;
+  font-weight: 500;
+  color: #334155;
   overflow-wrap: anywhere;
+  cursor: pointer;
 }
 
 .form-actions {
@@ -2976,14 +3091,17 @@ footer .version:before {
   gap: .5rem;
 }
 
-.card-list-filter .btn,
-:not(.btn-group) > .card-list-filter .btn + .btn {
+.card-list-filter .btn {
   min-width: 44px;
   min-height: 44px;
   margin-left: 0;
   border-color: #cbd5e1;
   background-color: #fff;
   color: #334155;
+}
+
+:not(.btn-group) > .card-list-filter .btn + .btn {
+  margin-left: 0;
 }
 
 .card-list-filter .btn[aria-pressed="true"] {

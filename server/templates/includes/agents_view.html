@@ -11,7 +11,7 @@
   <div id="cards" class="row row-cols-3">
     {{range .agents}}
     <div class="col sm:col-6 lg:col-4 mb-3">
-      <div class="card agent">
+      <div class="card agent" role="article" aria-label="Agent #{{ .ID }}: {{ .Name }}">
 
         <div class="card-header card-summary">
           <button type="button" class="card-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-{{ .ID }}" aria-expanded="false" aria-controls="collapse-{{ .ID }}">
@@ -27,17 +27,17 @@
 
         <div id="collapse-{{ .ID }}" class="collapse collapsed">
           <div class="card-body">
-            <p class="card-text truncate">{{ .Description }}</p>
+            {{if .Description}}<p class="card-text card-description" title="{{ .Description }}">{{ .Description }}</p>{{else}}<p class="card-text card-description is-empty">No description</p>{{end}}
             <dl class="card-details">
               <div class="card-detail"><dt>Host</dt><dd>{{ .Host }}</dd></div>
               <div class="card-detail"><dt>Port</dt><dd>{{ .Port }}</dd></div>
-              <div class="card-detail"><dt>Version</dt><dd>{{ .Version }}</dd></div>
+              <div class="card-detail"><dt>Version</dt><dd>{{if .Version}}{{ .Version }}{{else}}<span class="text-muted">Not reported yet</span>{{end}}</dd></div>
             </dl>
           </div>
 
           <div class="card-footer">
             <div class="card-actions">
-            <a href="/agent/{{.GUID}}/check" class="btn btn-outline theme-secondary action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST">
+            <a href="/agent/{{.GUID}}/check" class="btn btn-outline theme-secondary action check {{if (eq .Status 0) }}disabled{{end}}" data-method="POST"{{if (eq .Status 0) }} aria-disabled="true" tabindex="-1"{{end}}>
               <svg class="bi" width="20" height="20" fill="currentColor" color="grey" viewBox="0 0 20 20" aria-hidden="true">
                 <use xlink:href="/static/svg/bootstrap-icons.svg#check-circle-fill"/>
               </svg>

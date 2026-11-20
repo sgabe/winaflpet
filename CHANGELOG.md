@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Group crash-edit fields into Analysis, Source and Notes sections with field-specific guidance.
 - Show job statistics as one divided panel per instance.
 - Refine crash details, instance statistics, plot and form navigation, and sign-in feedback.
+- Regroup job configuration sections and refine shared card controls, descriptions and switches.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.
