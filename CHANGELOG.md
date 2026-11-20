@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - File drop areas on the import and input-upload forms.
 - Render instance plot data as SVG charts with legends and values tables, retaining generated image fallback.
 - Warning about empty, oversized or wrongly typed files in the import and input-upload file summaries.
+- Accessible names for configuration and upload forms.
 
 ### Changed
 - Upgrade to Bootstrap 6.0.0-alpha.1 and jQuery 4.0.0.

@@ -1038,7 +1038,7 @@ $(function () {
         if (!id || crashJobs.some(function(job) { return job.id === id; })) return;
         var summaryLabel = column.querySelector(".card.crash .card-summary-label");
         var name = summaryLabel ? String(summaryLabel.textContent).replace(/\s+/g, " ").trim() : "";
-        crashJobs.push({ id: id, label: name ? name + " (#" + id + ")" : "Job #" + id });
+        crashJobs.push({ id: id, label: name && name !== "Job #" + id ? name + " (#" + id + ")" : "Job #" + id });
     });
     if (crashJobs.length) {
         selects.appendChild(cardListSelect({
