@@ -911,8 +911,18 @@ div:has(> .card.stat) {
   margin-left: 0;
 }
 
-.card-actions .btn .bi {
+.card-actions .btn .bi,
+.card-actions .menu-item .bi {
   flex: 0 0 auto;
+  color: inherit;
+}
+
+.card-actions .job-start:not(:disabled):not(.disabled) .bi {
+  color: #15803d;
+}
+
+.card-actions .job-stop .bi {
+  color: #b91c1c;
 }
 
 .card-actions-more {
@@ -962,6 +972,33 @@ div:has(> .card.stat) {
 .card.job .card-description.is-empty {
   font-style: italic;
   color: #64748b;
+}
+
+.card.agent .agent-check-result {
+  margin-top: .75rem;
+}
+
+.card.agent .agent-check-result[hidden] {
+  display: none !important;
+}
+
+.card.agent .agent-check-result-label {
+  display: block;
+  font-weight: 600;
+}
+
+.card.agent .agent-check-result.is-success {
+  border-color: #bfe5cd;
+  border-left-color: #15803d;
+  background-color: #e8f6ee;
+  color: #15803d;
+}
+
+.card.agent .agent-check-result.is-error {
+  border-color: #fca5a5;
+  border-left-color: #b91c1c;
+  background-color: #fef2f2;
+  color: #991b1b;
 }
 
 .btn.theme-danger {
@@ -1038,6 +1075,17 @@ div:has(> .card.stat) {
   color: #475569;
 }
 
+.job-config-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin: .25rem 0 0;
+  font-size: .875rem;
+  color: #475569;
+  overflow-wrap: anywhere;
+}
+
 .job-config-body,
 .confirm-dialog-body {
   flex: 1 1 auto;
@@ -1109,6 +1157,24 @@ div:has(> .card.stat) {
 .confirm-dialog-footer .btn {
   min-width: 44px;
   min-height: 44px;
+}
+
+.job-config-footer {
+  gap: .5rem;
+}
+
+.job-config-footer .btn + .btn {
+  margin-left: 0;
+}
+
+.job-config-footer .job-config-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.job-config-footer .job-config-edit[hidden] {
+  display: none !important;
 }
 
 .card.crash .card-text {
@@ -1228,10 +1294,6 @@ div:has(> .card.stat) {
   gap: .5rem;
   white-space: normal;
   overflow-wrap: anywhere;
-}
-
-.card-actions .menu-item .bi {
-  flex: 0 0 auto;
 }
 
 .card-actions .btn.delete,
@@ -2936,6 +2998,7 @@ footer .version:before {
 .settings-navigation .settings-navigation-link {
   display: inline-flex;
   align-items: center;
+  gap: .5rem;
   box-sizing: border-box;
   min-width: 44px;
   max-width: 100%;
@@ -2966,6 +3029,22 @@ footer .version:before {
 .settings-navigation .settings-navigation-link:focus-visible {
   outline: 2px solid #c2410c;
   outline-offset: 2px;
+}
+
+.settings-navigation .settings-navigation-icon {
+  flex: 0 0 auto;
+  width: 1.25em;
+  text-align: center;
+}
+
+.settings-navigation .settings-navigation-text {
+  min-width: 0;
+  font-size: .875rem;
+  overflow-wrap: normal;
+}
+
+.settings-navigation .settings-navigation-count {
+  display: none;
 }
 
 .settings-form-layout {
@@ -3001,6 +3080,25 @@ footer .version:before {
   .settings-form-layout.has-section-navigation > nav.settings-navigation .settings-navigation-link {
     width: 100%;
     min-height: 44px;
+  }
+  .settings-form-layout.has-section-navigation > nav.settings-navigation .settings-navigation-count {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    margin-left: auto;
+    padding: 0 .25rem;
+    border-radius: 999px;
+    background-color: #f1f5f9;
+    color: #475569;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .settings-form-layout.has-section-navigation > nav.settings-navigation .settings-navigation-link[aria-current="location"] .settings-navigation-count {
+    background-color: #c2410c;
+    color: #fff;
   }
 }
 

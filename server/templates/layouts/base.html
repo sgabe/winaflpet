@@ -76,7 +76,7 @@
         </ol>
     </nav>
     {{end}}{{end}}
-    {{if .title}}{{if or (isActive $currentPath "/agents/view") (isActive $currentPath "/jobs/view") (isActive $currentPath "/crashes/view")}}
+    {{if .title}}{{$formsubtitle := ""}}{{if isActive $currentPath "/agents/create"}}{{$formsubtitle = "Register a Windows fuzzing machine running the WinAFL Pet agent."}}{{else if isActive $currentPath "/jobs/create"}}{{$formsubtitle = "Configure a fuzzing job for one of your agents. All paths refer to the agent machine."}}{{end}}{{if .agent}}{{if isActive $currentPath (printf "/agent/%s/edit" .agent.GUID)}}{{$formsubtitle = "Change how WinAFL Pet connects to this fuzzing machine."}}{{end}}{{end}}{{if .job}}{{if isActive $currentPath (printf "/job/%s/edit" .job.GUID)}}{{$formsubtitle = "Review or change the saved tool locations, input and output directories, and target settings."}}{{end}}{{end}}{{if or (isActive $currentPath "/agents/view") (isActive $currentPath "/jobs/view") (isActive $currentPath "/crashes/view")}}
     <div class="page-heading">
         <div class="page-heading-text">
             <h1>{{.title}}</h1>
@@ -92,6 +92,13 @@
             <a class="btn theme-primary" href="/jobs/create">New job</a>
         </div>
         {{end}}
+    </div>
+    {{else if $formsubtitle}}
+    <div class="page-heading">
+        <div class="page-heading-text">
+            <h1>{{.title}}</h1>
+            <p class="page-heading-subtitle">{{$formsubtitle}}</p>
+        </div>
     </div>
     {{else}}<h1>{{.title}}</h1>{{end}}{{end}}
     <div id="alert" class="alert {{if .context}}{{if eq .context "empty"}}alert-empty{{else}}theme-{{.context}}{{end}}{{else}}alert-empty{{end}} alert-dismissible fade show" role="alert">

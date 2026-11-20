@@ -13,11 +13,11 @@
   </div>
   <div class="job-overview-item">
     <dt>Target</dt>
-    <dd>{{if ne $job.TargetOffset "0"}}{{ $job.TargetOffset }}{{else}}{{ $job.TargetMethod }}{{end}} in {{ $job.TargetModule }} ({{ $job.TargetArch }})</dd>
+    <dd>{{if and $job.TargetOffset (ne $job.TargetOffset "0")}}{{ $job.TargetOffset }}{{else}}{{ $job.TargetMethod }}{{end}} in {{ $job.TargetModule }} ({{ $job.TargetArch }})</dd>
   </div>
   <div class="job-overview-item">
     <dt>Instrumentation</dt>
-    <dd>{{ $job.InstMode }} · {{ $job.CoverageType }} for {{ $job.CoverageModule }}</dd>
+    <dd>{{if eq $job.InstMode "DynamorIO"}}DynamoRIO{{else}}{{ $job.InstMode }}{{end}} · {{ $job.CoverageType }} for {{ $job.CoverageModule }}</dd>
   </div>
 </dl>
 {{ end }}

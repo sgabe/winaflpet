@@ -2,6 +2,8 @@
 <div class="settings-form-layout">
 <form id="createJob" class="create job settings-panel" method="PUT" enctype="multipart/form-data" action="/jobs/create" data-validation-summary>
 
+  <p class="form-notice job-form-intro"><strong>Create defaults:</strong> first Agent entry, 1 CPU core, DynamoRIO, Basic block coverage, File delivery, x86; Advanced options off. Paths refer to the selected agent machine. Placeholder examples are hints, not saved values.</p>
+
   <fieldset class="settings-section">
     <legend>General</legend>
     <p class="settings-description text-muted">Which agent runs the job, how many CPU cores it uses and how it is identified.</p>
@@ -57,6 +59,10 @@
     <p class="settings-description text-muted">Tool directories on the remote machine.</p>
     <div class="settings-fields">
 
+      <div class="settings-field">
+        <p class="form-notice"><i class="fas fa-server" aria-hidden="true"></i> Paths are on the agent machine selected under General, not on this computer.</p>
+      </div>
+
       <div class="settings-field settings-field-half">
         <label for="aflDir" class="form-label">AFL directory</label>
         <input type="text" class="form-control" name="afl_dir" id="aflDir" aria-describedby="aflDirHelp" placeholder="Enter AFL directory">
@@ -88,6 +94,10 @@
     <legend>Input &amp; output</legend>
     <p class="settings-description text-muted">Test case and findings directories, sample delivery, per-run limits and an optional dictionary.</p>
     <div class="settings-fields">
+
+      <div class="settings-field">
+        <p class="form-notice"><i class="fas fa-server" aria-hidden="true"></i> Paths are on the agent machine selected under General, not on this computer.</p>
+      </div>
 
       <div class="settings-field settings-field-half">
         <label for="input" class="form-label">Input</label>

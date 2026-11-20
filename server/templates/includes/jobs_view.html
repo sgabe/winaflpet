@@ -36,10 +36,10 @@
             </section>
             {{if .Desc}}<p class="card-text card-description" title="{{ .Desc }}">{{ .Desc }}</p>{{else}}<p class="card-text card-description is-empty">No description</p>{{end}}
             <dl class="card-details">
-              <div class="card-detail"><dt>Instrumentation</dt><dd>{{.InstMode}}</dd></div>
+              <div class="card-detail"><dt>Instrumentation</dt><dd>{{if eq .InstMode "DynamorIO"}}DynamoRIO{{else}}{{.InstMode}}{{end}}</dd></div>
               <div class="card-detail card-detail-wide"><dt>Coverage</dt><dd>{{.CoverageType}} for {{.CoverageModule}}</dd></div>
               <div class="card-detail"><dt>Iterations</dt><dd>{{.FuzzIter}}</dd></div>
-              <div class="card-detail card-detail-wide"><dt>Target</dt><dd>{{if ne .TargetOffset "0"}}{{.TargetOffset}}{{else}}{{.TargetMethod}}{{end}} in {{.TargetModule}} ({{.TargetArch}})</dd></div>
+              <div class="card-detail card-detail-wide"><dt>Target</dt><dd>{{if and .TargetOffset (ne .TargetOffset "0")}}{{.TargetOffset}}{{else}}{{.TargetMethod}}{{end}} in {{.TargetModule}} ({{.TargetArch}})</dd></div>
             </dl>
           </div>
 
@@ -116,7 +116,7 @@
           </div>
         </div>
         </div>
-        <template class="job-config-template" data-name="{{.Name}}">
+        <template class="job-config-template" data-name="{{.Name}}" data-agent="{{$agent.Name}}" data-job-id="{{.ID}}">
           <h3>General</h3>
           <dl class="card-details">
             <div class="card-detail card-detail-wide"><dt>Agent</dt><dd>{{or $agent.Name "—"}} (#{{.AgentID}})</dd></div>
@@ -126,7 +126,7 @@
           </dl>
           <h3>Target</h3>
           <dl class="card-details">
-            {{if ne .TargetOffset "0"}}
+            {{if and .TargetOffset (ne .TargetOffset "0")}}
             <div class="card-detail"><dt>Target offset</dt><dd class="job-config-code">{{or .TargetOffset "—"}}</dd></div>
             {{else}}
             <div class="card-detail"><dt>Target method</dt><dd class="job-config-code">{{or .TargetMethod "—"}}</dd></div>
@@ -138,7 +138,7 @@
           </dl>
           <h3>Instrumentation</h3>
           <dl class="card-details">
-            <div class="card-detail"><dt>Mode</dt><dd>{{or .InstMode "—"}}</dd></div>
+            <div class="card-detail"><dt>Mode</dt><dd>{{if eq .InstMode "DynamorIO"}}DynamoRIO{{else}}{{or .InstMode "—"}}{{end}}</dd></div>
             <div class="card-detail"><dt>Coverage type</dt><dd>{{or .CoverageType "—"}}</dd></div>
             <div class="card-detail card-detail-wide"><dt>Coverage module(s)</dt><dd class="job-config-code">{{or .CoverageModule "—"}}</dd></div>
             <div class="card-detail"><dt>Iterations</dt><dd>{{.FuzzIter}}</dd></div>
@@ -178,11 +178,13 @@
   <dialog id="job-config-dialog" class="job-config-dialog" aria-labelledby="job-config-title" aria-describedby="job-config-note">
     <div class="job-config-header">
       <h2 id="job-config-title"></h2>
+      <p class="job-config-meta"><i class="fas fa-server" aria-hidden="true"></i><span class="sr-only">Agent: </span><span class="job-config-agent"></span><span aria-hidden="true">·</span><span class="job-config-job"></span></p>
       <p id="job-config-note" class="job-config-note">Saved configuration stored on this server. These are settings, not live status from the agent.</p>
     </div>
     <div class="job-config-body" role="region" aria-label="Saved settings" tabindex="0"></div>
     <div class="job-config-footer">
       <button type="button" class="btn btn-outline theme-secondary job-config-close">Close</button>
+      <a class="btn theme-primary job-config-edit" hidden>Edit configuration</a>
     </div>
   </dialog>
   {{end}}

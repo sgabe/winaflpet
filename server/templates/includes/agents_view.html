@@ -20,7 +20,7 @@
             <i class="fas fa-chevron-down card-summary-chevron" aria-hidden="true"></i>
             <span class="card-summary-meta">
               <small class="id {{if .Status}}on{{else}}off{{end}}">{{ .ID }}</small>
-              <span class="card-summary-label" title="{{ .Host }}">{{ .Host }}</span>
+              <span class="card-summary-label" title="{{.Host}}:{{.Port}}">{{.Host}}:{{.Port}}</span>
             </span>
           </button>
         </div>
@@ -33,6 +33,7 @@
               <div class="card-detail"><dt>Port</dt><dd>{{ .Port }}</dd></div>
               <div class="card-detail"><dt>Version</dt><dd>{{if .Version}}{{ .Version }}{{else}}<span class="text-muted">Not reported yet</span>{{end}}</dd></div>
             </dl>
+            <div class="form-notice agent-check-result" role="status" aria-live="polite" hidden><strong class="agent-check-result-label">Last connection check</strong><span class="agent-check-result-message"></span></div>
           </div>
 
           <div class="card-footer">

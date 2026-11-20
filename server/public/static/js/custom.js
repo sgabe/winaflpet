@@ -41,6 +41,20 @@ $(function () {
         $("html, body").animate({ scrollTop: 0 }, "fast");
     }
 
+    var showCheckResult = function(context, success, message) {
+        var link = $(context).filter("a.action.check").get(0);
+        var card = link ? link.closest(".card.agent") : null;
+        var result = card ? card.querySelector(".agent-check-result") : null;
+        var text = result ? result.querySelector(".agent-check-result-message") : null;
+        if (!text) return;
+        result.classList.toggle("is-success", success);
+        result.classList.toggle("is-error", !success);
+        result.hidden = false;
+        text.textContent = message;
+        var cards = document.getElementById("cards");
+        if (cards && cards.contains(card) && $.fn.masonry) $(cards).masonry();
+    }
+
     var toggleActions = function(context) {
         $(context).toggleClass("disabled");
         var group = $(context).closest(".card.job .card-actions").length
@@ -165,6 +179,7 @@ $(function () {
             }).done(function(data, textStatus, jqXHR ) {
                 if (data.hasOwnProperty("context") && data.hasOwnProperty("alert")) {
                     showAlert(data.context, data.alert);
+                    showCheckResult(this, String(data.context).includes("success"), String(data.alert));
                     if (data.context.includes("success")) {
                         toggleActions(this);
                         if ($(this).is("a.plot")) {
@@ -198,6 +213,8 @@ $(function () {
                 }
             }).fail(function(jqXHR, textStatus) {
                 showAlert("danger", "You are not logged in. Please log in and try again.");
+                var json = jqXHR && jqXHR.responseJSON;
+                showCheckResult(this, false, json && typeof json.alert === "string" ? json.alert : "Connection check failed.");
             });
         }
     });
@@ -702,6 +719,19 @@ $(function () {
         nav.appendChild(label);
 
         var links = [];
+        var advanced = null;
+        var sectionIcons = {
+            "General": "info-circle",
+            "Tool locations": "wrench",
+            "Input & output": "folder-open",
+            "Instrumentation & target": "crosshairs",
+            "Advanced": "cog"
+        };
+        var sectionFields = function(section) {
+            return Array.prototype.filter.call(section.querySelectorAll("input, select, textarea"), function(control) {
+                return control.tagName !== "INPUT" || ["hidden", "button", "submit", "reset", "image"].indexOf(control.type) < 0;
+            }).length;
+        };
         var frame = 0;
         var schedule = function() {
             if (!frame) frame = window.requestAnimationFrame(updateCurrent);
@@ -753,7 +783,27 @@ $(function () {
             var link = document.createElement("a");
             link.className = "settings-navigation-link";
             link.setAttribute("href", "#" + section.id);
-            link.textContent = String(legend.textContent).replace(/\s+/g, " ").trim() || "Section " + (sectionIndex + 1);
+            var text = String(legend.textContent).replace(/\s+/g, " ").trim() || "Section " + (sectionIndex + 1);
+            if (jobForm) {
+                if (Object.prototype.hasOwnProperty.call(sectionIcons, text)) {
+                    var icon = document.createElement("i");
+                    icon.className = "fas fa-" + sectionIcons[text] + " settings-navigation-icon";
+                    icon.setAttribute("aria-hidden", "true");
+                    link.appendChild(icon);
+                }
+                var name = document.createElement("span");
+                name.className = "settings-navigation-text";
+                name.textContent = text;
+                var count = document.createElement("span");
+                count.className = "settings-navigation-count";
+                if (text === "Advanced") advanced = { section: section, count: count };
+                else count.textContent = String(sectionFields(section));
+                link.appendChild(name);
+                link.appendChild(document.createTextNode(" "));
+                link.appendChild(count);
+            } else {
+                link.textContent = text;
+            }
             nav.appendChild(link);
             links.push(link);
 
@@ -800,6 +850,16 @@ $(function () {
                 if (input.name === "name" || input.name === "desc") return;
                 input.setAttribute("spellcheck", "false");
             });
+
+            if (advanced) {
+                var countChecked = function() {
+                    advanced.count.textContent = advanced.section.querySelectorAll('input[type="checkbox"]:checked').length + " on";
+                };
+                advanced.section.addEventListener("change", function(e) {
+                    if (e.target.type === "checkbox") countChecked();
+                });
+                countChecked();
+            }
 
             window.addEventListener("scroll", schedule, { passive: true });
             window.addEventListener("resize", schedule, { passive: true });
@@ -2021,7 +2081,28 @@ $(function () {
     var title = document.getElementById("job-config-title");
     var body = dialog.querySelector(".job-config-body");
     var close = dialog.querySelector(".job-config-close");
+    var agent = dialog.querySelector(".job-config-agent");
+    var job = dialog.querySelector(".job-config-job");
+    var edit = dialog.querySelector(".job-config-edit");
     var trigger = null;
+    var source = null;
+    var observer = null;
+
+    var syncEdit = function() {
+        if (!edit) return false;
+        var href = source && source.isConnected ? source.getAttribute("href") : "";
+        var available = !!href && !source.classList.contains("disabled") && !source.classList.contains("d-none") && !source.hasAttribute("disabled") && source.getAttribute("aria-disabled") !== "true";
+        if (available) edit.setAttribute("href", href);
+        else edit.removeAttribute("href");
+        edit.hidden = !available;
+        return available;
+    };
+
+    if (edit) {
+        edit.addEventListener("click", function(e) {
+            if (!syncEdit()) e.preventDefault();
+        });
+    }
 
     document.querySelectorAll(".card.job .job-config").forEach(function(button) {
         button.addEventListener("click", function() {
@@ -2029,9 +2110,17 @@ $(function () {
             var template = card ? card.querySelector("template.job-config-template") : null;
             if (!template || dialog.open) return;
             title.textContent = template.getAttribute("data-name") || "";
+            if (agent) agent.textContent = template.getAttribute("data-agent") || "—";
+            if (job) job.textContent = "Job #" + (template.getAttribute("data-job-id") || "");
             body.textContent = "";
             body.appendChild(template.content.cloneNode(true));
             body.scrollTop = 0;
+            source = card.querySelector(".card-actions a.action.edit");
+            if (source && edit && typeof MutationObserver === "function") {
+                observer = new MutationObserver(syncEdit);
+                observer.observe(source, { attributes: true, attributeFilter: ["class", "href", "disabled", "aria-disabled"] });
+            }
+            syncEdit();
             trigger = button;
             dialog.showModal();
             close.focus();
@@ -2049,6 +2138,12 @@ $(function () {
     dialog.addEventListener("close", function() {
         var target = trigger;
         trigger = null;
+        if (observer) observer.disconnect();
+        observer = null;
+        source = null;
+        if (agent) agent.textContent = "";
+        if (job) job.textContent = "";
+        syncEdit();
         if (target && target.isConnected && target.getClientRects().length) target.focus();
     });
 });

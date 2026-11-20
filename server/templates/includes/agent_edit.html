@@ -2,6 +2,8 @@
 <div class="settings-layout"><div class="settings-main">
 <form id="editAgent" class="edit agent settings-panel" method="POST" enctype="multipart/form-data">
 
+  <p class="form-notice">Editing <strong>{{.agent.Name}}</strong>. The Key field is prefilled with the saved key. Changing it here doesn't change the key on the agent.</p>
+
   <fieldset class="settings-section">
     <legend>General settings</legend>
     <p class="settings-description text-muted">Identify the agent with a name and an optional description.</p>
