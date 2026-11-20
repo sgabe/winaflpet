@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Move statistics, form feedback, and plot controls into HTML templates.
 - Clarify agent and job names in page context, choices and actions.
 - Preserve fid statistics selection across refreshes and plot links.
+- Align crash filter order and risk labels, clarify search and page scope.
 
 ### Fixed
 - Prefill profile fields, so saving no longer clears the alert email, and explain password requirements.

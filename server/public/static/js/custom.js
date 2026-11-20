@@ -972,14 +972,14 @@ $(function () {
     toolbar.setAttribute("aria-label", "Filter " + noun + " on this page");
     if (noun === "crashes") toolbar.querySelector("#card-list-scope").textContent += " Unavailable crashes were verified but have no reported function.";
     var search = toolbar.querySelector("input");
-    search.placeholder = "Search " + noun;
+    search.placeholder = noun === "crashes" ? "Search label, Bug ID, module, function…" : "Search " + noun;
     search.setAttribute("aria-label", "Search " + noun);
     search.addEventListener("input", function() { filterCards(); });
     var selects = toolbar.querySelector(".card-list-selects");
     var buttons = [];
     [
         [".card.agent", "Agent configuration", [["All", "all"], ["Enabled", "enabled"], ["Disabled", "disabled"]]],
-        [".card.crash", "Crash verification", [["All", "all"], ["Verified", "verified"], ["Unverified", "unverified"], ["Unavailable", "unavailable"]]],
+        [".card.crash", "Crash verification", [["All", "all"], ["Unverified", "unverified"], ["Verified", "verified"], ["Unavailable", "unavailable"]]],
         [".card.job", "Job status", [["All", "all"], ["Running", "running"], ["Starting", "starting"], ["Stopped", "stopped"], ["Unknown", "unknown"]]]
     ].forEach(function(definition) {
         if (!columns.some(function(column) { return column.querySelector(definition[0]); })) return;
@@ -1050,12 +1050,12 @@ $(function () {
         selects.appendChild(cardListSelect({
             prefix: "card-list-risk-select",
             className: "card-list-risk",
-            label: "Crash Risk",
+            label: "Risk",
             allLabel: "All risks",
             items: [
-                { id: "high", label: "High" },
-                { id: "medium", label: "Medium" },
-                { id: "low", label: "Low" },
+                { id: "high", label: "High (execute)" },
+                { id: "medium", label: "Medium (write)" },
+                { id: "low", label: "Low (read)" },
                 { id: "none", label: "None" },
                 { id: "na", label: "Not assessed" }
             ],
