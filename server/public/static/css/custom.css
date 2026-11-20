@@ -3533,3 +3533,23 @@ footer .version:before {
     padding: 1.25rem .75rem;
   }
 }
+
+.input-replace-confirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.input-replace-confirm input {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+}
+
+.job-alert-state {
+  color: #9a3412;
+  font-size: 11px;
+  white-space: nowrap;
+}

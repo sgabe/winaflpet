@@ -4,7 +4,7 @@
 <div class="settings-main">
 <div class="settings-panel">
 {{if .can_upload}}
-<form method="POST" enctype="multipart/form-data" action="/job/{{.job.GUID}}/input">
+<form method="POST" enctype="multipart/form-data" action="/job/{{.job.GUID}}/input" data-validation-summary>
 
   <fieldset class="settings-section">
     <legend>Input files</legend>
@@ -15,7 +15,7 @@
         <div class="path-box">
           <i class="fas fa-folder" aria-hidden="true"></i>
           <div class="path-box-text">
-            <span class="path-box-label">Input directory on Agent #{{.job.AgentID}}</span>
+            <span class="path-box-label">Input directory on {{with .job.GetAgent}}{{if .Name}}{{.Name}}{{else}}Agent #{{$.job.AgentID}}{{end}}{{else}}Agent #{{.job.AgentID}}{{end}}</span>
             <code>{{.job.Input}}</code>
           </div>
         </div>
@@ -35,6 +35,10 @@
         <small id="inputHelp" class="form-text text-muted">Maximum 256 MiB ZIP, 1 GiB extracted. Input must be an existing directory. Existing files are deleted before extraction; a failed extraction may leave a partial input set.</small>
         <p id="inputZipDropStatus" class="form-notice is-warning file-drop-status" role="status" aria-label="Input files drop status" hidden></p>
         <p id="inputZipSummary" class="file-selection-summary" role="status" hidden></p>
+      </div>
+
+      <div class="settings-field">
+        <label class="input-replace-confirm" for="confirm_replace"><input type="checkbox" id="confirm_replace" required> <span>I understand existing files directly inside Input will be deleted</span></label>
       </div>
 
     </div>
@@ -58,7 +62,7 @@
       <div class="path-box">
         <i class="fas fa-folder" aria-hidden="true"></i>
         <div class="path-box-text">
-          <span class="path-box-label">Input directory on Agent #{{.job.AgentID}}</span>
+          <span class="path-box-label">Input directory on {{with .job.GetAgent}}{{if .Name}}{{.Name}}{{else}}Agent #{{$.job.AgentID}}{{end}}{{else}}Agent #{{.job.AgentID}}{{end}}</span>
           <code>{{.job.Input}}</code>
         </div>
       </div>
@@ -82,7 +86,7 @@
     <dt>Job #</dt>
     <dd>{{.job.ID}}</dd>
     <dt>Agent</dt>
-    <dd>Agent #{{.job.AgentID}}</dd>
+    <dd>{{with .job.GetAgent}}{{if .Name}}{{.Name}}{{else}}Agent #{{$.job.AgentID}}{{end}}{{else}}Agent #{{.job.AgentID}}{{end}}</dd>
     <dt>Input</dt>
     <dd><code>{{.job.Input}}</code></dd>
     <dt>Availability</dt>

@@ -2,7 +2,7 @@
 <div class="settings-layout">
 <div class="settings-main">
 <div class="settings-panel">
-<form id="uploadJob" class="upload job" method="POST" enctype="multipart/form-data" action="/jobs/upload">
+<form id="uploadJob" class="upload job" method="POST" enctype="multipart/form-data" action="/jobs/upload" data-validation-summary>
 
   <fieldset class="settings-section">
     <legend>Job configuration</legend>
@@ -14,7 +14,7 @@
           <i class="fas fa-file-code file-drop-icon" aria-hidden="true"></i>
           <label for="jobFile" class="form-label">Configuration file</label>
           <p class="file-drop-hint text-muted"><strong class="file-drop-choose">Choose a JSON export file</strong> or drop it here.</p>
-          <input type="file" name="job" id="jobFile" class="form-control" data-file-summary="jobFileSummary" aria-describedby="jobFileSummary">
+          <input type="file" name="job" id="jobFile" class="form-control" accept=".json,application/json" required data-file-summary="jobFileSummary" aria-describedby="jobFileSummary">
         </div>
         <p id="jobFileDropStatus" class="form-notice is-warning file-drop-status" role="status" aria-label="Configuration file drop status" hidden></p>
         <p id="jobFileSummary" class="file-selection-summary" role="status" hidden></p>
@@ -30,7 +30,7 @@
   <div class="form-actions">
     <div class="form-actions-buttons">
       <a href="/jobs/view" class="btn">Cancel</a>
-      <button type="submit" class="btn theme-primary">Upload configuration</button>
+      <button type="submit" class="btn theme-primary">Import jobs</button>
     </div>
   </div>
 </form>

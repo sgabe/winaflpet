@@ -994,7 +994,7 @@ $(function () {
         if (!id || agents.some(function(agent) { return agent.id === id; })) return;
         var host = column.querySelector(".card.job .card-summary .host");
         var name = host ? String(host.textContent).replace(/\s+/g, " ").trim() : "";
-        agents.push({ id: id, label: (name ? name + " " : "") + "(#" + id + ")" });
+        agents.push({ id: id, label: name ? name + " (#" + id + ")" : "Agent #" + id });
     });
     if (agents.length) {
         selects.appendChild(cardListSelect({
@@ -1016,7 +1016,7 @@ $(function () {
         if (!id || crashJobs.some(function(job) { return job.id === id; })) return;
         var summaryLabel = column.querySelector(".card.crash .card-summary-label");
         var name = summaryLabel ? String(summaryLabel.textContent).replace(/\s+/g, " ").trim() : "";
-        crashJobs.push({ id: id, label: (name ? name + " " : "") + "(#" + id + ")" });
+        crashJobs.push({ id: id, label: name ? name + " (#" + id + ")" : "Job #" + id });
     });
     if (crashJobs.length) {
         selects.appendChild(cardListSelect({

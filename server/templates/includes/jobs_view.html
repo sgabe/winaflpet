@@ -23,7 +23,8 @@
             <i class="fas fa-chevron-down card-summary-chevron" aria-hidden="true"></i>
             <span class="card-summary-meta">
               <small class="id {{if $agent.Status}}on{{else}}off{{end}}">{{ .ID }}</small>
-              <span class="card-summary-label" title="{{$agent.Name}}">@ <span class="host">{{$agent.Name}}</span></span>
+              <span class="card-summary-label" title="{{if $agent.Name}}{{$agent.Name}}{{else}}Agent #{{.AgentID}}{{end}}">@ {{if $agent.Name}}<span class="host">{{$agent.Name}}</span>{{else}}Agent #{{.AgentID}}{{end}}</span>
+              {{if .HasAlert}}<span class="job-alert-state" title="Email alert enabled for this job"><i class="fas fa-bell" aria-hidden="true"></i> Alert on</span>{{end}}
             </span>
             <span class="card-summary-count job-running" title="Running instances have not been observed yet.">Status unknown</span>
           </button>
@@ -118,10 +119,10 @@
           </div>
         </div>
         </div>
-        <template class="job-config-template" data-name="{{.Name}}" data-agent="{{$agent.Name}}" data-job-id="{{.ID}}">
+        <template class="job-config-template" data-name="{{.Name}}" data-agent="{{if $agent.Name}}{{$agent.Name}}{{else}}Agent #{{.AgentID}}{{end}}" data-job-id="{{.ID}}">
           <h3>General</h3>
           <dl class="card-details">
-            <div class="card-detail card-detail-wide"><dt>Agent</dt><dd>{{or $agent.Name "—"}} (#{{.AgentID}})</dd></div>
+            <div class="card-detail card-detail-wide"><dt>Agent</dt><dd>{{if $agent.Name}}{{$agent.Name}} (#{{.AgentID}}){{else}}Agent #{{.AgentID}}{{end}}</dd></div>
             <div class="card-detail"><dt>CPU cores</dt><dd>{{.Cores}}</dd></div>
             <div class="card-detail"><dt>Banner</dt><dd>{{or .Banner "—"}}</dd></div>
             <div class="card-detail card-detail-wide"><dt>Description</dt><dd>{{or .Desc "—"}}</dd></div>

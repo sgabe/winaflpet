@@ -13,7 +13,7 @@
 <dl class="job-overview" aria-label="Job configuration" data-cores="{{ $job.Cores }}" data-banner="{{ $job.Banner }}">
   <div class="job-overview-item">
     <dt>Agent</dt>
-    <dd><a href="/agents/view">Agent #{{ $job.AgentID }}</a></dd>
+    <dd><a href="/agents/view">{{with $job.GetAgent}}{{if .Name}}{{.Name}}{{else}}Agent #{{$job.AgentID}}{{end}}{{else}}Agent #{{$job.AgentID}}{{end}}</a></dd>
   </div>
   <div class="job-overview-item">
     <dt>Configured instances</dt>
