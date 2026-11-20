@@ -604,6 +604,41 @@ $(function () {
 
     var picker = sources.picker.cloneNode(true);
 
+    var viewPath = /^\/job\/[^/]+\/view$/.test(window.location.pathname);
+    var validFID = function(value) {
+        return /^[1-9]\d*$/.test(value) && Number.isSafeInteger(Number(value)) ? Number(value) : 0;
+    };
+    var panelFids = panels.map(function(panel) {
+        return validFID(String(panel.getAttribute("data-fid") || "").trim());
+    });
+    var uniqueFID = function(panel) {
+        var fid = panelFids[panels.indexOf(panel)];
+        return fid && panelFids.indexOf(fid) === panelFids.lastIndexOf(fid) ? fid : 0;
+    };
+    var requestedFID = 0;
+    if (viewPath) {
+        try {
+            var requested = new URLSearchParams(window.location.search).getAll("fid");
+            requestedFID = requested.length === 1 ? validFID(requested[0]) : 0;
+        } catch (error) {
+            requestedFID = 0;
+        }
+    }
+    var initial = requestedFID ? panels.filter(function(panel) {
+        return uniqueFID(panel) === requestedFID;
+    })[0] || panels[0] : panels[0];
+    var remember = function(target) {
+        var fid = viewPath ? uniqueFID(target) : 0;
+        if (!fid) return;
+        try {
+            var url = new URL(window.location.href);
+            var current = url.searchParams.getAll("fid");
+            if (current.length === 1 && current[0] === String(fid)) return;
+            url.searchParams.set("fid", String(fid));
+            window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+        } catch (error) {}
+    };
+
     var select = function(target) {
         panels.forEach(function(panel) {
             panel.hidden = panel !== target;
@@ -656,6 +691,7 @@ $(function () {
         button.setAttribute("aria-controls", entry.panel.id);
         button.addEventListener("click", function() {
             select(entry.panel);
+            remember(entry.panel);
         });
         button.addEventListener("keydown", function(e) {
             if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -669,6 +705,7 @@ $(function () {
             else return;
             e.preventDefault();
             select(available[target].panel);
+            remember(available[target].panel);
             available[target].button.focus();
         });
         picker.appendChild(button);
@@ -683,7 +720,7 @@ $(function () {
     } else {
         stats.insertBefore(picker, stats.firstChild);
     }
-    select(panels[0]);
+    select(initial);
 });
 
 $(function () {
@@ -1766,14 +1803,16 @@ function initPlotRefresh() {
     var noteSource = template("tpl-plot-chart-note");
     var figureTemplates = !!(headingSource && headingSource.content && headingSource.content.querySelector(".plot-figure-title") && headingSource.content.querySelector(".plot-figure-description") && errorSource && noteSource);
 
-    if (back && /^\/job\/[^/]+\/plot$/.test(window.location.pathname)) {
-        back.setAttribute("href", window.location.pathname.replace(/\/plot$/, "/view"));
-        back.textContent = "Back to run";
-    }
-
     var plotPath = /^\/job\/[^/]+\/plot$/.test(window.location.pathname) ? window.location.pathname : "";
     var plotFids = typeof URLSearchParams === "function" ? new URLSearchParams(window.location.search).getAll("fid") : [];
     var currentFID = plotFids.length === 1 && /^[1-9]\d*$/.test(plotFids[0]) ? Number(plotFids[0]) : 0;
+    var viewHref = plotPath ? plotPath.replace(/\/plot$/, "/view") + (Number.isSafeInteger(currentFID) && currentFID > 0 ? "?fid=" + currentFID : "") : "";
+
+    if (back && plotPath) {
+        back.setAttribute("href", viewHref);
+        back.textContent = "Back to run";
+    }
+
     var toolbar = button && button.parentNode && button.parentNode.classList.contains("plot-toolbar") ? button.parentNode : document.querySelector(".plot-toolbar");
     if (plotPath && Number.isSafeInteger(currentFID) && currentFID > 0 && toolbar && !toolbar.querySelector(".plot-instance") && typeof fetch === "function" && typeof URL === "function") {
         var jobPath = plotPath.replace(/\/plot$/, "");
@@ -1793,7 +1832,7 @@ function initPlotRefresh() {
             if (name && crumbSource && current && current.parentNode && !current.parentNode.querySelector(".page-breadcrumb-job")) {
                 var crumb = crumbSource.cloneNode(true);
                 var crumbLink = crumb.querySelector(".page-breadcrumb-job");
-                crumbLink.setAttribute("href", jobPath + "/view");
+                crumbLink.setAttribute("href", viewHref);
                 crumbLink.textContent = name;
                 current.parentNode.insertBefore(crumb, current);
             }
