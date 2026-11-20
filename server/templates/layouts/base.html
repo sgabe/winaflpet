@@ -165,6 +165,31 @@
         <div class="card-list-select"><label class="form-label"></label><select class="form-select"></select></div>
     </template>
     {{end}}
+    <template id="tpl-settings-navigation">
+        <nav class="settings-navigation" aria-label="Form sections"><small class="settings-navigation-label">Jump to section</small></nav>
+    </template>
+    <template id="tpl-settings-navigation-link">
+        <a class="settings-navigation-link"><i class="fas settings-navigation-icon" aria-hidden="true"></i><span class="settings-navigation-text"></span> <span class="settings-navigation-count"></span></a>
+    </template>
+    <template id="tpl-settings-navigation-note">
+        <p class="settings-navigation-note">Fields marked * are required.</p>
+    </template>
+    <template id="tpl-form-required-marker">
+        <span class="form-required-marker" aria-hidden="true"> *</span>
+    </template>
+    <template id="tpl-job-form-intro">
+        <p class="form-notice job-form-intro">Paths refer to the selected agent machine. Placeholder examples are hints, not saved values.</p>
+    </template>
+    <template id="tpl-file-selection-warning">
+        <span class="file-selection-warning"></span>
+    </template>
+    <template id="tpl-form-validation-summary">
+        <div class="form-notice form-validation-summary" role="alert" tabindex="-1" hidden></div>
+    </template>
+    <template id="tpl-form-validation-body"><h2 class="form-validation-heading"></h2><ul class="form-validation-list"></ul></template>
+    <template id="tpl-form-validation-entry">
+        <li><button type="button" class="form-validation-link"></button></li>
+    </template>
     <script src="/static/js/jquery.min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/jquery-succinct-min.js" type="text/javascript" charset="utf8"></script>
     <script src="/static/js/masonry.pkgd.min.js" type="text/javascript" charset="utf8"></script>

@@ -505,6 +505,19 @@ $(function () {
         });
     });
 
+    var template = function(id) {
+        var source = document.getElementById(id);
+        return source && source.content ? source.content.firstElementChild : null;
+    };
+    var sources = {
+        toolbar: template("tpl-job-stats-toolbar"),
+        actions: template("tpl-job-instance-actions"),
+        definition: template("tpl-job-stat-definition"),
+        picker: template("tpl-job-instance-picker"),
+        tile: template("tpl-job-instance-tile")
+    };
+    if (Object.keys(sources).some(function(key) { return !sources[key]; })) return;
+
     var panels = Array.prototype.slice.call(stats.querySelectorAll(".card.fuzzer"));
     var toolbar = null;
 
@@ -543,8 +556,7 @@ $(function () {
                 if (!item || !panel.contains(item)) return;
                 var text = (label.getAttribute("title") || label.getAttribute("data-bs-original-title") || "").replace(/\s+/g, " ").trim();
                 if (!text || label.jobStatDefinition) return;
-                var definition = document.createElement("span");
-                definition.className = "job-stat-definition";
+                var definition = sources.definition.cloneNode(true);
                 definition.hidden = false;
                 definition.textContent = text;
                 label.jobStatDefinition = definition;
@@ -554,19 +566,12 @@ $(function () {
 
             var header = panel.querySelector(":scope > .card-header");
             if (!header) return;
-            var group = document.createElement("div");
-            group.className = "job-instance-actions";
-            var toggle = document.createElement("label");
-            toggle.className = "job-definitions-toggle";
-            var checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
+            var group = sources.actions.cloneNode(true);
+            var checkbox = group.querySelector(".job-definitions-toggle input");
             checkbox.checked = true;
             checkbox.addEventListener("change", function() {
                 showDefinitions(checkbox.checked);
             });
-            toggle.appendChild(checkbox);
-            toggle.appendChild(document.createTextNode("Show definitions"));
-            group.appendChild(toggle);
             checkboxes.push(checkbox);
             var footer = panel.querySelector(":scope > .card-footer");
             var actions = footer ? footer.querySelector(".card-actions") : null;
@@ -577,21 +582,17 @@ $(function () {
             header.appendChild(group);
         });
 
-        toolbar = document.createElement("div");
-        toolbar.className = "job-stats-toolbar";
-        var toolbarLabel = document.createElement("span");
-        toolbarLabel.className = "job-stats-toolbar-label";
-        toolbarLabel.textContent = configured
+        toolbar = sources.toolbar.cloneNode(true);
+        toolbar.querySelector(".job-stats-toolbar-label").textContent = configured
             ? "Fuzzer instances (" + panels.length + " of " + cores + " with statistics)"
             : "Fuzzer instances (" + panels.length + ")";
-        toolbar.appendChild(toolbarLabel);
+        var hint = toolbar.querySelector(".job-stats-toolbar-hint");
         if (total > 1) {
-            var hint = document.createElement("span");
-            hint.className = "job-stats-toolbar-hint";
             hint.textContent = configured && panels.length < cores
                 ? "Select an instance to see its statistics. Dashed tiles are instances with no statistics received and can't be selected."
                 : "Select an instance to see its statistics.";
-            toolbar.appendChild(hint);
+        } else {
+            hint.remove();
         }
 
         var accordion = stats.querySelector(".accordion");
@@ -601,10 +602,7 @@ $(function () {
 
     if (!panels.length) return;
 
-    var picker = document.createElement("div");
-    picker.className = "job-instance-picker";
-    picker.setAttribute("role", "group");
-    picker.setAttribute("aria-label", "Fuzzer instances");
+    var picker = sources.picker.cloneNode(true);
 
     var select = function(target) {
         panels.forEach(function(panel) {
@@ -634,16 +632,9 @@ $(function () {
     }
 
     var tiles = entries.map(function(entry) {
-        var button = document.createElement("button");
+        var button = sources.tile.cloneNode(true);
         var tile = { button: button, panel: entry.panel };
-        button.type = "button";
-        button.className = "job-instance-tile";
-        if (configured) {
-            var mark = document.createElement("span");
-            mark.className = "job-instance-tile-mark";
-            mark.setAttribute("aria-hidden", "true");
-            button.appendChild(mark);
-        }
+        if (!configured) button.querySelector(".job-instance-tile-mark").remove();
         button.appendChild(document.createTextNode(String(entry.number)));
         if (!entry.panel) {
             var missing = (banner || "Instance ") + entry.number + ": No statistics received";
@@ -697,6 +688,18 @@ $(function () {
 
 $(function () {
     var forms = Array.prototype.slice.call(document.querySelectorAll("form.settings-panel"));
+    var template = function(id) {
+        var source = document.getElementById(id);
+        return source && source.content ? source.content.firstElementChild : null;
+    };
+    var sources = {
+        navigation: template("tpl-settings-navigation"),
+        link: template("tpl-settings-navigation-link"),
+        note: template("tpl-settings-navigation-note"),
+        marker: template("tpl-form-required-marker"),
+        intro: template("tpl-job-form-intro")
+    };
+    if (Object.keys(sources).some(function(key) { return !sources[key]; })) return;
 
     forms.forEach(function(form, formIndex) {
         var previous = form.previousElementSibling;
@@ -711,14 +714,7 @@ $(function () {
 
         var prefix = form.id || "settings-form-" + (formIndex + 1);
         var jobForm = form.id === "createJob" || form.id === "editJob";
-        var nav = document.createElement("nav");
-        nav.className = "settings-navigation";
-        nav.setAttribute("aria-label", "Form sections");
-
-        var label = document.createElement("small");
-        label.className = "settings-navigation-label";
-        label.textContent = "Jump to section";
-        nav.appendChild(label);
+        var nav = sources.navigation.cloneNode(true);
 
         var links = [];
         var advanced = null;
@@ -782,27 +778,20 @@ $(function () {
                 section.id = id;
             }
 
-            var link = document.createElement("a");
-            link.className = "settings-navigation-link";
+            var link = sources.link.cloneNode(true);
             link.setAttribute("href", "#" + section.id);
             var text = String(legend.textContent).replace(/\s+/g, " ").trim() || "Section " + (sectionIndex + 1);
             if (jobForm) {
+                var icon = link.querySelector(".settings-navigation-icon");
                 if (Object.prototype.hasOwnProperty.call(sectionIcons, text)) {
-                    var icon = document.createElement("i");
                     icon.className = "fas fa-" + sectionIcons[text] + " settings-navigation-icon";
-                    icon.setAttribute("aria-hidden", "true");
-                    link.appendChild(icon);
+                } else {
+                    icon.remove();
                 }
-                var name = document.createElement("span");
-                name.className = "settings-navigation-text";
-                name.textContent = text;
-                var count = document.createElement("span");
-                count.className = "settings-navigation-count";
+                link.querySelector(".settings-navigation-text").textContent = text;
+                var count = link.querySelector(".settings-navigation-count");
                 if (text === "Advanced") advanced = { section: section, count: count };
                 else count.textContent = String(sectionFields(section));
-                link.appendChild(name);
-                link.appendChild(document.createTextNode(" "));
-                link.appendChild(count);
             } else {
                 link.textContent = text;
             }
@@ -826,26 +815,14 @@ $(function () {
                 if (!control.hasAttribute("required") || !control.labels) return;
                 Array.prototype.forEach.call(control.labels, function(text) {
                     if (text.querySelector(".form-required-marker")) return;
-                    var marker = document.createElement("span");
-                    marker.className = "form-required-marker";
-                    marker.setAttribute("aria-hidden", "true");
-                    marker.textContent = " *";
-                    text.appendChild(marker);
+                    text.appendChild(sources.marker.cloneNode(true));
                 });
                 required++;
             });
-            if (required) {
-                var note = document.createElement("p");
-                note.className = "settings-navigation-note";
-                note.textContent = "Fields marked * are required.";
-                nav.appendChild(note);
-            }
+            if (required) nav.appendChild(sources.note.cloneNode(true));
 
             if (!form.querySelector(":scope > .job-form-intro")) {
-                var intro = document.createElement("p");
-                intro.className = "form-notice job-form-intro";
-                intro.textContent = "Paths refer to the selected agent machine. Placeholder examples are hints, not saved values.";
-                form.insertBefore(intro, sections[0]);
+                form.insertBefore(sources.intro.cloneNode(true), sections[0]);
             }
 
             Array.prototype.forEach.call(form.querySelectorAll('input[type="text"]'), function(input) {
@@ -1153,6 +1130,8 @@ function formatFileSize(bytes) {
 }
 
 function initFileSummaries() {
+    var warningSource = document.getElementById("tpl-file-selection-warning");
+    var warningTemplate = warningSource && warningSource.content ? warningSource.content.firstElementChild : null;
     Array.prototype.forEach.call(document.querySelectorAll("[data-file-summary]"), function(input) {
         if (input.dataset.fileSummaryBound) return;
         var output = document.getElementById(input.getAttribute("data-file-summary"));
@@ -1186,11 +1165,14 @@ function initFileSummaries() {
             var warning = problem(file);
             output.textContent = "Selected: " + file.name + " (" + formatFileSize(file.size) + ")";
             if (warning) {
-                var note = document.createElement("span");
-                note.className = "file-selection-warning";
-                note.textContent = warning;
                 output.appendChild(document.createTextNode(" "));
-                output.appendChild(note);
+                if (warningTemplate) {
+                    var note = warningTemplate.cloneNode(true);
+                    note.textContent = warning;
+                    output.appendChild(note);
+                } else {
+                    output.appendChild(document.createTextNode(warning));
+                }
             }
             output.classList.toggle("is-warning", !!warning);
             output.hidden = false;
@@ -1303,14 +1285,18 @@ function initFileDrops() {
 $(initFileDrops);
 
 function initValidationSummaries() {
+    var summarySource = document.getElementById("tpl-form-validation-summary");
+    var bodySource = document.getElementById("tpl-form-validation-body");
+    var entrySource = document.getElementById("tpl-form-validation-entry");
+    if (!summarySource || !summarySource.content || !summarySource.content.firstElementChild) return;
+    if (!bodySource || !bodySource.content || !bodySource.content.querySelector(".form-validation-heading") || !bodySource.content.querySelector(".form-validation-list")) return;
+    if (!entrySource || !entrySource.content || !entrySource.content.querySelector(".form-validation-link")) return;
+
     Array.prototype.forEach.call(document.querySelectorAll("form[data-validation-summary]"), function(form) {
         if (form.dataset.validationSummaryBound) return;
         form.dataset.validationSummaryBound = "1";
 
-        var summary = document.createElement("div");
-        summary.className = "form-notice form-validation-summary";
-        summary.setAttribute("role", "alert");
-        summary.tabIndex = -1;
+        var summary = summarySource.content.firstElementChild.cloneNode(true);
         summary.hidden = true;
         var anchor = form.id === "login" ? form.querySelector(":scope > .login-field") : null;
         form.insertBefore(summary, anchor || form.firstElementChild);
@@ -1370,27 +1356,21 @@ function initValidationSummaries() {
                 summary.hidden = true;
                 return 0;
             }
-            var heading = document.createElement("h2");
-            heading.className = "form-validation-heading";
-            heading.textContent = items.length === 1 ? "1 field needs attention" : items.length + " fields need attention";
-            var list = document.createElement("ul");
-            list.className = "form-validation-list";
+            var body = bodySource.content.cloneNode(true);
+            body.querySelector(".form-validation-heading").textContent = items.length === 1 ? "1 field needs attention" : items.length + " fields need attention";
+            var list = body.querySelector(".form-validation-list");
             items.forEach(function(item) {
-                var entry = document.createElement("li");
-                var link = document.createElement("button");
-                link.type = "button";
-                link.className = "form-validation-link";
+                var entry = entrySource.content.firstElementChild.cloneNode(true);
+                var link = entry.querySelector(".form-validation-link");
                 link.textContent = item.message ? item.label + ": " + item.message : item.label;
                 link.addEventListener("click", function() {
                     if (!item.control.isConnected) return;
                     item.control.scrollIntoView({ block: "center" });
                     item.control.focus({ preventScroll: true });
                 });
-                entry.appendChild(link);
                 list.appendChild(entry);
             });
-            summary.appendChild(heading);
-            summary.appendChild(list);
+            summary.appendChild(body);
             summary.hidden = false;
             return items.length;
         };
@@ -1634,6 +1614,14 @@ function plotSample(rows, column, x) {
 }
 
 function plotChart(definition, rows, id, title) {
+    var template = function(templateId) {
+        var source = document.getElementById(templateId);
+        return source && source.content ? source.content.firstElementChild : null;
+    };
+    var chartSource = template("tpl-plot-chart");
+    var legendSource = template("tpl-plot-chart-legend-entry");
+    var rowSource = template("tpl-plot-chart-row");
+    if (!chartSource || !legendSource || !rowSource) throw new Error("Plot chart templates are unavailable.");
     var width = 1000;
     var height = definition.height;
     var left = 64;
@@ -1729,74 +1717,31 @@ function plotChart(definition, rows, id, title) {
         plotSvg(group, "path", { class: "plot-chart-line", d: "M" + points, "vector-effect": "non-scaling-stroke" });
     });
 
-    var container = document.createElement("div");
-    container.className = "plot-chart";
-    var hint = document.createElement("p");
-    hint.className = "plot-chart-hint";
-    hint.textContent = "Scroll horizontally to inspect the chart.";
-    container.appendChild(hint);
-    var viewport = document.createElement("div");
-    viewport.className = "plot-chart-viewport";
-    viewport.tabIndex = 0;
-    viewport.setAttribute("role", "region");
+    var container = chartSource.cloneNode(true);
+    var viewport = container.querySelector(".plot-chart-viewport");
     viewport.setAttribute("aria-label", title + " chart");
     viewport.appendChild(svg);
-    container.appendChild(viewport);
 
-    var legend = document.createElement("ul");
-    legend.className = "plot-chart-legend";
+    var legend = container.querySelector(".plot-chart-legend");
     legend.setAttribute("aria-label", title + " legend");
     stats.forEach(function(entry) {
-        var item = document.createElement("li");
-        var swatch = document.createElement("span");
-        swatch.className = "plot-chart-swatch plot-series-" + entry.color;
-        swatch.setAttribute("aria-hidden", "true");
-        item.appendChild(swatch);
+        var item = legendSource.cloneNode(true);
+        item.querySelector(".plot-chart-swatch").classList.add("plot-series-" + entry.color);
         item.appendChild(document.createTextNode(entry.name));
         legend.appendChild(item);
     });
-    container.appendChild(legend);
 
-    var details = document.createElement("details");
-    details.className = "plot-chart-details";
-    var summary = document.createElement("summary");
-    summary.textContent = "Values as a table";
-    details.appendChild(summary);
-    var wrapper = document.createElement("div");
-    wrapper.className = "plot-chart-table";
-    var table = document.createElement("table");
-    var caption = document.createElement("caption");
-    caption.className = "sr-only";
-    caption.textContent = title + " values";
-    table.appendChild(caption);
-    var head = document.createElement("thead");
-    var headRow = document.createElement("tr");
-    ["Series", "First", "Max", "Last"].forEach(function(label) {
-        var cell = document.createElement("th");
-        cell.scope = "col";
-        cell.textContent = label;
-        headRow.appendChild(cell);
-    });
-    head.appendChild(headRow);
-    table.appendChild(head);
-    var body = document.createElement("tbody");
+    container.querySelector(".plot-chart-table caption").textContent = title + " values";
+    var body = container.querySelector(".plot-chart-table tbody");
     stats.forEach(function(entry) {
-        var row = document.createElement("tr");
-        var name = document.createElement("th");
-        name.scope = "row";
-        name.textContent = entry.name;
-        row.appendChild(name);
-        [entry.first, entry.max, entry.last].forEach(function(value) {
-            var cell = document.createElement("td");
-            cell.textContent = plotValue(value);
-            row.appendChild(cell);
+        var row = rowSource.cloneNode(true);
+        row.querySelector("th").textContent = entry.name;
+        var cells = row.querySelectorAll("td");
+        [entry.first, entry.max, entry.last].forEach(function(value, index) {
+            cells[index].textContent = plotValue(value);
         });
         body.appendChild(row);
     });
-    table.appendChild(body);
-    wrapper.appendChild(table);
-    details.appendChild(wrapper);
-    container.appendChild(details);
     return container;
 }
 
@@ -1810,6 +1755,16 @@ function initPlotRefresh() {
     var back = document.getElementById("plot-back-link");
     var busy = false;
     var outdated = " Displayed plots may be out of date.";
+    var template = function(id) {
+        var source = document.getElementById(id);
+        return source && source.content ? source.content.firstElementChild : null;
+    };
+    var crumbSource = template("tpl-plot-breadcrumb-job");
+    var instanceSource = template("tpl-plot-instance");
+    var headingSource = document.getElementById("tpl-plot-figure-heading");
+    var errorSource = template("tpl-plot-image-error");
+    var noteSource = template("tpl-plot-chart-note");
+    var figureTemplates = !!(headingSource && headingSource.content && headingSource.content.querySelector(".plot-figure-title") && headingSource.content.querySelector(".plot-figure-description") && errorSource && noteSource);
 
     if (back && /^\/job\/[^/]+\/plot$/.test(window.location.pathname)) {
         back.setAttribute("href", window.location.pathname.replace(/\/plot$/, "/view"));
@@ -1835,29 +1790,23 @@ function initPlotRefresh() {
             var name = data.name.replace(/\s+/g, " ").trim();
 
             var current = document.querySelector(".page-breadcrumbs .page-breadcrumb-current");
-            if (name && current && current.parentNode && !current.parentNode.querySelector(".page-breadcrumb-job")) {
-                var crumb = document.createElement("li");
-                var crumbLink = document.createElement("a");
-                crumbLink.className = "page-breadcrumb-parent page-breadcrumb-job";
+            if (name && crumbSource && current && current.parentNode && !current.parentNode.querySelector(".page-breadcrumb-job")) {
+                var crumb = crumbSource.cloneNode(true);
+                var crumbLink = crumb.querySelector(".page-breadcrumb-job");
                 crumbLink.setAttribute("href", jobPath + "/view");
                 crumbLink.textContent = name;
-                crumb.appendChild(crumbLink);
                 current.parentNode.insertBefore(crumb, current);
             }
 
+            if (!instanceSource) return;
             var controlId = "plot-instance-select";
             for (var n = 2; document.getElementById(controlId); n++) {
                 controlId = "plot-instance-select-" + n;
             }
-            var group = document.createElement("div");
-            group.className = "plot-instance";
-            var label = document.createElement("label");
-            label.className = "form-label";
-            label.setAttribute("for", controlId);
-            label.textContent = "Instance";
-            var select = document.createElement("select");
+            var group = instanceSource.cloneNode(true);
+            group.querySelector("label").setAttribute("for", controlId);
+            var select = group.querySelector("select");
             select.id = controlId;
-            select.className = "form-select";
             var option = function(fid) {
                 var item = new Option((banner || "Instance ") + fid, String(fid));
                 if (fid === currentFID) {
@@ -1868,10 +1817,8 @@ function initPlotRefresh() {
             };
             for (var fid = 1; fid <= data.cores; fid++) option(fid);
             if (currentFID > data.cores) option(currentFID);
-            var help = document.createElement("small");
-            help.className = "form-text plot-instance-help";
+            var help = group.querySelector(".plot-instance-help");
             help.id = controlId + "-help";
-            help.textContent = "If the selected instance has no plots yet, use Refresh plot data to fetch them.";
             select.setAttribute("aria-describedby", help.id);
             select.addEventListener("change", function() {
                 var value = String(select.value);
@@ -1880,14 +1827,11 @@ function initPlotRefresh() {
                 target.searchParams.set("fid", value);
                 window.location.assign(target.pathname + target.search);
             });
-            group.appendChild(label);
-            group.appendChild(select);
-            group.appendChild(help);
             toolbar.insertBefore(group, button && button.parentNode === toolbar ? button : null);
         }).catch(function() {});
     }
 
-    Array.prototype.forEach.call(plots.querySelectorAll(".plot-figure img"), function(image, index) {
+    Array.prototype.forEach.call(figureTemplates ? plots.querySelectorAll(".plot-figure img") : [], function(image, index) {
         var figure = image.closest(".plot-figure");
         var plotLabels = {
             "exec_speed.png": ["Exec speed", "Executions per second over time"],
@@ -1906,20 +1850,14 @@ function initPlotRefresh() {
         var plotLabel = Object.prototype.hasOwnProperty.call(plotLabels, plotName)
             ? plotLabels[plotName]
             : ["Fuzzing plot", "Generated fuzzing statistics over time"];
-        var plotTitle = document.createElement("h2");
-        plotTitle.className = "plot-figure-title";
-        plotTitle.textContent = plotLabel[0];
-        var plotDescription = document.createElement("p");
-        plotDescription.className = "plot-figure-description";
-        plotDescription.textContent = plotLabel[1];
-        image.parentNode.insertBefore(plotTitle, image);
-        image.parentNode.insertBefore(plotDescription, image);
+        var plotHeading = headingSource.content.cloneNode(true);
+        plotHeading.querySelector(".plot-figure-title").textContent = plotLabel[0];
+        plotHeading.querySelector(".plot-figure-description").textContent = plotLabel[1];
+        image.parentNode.insertBefore(plotHeading, image);
         image.alt = plotLabel[0];
         var open = figure.querySelector("figcaption a");
         if (open) open.setAttribute("aria-label", "Open image: " + plotLabel[0]);
-        var message = document.createElement("p");
-        message.className = "plot-refresh-status is-error plot-image-error";
-        message.setAttribute("role", "status");
+        var message = errorSource.cloneNode(true);
         message.hidden = true;
         var caption = figure.querySelector("figcaption");
         figure.insertBefore(message, caption && caption.parentNode === figure ? caption : null);
@@ -1955,9 +1893,7 @@ function initPlotRefresh() {
             message.textContent = "";
         }).catch(function() {
             if (rendered) return;
-            var note = document.createElement("p");
-            note.className = "plot-chart-note";
-            note.textContent = "Chart data is unavailable. Showing the generated image when available.";
+            var note = noteSource.cloneNode(true);
             figure.insertBefore(note, caption && caption.parentNode === figure ? caption : null);
         });
     });

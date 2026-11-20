@@ -26,4 +26,26 @@
   </section>
 {{end}}
 </div>
+<template id="tpl-plot-figure-heading"><h2 class="plot-figure-title"></h2><p class="plot-figure-description"></p></template>
+<template id="tpl-plot-image-error">
+  <p class="plot-refresh-status is-error plot-image-error" role="status" hidden></p>
+</template>
+<template id="tpl-plot-chart-note">
+  <p class="plot-chart-note">Chart data is unavailable. Showing the generated image when available.</p>
+</template>
+<template id="tpl-plot-chart">
+  <div class="plot-chart"><p class="plot-chart-hint">Scroll horizontally to inspect the chart.</p><div class="plot-chart-viewport" tabindex="0" role="region"></div><ul class="plot-chart-legend"></ul><details class="plot-chart-details"><summary>Values as a table</summary><div class="plot-chart-table"><table><caption class="sr-only"></caption><thead><tr><th scope="col">Series</th><th scope="col">First</th><th scope="col">Max</th><th scope="col">Last</th></tr></thead><tbody></tbody></table></div></details></div>
+</template>
+<template id="tpl-plot-chart-legend-entry">
+  <li><span class="plot-chart-swatch" aria-hidden="true"></span></li>
+</template>
+<template id="tpl-plot-chart-row">
+  <tr><th scope="row"></th><td></td><td></td><td></td></tr>
+</template>
+<template id="tpl-plot-breadcrumb-job">
+  <li><a class="page-breadcrumb-parent page-breadcrumb-job"></a></li>
+</template>
+<template id="tpl-plot-instance">
+  <div class="plot-instance"><label class="form-label">Instance</label><select class="form-select"></select><small class="form-text plot-instance-help">If the selected instance has no plots yet, use Refresh plot data to fetch them.</small></div>
+</template>
 {{end}}
