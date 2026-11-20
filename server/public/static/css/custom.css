@@ -3395,6 +3395,13 @@ footer .version:before {
 .crash-risk-preview.is-none,
 .crash-risk-preview.is-na { color: #475569; }
 
+.crash-risk-meter { display: none; gap: 2px; margin-inline-end: 6px; vertical-align: middle; }
+:is(.crash-risk, .crash-risk-preview):is(.is-high, .is-medium, .is-low) > .crash-risk-meter { display: inline-flex; }
+.crash-risk-meter > i { display: block; width: 5px; height: 11px; border-radius: 1.5px; background: #e2e8f0; }
+:is(.crash-risk, .crash-risk-preview).is-high > .crash-risk-meter > i { background: #b91c1c; }
+:is(.crash-risk, .crash-risk-preview).is-medium > .crash-risk-meter > i:nth-child(-n+2) { background: #92400e; }
+:is(.crash-risk, .crash-risk-preview).is-low > .crash-risk-meter > i:first-child { background: #1d4ed8; }
+
 .card.crash pre.crash-arguments {
   display: block;
   box-sizing: border-box;

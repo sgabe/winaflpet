@@ -1488,6 +1488,7 @@ function initCrashRiskPreview() {
     var preview = document.getElementById("bugIDRisk");
     if (!form || !input || !preview || !form.contains(input) || !form.contains(preview) || preview.dataset.riskPreviewBound) return;
     preview.dataset.riskPreviewBound = "1";
+    var text = preview.querySelector(".crash-risk-preview-text") || preview;
     var labels = { high: "High", medium: "Medium", low: "Low", none: "None" };
 
     input.addEventListener("input", function() {
@@ -1495,7 +1496,7 @@ function initCrashRiskPreview() {
         var risk = match ? { R: "low", W: "medium", E: "high" }[match[1]] : "none";
         preview.classList.remove("is-high", "is-medium", "is-low", "is-none", "is-na");
         preview.classList.add("is-" + risk);
-        preview.textContent = "Risk preview: " + labels[risk] + " (unsaved)";
+        text.textContent = "Risk preview: " + labels[risk] + " (unsaved)";
     });
 }
 

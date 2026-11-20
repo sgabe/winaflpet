@@ -133,9 +133,9 @@
             <span class="card-summary-label" title="{{ $jobName }}">{{ $jobName }}</span>
           </span>
           {{- if .Verified }}
-          <span class="card-summary-count crash-risk is-{{ .GetRisk }}" title="Risk is based on the Bug ID access type and does not confirm exploitability.">Risk: {{if eq .GetRisk "high"}}High{{else if eq .GetRisk "medium"}}Medium{{else if eq .GetRisk "low"}}Low{{else if eq .GetRisk "none"}}None{{else}}Not assessed{{end}}</span>
+          <span class="card-summary-count crash-risk is-{{ .GetRisk }}" title="Risk is based on the Bug ID access type and does not confirm exploitability.">Risk: {{template "crashRiskMeter"}}{{if eq .GetRisk "high"}}High{{else if eq .GetRisk "medium"}}Medium{{else if eq .GetRisk "low"}}Low{{else if eq .GetRisk "none"}}None{{else}}Not assessed{{end}}</span>
           {{- else}}
-          <span class="card-summary-count crash-risk is-na" title="Risk is based on the Bug ID access type and does not confirm exploitability.">Risk: Not assessed</span>
+          <span class="card-summary-count crash-risk is-na" title="Risk is based on the Bug ID access type and does not confirm exploitability.">Risk: {{template "crashRiskMeter"}}Not assessed</span>
           {{- end}}
         </button>
         </h2>
@@ -178,7 +178,7 @@
     {{- $job := .GetJob}}
     <div class="card-detail"><dt>Job</dt><dd>{{if trim $job.Name}}{{ $job.Name }} (#{{ .JobID }}){{else}}Job #{{ .JobID }}{{end}}</dd></div>
     <div class="card-detail"><dt>Fuzzer ID</dt><dd class="font-monospace">{{if .FuzzerID}}{{ .FuzzerID }}{{else}}&mdash;{{end}}</dd></div>
-    <div class="card-detail card-detail-wide"><dt>Risk</dt><dd>{{if not .Verified}}Not assessed <span class="form-text text-muted">Verify the crash to assess its Bug ID access type.</span>{{else if eq .GetRisk "high"}}High <span class="form-text text-muted">Bug ID access type E (execute).</span>{{else if eq .GetRisk "medium"}}Medium <span class="form-text text-muted">Bug ID access type W (write).</span>{{else if eq .GetRisk "low"}}Low <span class="form-text text-muted">Bug ID access type R (read).</span>{{else if eq .GetRisk "none"}}None <span class="form-text text-muted">No R/W/E access type was recognized in the Bug ID.</span>{{else}}Not assessed{{end}}<span class="form-text text-muted">This heuristic does not confirm exploitability.</span></dd></div>
+    <div class="card-detail card-detail-wide"><dt>Risk</dt><dd class="crash-risk is-{{if .Verified}}{{.GetRisk}}{{else}}na{{end}}">{{template "crashRiskMeter"}}{{if not .Verified}}Not assessed <span class="form-text text-muted">Verify the crash to assess its Bug ID access type.</span>{{else if eq .GetRisk "high"}}High <span class="form-text text-muted">Bug ID access type E (execute).</span>{{else if eq .GetRisk "medium"}}Medium <span class="form-text text-muted">Bug ID access type W (write).</span>{{else if eq .GetRisk "low"}}Low <span class="form-text text-muted">Bug ID access type R (read).</span>{{else if eq .GetRisk "none"}}None <span class="form-text text-muted">No R/W/E access type was recognized in the Bug ID.</span>{{else}}Not assessed{{end}}<span class="form-text text-muted">This heuristic does not confirm exploitability.</span></dd></div>
     <div class="card-detail"><dt>Bug ID</dt><dd class="font-monospace">{{if .BugID}}{{ .BugID }}{{else}}&mdash;{{end}}</dd></div>
     <div class="card-detail"><dt>Module</dt><dd class="font-monospace">{{if .Module}}{{ .Module }}{{else}}&mdash;{{end}}</dd></div>
     <div class="card-detail"><dt>Function</dt><dd class="font-monospace">{{if .Function}}{{ .Function }}{{else}}&mdash;{{end}}</dd></div>
